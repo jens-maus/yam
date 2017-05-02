@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.38 (21.04.2014)
+; $VER: Install-YAM 1.39 (02.05.2017)
 ; Copyright (C) 2000-2017 YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
@@ -7,27 +7,35 @@
 ;
 ;
 ; /// Setting up
-(set #def_lang_english             $000)
-(set #def_lang_german              $001)
-(set #def_lang_swedish             $002)
-(set #def_lang_czech               $004)
-(set #def_lang_italian             $008)
-(set #def_lang_french              $010)
-(set #def_lang_greek               $020)
-(set #def_lang_spanish             $040)
-(set #def_lang_turkish             $080)
-(set #def_lang_hungarian           $100)
-(set #def_lang_polish              $200)
-(set #def_lang_finnish             $400)
-(set #def_lang_danish              $800)
-(set #def_lang_dutch               $1000)
-(set #def_lang_russian             $2000)
+(set #def_lang_english             $000000)
+(set #def_lang_german              $000001)
+(set #def_lang_swedish             $000002)
+(set #def_lang_czech               $000004)
+(set #def_lang_italian             $000008)
+(set #def_lang_french              $000010)
+(set #def_lang_greek               $000020)
+(set #def_lang_spanish             $000040)
+(set #def_lang_turkish             $000080)
+(set #def_lang_hungarian           $000100)
+(set #def_lang_polish              $000200)
+(set #def_lang_finnish             $000400)
+(set #def_lang_danish              $000800)
+(set #def_lang_dutch               $001000)
+(set #def_lang_russian             $002000)
+(set #def_lang_bosnian             $004000)
+(set #def_lang_norwegian           $008000)
+(set #def_lang_portuguese          $010000)
+(set #def_lang_portuguese_brazil   $020000)
+(set #def_lang_serbian             $040000)
+(set #def_lang_slovak              $080000)
+(set #def_lang_slovenian           $100000)
+(set #def_lang_catalan             $200000)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $4000)
+(set #def_lang_english_british     $400000)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -495,6 +503,14 @@
                      "Dansk"
                      "Nederlands"
                      "Ruski"
+                     "Bosanski"
+                     "Norsk"
+                     "Português"
+                     "Português-Brasil"
+                     "Srpski"
+                     "Slovak"
+                     "Slovensko"
+                     "Català"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -519,6 +535,14 @@
                      "Dansk"
                      "Nederlands"
                      "Ruski"
+                     "Bosanski"
+                     "Norsk"
+                     "Português"
+                     "Português-Brasil"
+                     "Srpski"
+                     "Slovak"
+                     "Slovensko"
+                     "Català"
             )
             (default #def_cat_lang)
         )
@@ -802,6 +826,118 @@
                     (source "/Catalogs/russian")
                     (choices "YAM.catalog")
                     (dest (tackon #Cat_dir #cat_name_russian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; bosnian catalog file
+        (if (bitand #catalog_lang #def_lang_bosnian)
+            (
+                (makedir (tackon #Cat_dir #cat_name_bosnian))
+
+                (copyfiles
+                    (source "/Catalogs/bosnian")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_bosnian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; norwegian catalog file
+        (if (bitand #catalog_lang #def_lang_norwegian)
+            (
+                (makedir (tackon #Cat_dir #cat_name_norwegian))
+
+                (copyfiles
+                    (source "/Catalogs/norwegian")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_norwegian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; portuguese catalog file
+        (if (bitand #catalog_lang #def_lang_portuguese)
+            (
+                (makedir (tackon #Cat_dir #cat_name_portuguese))
+
+                (copyfiles
+                    (source "/Catalogs/portuguese")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_portuguese))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; portuguese-brazil catalog file
+        (if (bitand #catalog_lang #def_lang_portuguese_brazil)
+            (
+                (makedir (tackon #Cat_dir #cat_name_portuguese_brazil))
+
+                (copyfiles
+                    (source "/Catalogs/portuguese-brazil")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_portuguese_brazil))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; serbian catalog file
+        (if (bitand #catalog_lang #def_lang_serbian)
+            (
+                (makedir (tackon #Cat_dir #cat_name_serbian))
+
+                (copyfiles
+                    (source "/Catalogs/serbian")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_serbian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; slovak catalog file
+        (if (bitand #catalog_lang #def_lang_slovak)
+            (
+                (makedir (tackon #Cat_dir #cat_name_slovak))
+
+                (copyfiles
+                    (source "/Catalogs/slovak")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_slovak))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; slovenian catalog file
+        (if (bitand #catalog_lang #def_lang_slovenian)
+            (
+                (makedir (tackon #Cat_dir #cat_name_slovenian))
+
+                (copyfiles
+                    (source "/Catalogs/slovenian")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_slovenian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; catalan catalog file
+        (if (bitand #catalog_lang #def_lang_catalan)
+            (
+                (makedir (tackon #Cat_dir #cat_name_catalan))
+
+                (copyfiles
+                    (source "/Catalogs/catalan")
+                    (choices "YAM.catalog")
+                    (dest (tackon #Cat_dir #cat_name_catalan))
                     (help @copyfiles-help)
                 )
             )
