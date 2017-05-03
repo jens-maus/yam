@@ -1,5 +1,4 @@
-;
-; $VER: Install-YAM 1.39 (02.05.2017)
+; $VER: Install-YAM 1.40 (03.05.2017)
 ; Copyright (C) 2000-2017 YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
@@ -29,13 +28,12 @@
 (set #def_lang_serbian             $040000)
 (set #def_lang_slovak              $080000)
 (set #def_lang_slovenian           $100000)
-(set #def_lang_catalan             $200000)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $400000)
+(set #def_lang_english_british     $200000)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -394,7 +392,6 @@
     ; AmigaOS 4.x uses english locale names only
     (
         (set #cat_name_bosnian               "bosnian")
-        (set #cat_name_catalan               "catalan")
         (set #cat_name_czech                 "czech")
         (set #cat_name_danish                "danish")
         (set #cat_name_dutch                 "dutch")
@@ -420,7 +417,6 @@
     ; AmigaOS 3.x and MorphOS use localized locale names
     (
         (set #cat_name_bosnian               "bosanski")
-        (set #cat_name_catalan               "català")
         (set #cat_name_czech                 "czech")
         (set #cat_name_danish                "dansk")
         (set #cat_name_dutch                 "nederlands")
@@ -940,20 +936,6 @@
                     (source "/Catalogs/slovenian")
                     (choices "YAM.catalog")
                     (dest (tackon #Cat_dir #cat_name_slovenian))
-                    (help @copyfiles-help)
-                )
-            )
-        )
-
-        ; catalan catalog file
-        (if (bitand #catalog_lang #def_lang_catalan)
-            (
-                (makedir (tackon #Cat_dir #cat_name_catalan))
-
-                (copyfiles
-                    (source "/Catalogs/catalan")
-                    (choices "YAM.catalog")
-                    (dest (tackon #Cat_dir #cat_name_catalan))
                     (help @copyfiles-help)
                 )
             )
