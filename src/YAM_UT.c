@@ -2082,6 +2082,9 @@ void ExtractAddress(const char *line, struct Person *pe)
   pe->Address[0] = '\0';
   pe->RealName[0] = '\0';
 
+  if(line == NULL)
+    line = "";
+
   SHOWSTRING(DBF_MIME, line);
 
   // create a temp copy of our source
