@@ -2082,6 +2082,8 @@ void ExtractAddress(const char *line, struct Person *pe)
   pe->Address[0] = '\0';
   pe->RealName[0] = '\0';
 
+  // replying to a draft mail might cause certain recipient pointers to stay NULL
+  // these must be treated as simple empty strings to avoid accesses to a NULL pointer
   if(line == NULL)
     line = "";
 
