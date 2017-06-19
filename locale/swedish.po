@@ -5,7 +5,7 @@
 # Translators:
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# Pär Boberg <pbobbenb@icloud.com>, 2014,2016
+# Pär Boberg <pbobbenb@icloud.com>, 2014,2016-2017
 # Pär Boberg <pbobbenb@spray.se>, 2013
 # Pär Boberg <pbobbenb@icloud.com>, 2014
 # Thore Böckelmann <tboeckel@gmx.de>, 2015
@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-04-28 10:19+0000\n"
+"PO-Revision-Date: 2017-06-19 06:23+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/ato/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -1099,8 +1099,8 @@ msgid "_Active"
 msgstr "A_ktiv"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
-msgid "Delete mail _on server"
-msgstr "Radera p_ost på server"
+msgid "Delete mail on ser_ver"
+msgstr ""
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1135,8 +1135,8 @@ msgid "_Transfer window"
 msgstr "_Statusfönster"
 
 msgctxt "MSG_CO_PreSelect (369//)"
-msgid "_Pre-selection"
-msgstr "V_älj innan"
+msgid "Pr_e-selection"
+msgstr ""
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1147,8 +1147,8 @@ msgid "minutes"
 msgstr "minut"
 
 msgctxt "MSG_CO_NotiReq (378//)"
-msgid "_Requester"
-msgstr "Dialogfönste_r"
+msgid "Reques_ter"
+msgstr ""
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1447,8 +1447,8 @@ msgid "Tagline _file"
 msgstr "_Fil"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
-msgid "T_agline separator"
-msgstr "Av_delare"
+msgid "Tag_line separator"
+msgstr ""
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1571,16 +1571,16 @@ msgid "Paths"
 msgstr "Sökvägar"
 
 msgctxt "MSG_CO_Detach (508//)"
-msgid "D_ecode files to"
-msgstr "Av_koda filer till"
+msgid "Decode _files to"
+msgstr ""
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
 msgstr "_Bifoga filer från"
 
 msgctxt "MSG_CO_TempDir (510//)"
-msgid "For _temporary files"
-msgstr "För _temporära filer"
+msgid "For temp_orary files"
+msgstr ""
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5604,8 +5604,8 @@ msgid "Searching messages in folder '%s'..."
 msgstr "Letar efter meddelanden i mappen '%s'..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
-msgid "A_ppIcon on Workbench"
-msgstr "_Appikon på Workbench"
+msgid "AppIcon on _Workbench"
+msgstr ""
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7638,8 +7638,8 @@ msgid ""
 msgstr "Ett fel uppstod vid försök att spela\nljudfilen '%s'.\n\nDetta kan bero på antingen en trasig\nljudfil eller en ljudfil som inte stöds eller\nför att din ljuddatatyp inte fungerar korrekt."
 
 msgctxt "MSG_WR_CHARSET (2084//)"
-msgid "_Charset"
-msgstr "Te_ckenupps."
+msgid "C_harset"
+msgstr ""
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7905,8 +7905,8 @@ msgid "The home directory '%s' of user '%s' does not exist."
 msgstr "Hemmamappen '%s' för användare '%s' existerar inte!"
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
-msgid "Show te_xt colors"
-msgstr "Visa te_xt färger"
+msgid "Show text co_lors"
+msgstr ""
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8341,8 +8341,8 @@ msgid "ARexx interface"
 msgstr "ARexx gränssnitt"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
-msgid "Search on gra_vatar.com..."
-msgstr "Sök på gra_vatar.com..."
+msgid "Search o_n gravatar.com..."
+msgstr ""
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9286,8 +9286,8 @@ msgid ""
 msgstr "Om vald, visas ett sökfält i huvudfönstret,\nför att snabbt söka efter specifika brev."
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
-msgid "Posi_tion"
-msgstr "P_osition"
+msgid "P_osition"
+msgstr ""
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9354,8 +9354,8 @@ msgid "Attachment"
 msgstr "Bilaga"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
-msgid "Re_move"
-msgstr "T_a bort"
+msgid "Rem_ove"
+msgstr ""
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9513,12 +9513,12 @@ msgid ""
 msgstr "Använd popupp knappen för att välja teckenuppsättningen\ndu vill YAM ska använda till kodning av brev.\nDetta bör vanligtvis matcha ditt systems förvalda\nteckenuppsättning, så att den visade teckenuppsättningen\nmatchar den du skriver brev med. Du kan dock välja vilken\nteckenuppsättning du vill, att koda dina utgående brev med."
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
-msgid "Default c_harset"
-msgstr "Förvald teckenu_ppsättning"
+msgid "_Default charset"
+msgstr ""
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
-msgid "Display _charset"
-msgstr "Visa te_ckenuppsättning"
+msgid "Display c_harset"
+msgstr ""
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9787,10 +9787,10 @@ msgid "Checking mails from '%s'"
 msgstr "Kontrollerar brev från '%s'"
 
 #. Translate "Cc" which means "Carbon Copy"
-#. (e.g. 'Kopie (_Cc)' in German)
+#. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
-msgid "_Cc"
-msgstr "_Kopia"
+msgid "Cc"
+msgstr ""
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10047,4 +10047,4 @@ msgstr "Ladda ned uppdatering med webbläsare..."
 
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
-msgstr ""
+msgstr "\\033bDetta nattliga bygge löper ut %s"

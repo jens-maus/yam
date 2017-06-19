@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-04-28 10:19+0000\n"
+"PO-Revision-Date: 2017-06-19 06:23+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Norwegian (http://www.transifex.com/ato/yam/language/no/)\n"
 "MIME-Version: 1.0\n"
@@ -1095,8 +1095,8 @@ msgid "_Active"
 msgstr "A_ktiv"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
-msgid "Delete mail _on server"
-msgstr "Sl_ette post på tjener"
+msgid "Delete mail on ser_ver"
+msgstr ""
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1131,8 +1131,8 @@ msgid "_Transfer window"
 msgstr "_Overføring vindu"
 
 msgctxt "MSG_CO_PreSelect (369//)"
-msgid "_Pre-selection"
-msgstr "_Forvalg"
+msgid "Pr_e-selection"
+msgstr ""
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1143,8 +1143,8 @@ msgid "minutes"
 msgstr "minutt"
 
 msgctxt "MSG_CO_NotiReq (378//)"
-msgid "_Requester"
-msgstr "A_nmodning"
+msgid "Reques_ter"
+msgstr ""
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1443,8 +1443,8 @@ msgid "Tagline _file"
 msgstr "Taglinje _fil"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
-msgid "T_agline separator"
-msgstr "Taglinje _separator"
+msgid "Tag_line separator"
+msgstr ""
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1567,16 +1567,16 @@ msgid "Paths"
 msgstr "Stier"
 
 msgctxt "MSG_CO_Detach (508//)"
-msgid "D_ecode files to"
-msgstr "D_ekode filer til"
+msgid "Decode _files to"
+msgstr ""
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
 msgstr "Legge til _filer fra"
 
 msgctxt "MSG_CO_TempDir (510//)"
-msgid "For _temporary files"
-msgstr "Katalog for _midlertidlige filer"
+msgid "For temp_orary files"
+msgstr ""
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5600,7 +5600,7 @@ msgid "Searching messages in folder '%s'..."
 msgstr ""
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
-msgid "A_ppIcon on Workbench"
+msgid "AppIcon on _Workbench"
 msgstr ""
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
@@ -7634,7 +7634,7 @@ msgid ""
 msgstr ""
 
 msgctxt "MSG_WR_CHARSET (2084//)"
-msgid "_Charset"
+msgid "C_harset"
 msgstr ""
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
@@ -7901,7 +7901,7 @@ msgid "The home directory '%s' of user '%s' does not exist."
 msgstr ""
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
-msgid "Show te_xt colors"
+msgid "Show text co_lors"
 msgstr ""
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
@@ -8337,7 +8337,7 @@ msgid "ARexx interface"
 msgstr ""
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
-msgid "Search on gra_vatar.com..."
+msgid "Search o_n gravatar.com..."
 msgstr ""
 
 #. ADDRESS
@@ -9282,7 +9282,7 @@ msgid ""
 msgstr ""
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
-msgid "Posi_tion"
+msgid "P_osition"
 msgstr ""
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
@@ -9350,7 +9350,7 @@ msgid "Attachment"
 msgstr ""
 
 msgctxt "MSG_WR_REMOVE (2441//)"
-msgid "Re_move"
+msgid "Rem_ove"
 msgstr ""
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
@@ -9509,11 +9509,11 @@ msgid ""
 msgstr ""
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
-msgid "Default c_harset"
+msgid "_Default charset"
 msgstr ""
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
-msgid "Display _charset"
+msgid "Display c_harset"
 msgstr ""
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
@@ -9783,9 +9783,9 @@ msgid "Checking mails from '%s'"
 msgstr ""
 
 #. Translate "Cc" which means "Carbon Copy"
-#. (e.g. 'Kopie (_Cc)' in German)
+#. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
-msgid "_Cc"
+msgid "Cc"
 msgstr ""
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
