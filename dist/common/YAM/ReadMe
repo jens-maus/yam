@@ -55,8 +55,8 @@ using two completly different versions.
 
 YAM's default imagery consists  of PNG images only.  Although it is possible
 to use themes using other  file formats like  IFF-ILBM or GIF a suitable PNG
-datatype with  full alpha channel  should be available  for the first run to
-avoid tons of warnings about failure to load the individual images.
+datatype with full  alpha channel support should be available  for the first
+run to avoid tons of warnings about failure to load the individual images.
 
 
 What's new
