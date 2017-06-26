@@ -56,17 +56,17 @@ enum FolderType
 
 extern const char* const FolderName[FT_NUM];
 
-#define isCustomFolder(folder)      ((folder)->Type == FT_CUSTOM)
-#define isIncomingFolder(folder)    ((folder)->Type == FT_INCOMING)
-#define isOutgoingFolder(folder)    ((folder)->Type == FT_OUTGOING)
-#define isSentFolder(folder)        ((folder)->Type == FT_SENT)
-#define isTrashFolder(folder)       ((folder)->Type == FT_TRASH)
-#define isGroupFolder(folder)       ((folder)->Type == FT_GROUP)
-#define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
-#define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
-#define isSpamFolder(folder)        (C->SpamFilterEnabled == TRUE && (folder)->Type == FT_SPAM)
-#define isDraftsFolder(folder)      ((folder)->Type == FT_DRAFTS)
-#define isArchiveFolder(folder)     ((folder)->Type == FT_ARCHIVE)
+#define isCustomFolder(folder)      ((folder) != NULL && (folder)->Type == FT_CUSTOM)
+#define isIncomingFolder(folder)    ((folder) != NULL && (folder)->Type == FT_INCOMING)
+#define isOutgoingFolder(folder)    ((folder) != NULL && (folder)->Type == FT_OUTGOING)
+#define isSentFolder(folder)        ((folder) != NULL && (folder)->Type == FT_SENT)
+#define isTrashFolder(folder)       ((folder) != NULL && (folder)->Type == FT_TRASH)
+#define isGroupFolder(folder)       ((folder) != NULL && (folder)->Type == FT_GROUP)
+#define isCustomSentFolder(folder)  ((folder) != NULL && (folder)->Type == FT_CUSTOMSENT)
+#define isCustomMixedFolder(folder) ((folder) != NULL && (folder)->Type == FT_CUSTOMMIXED)
+#define isSpamFolder(folder)        (C->SpamFilterEnabled == TRUE && (folder) != NULL && (folder)->Type == FT_SPAM)
+#define isDraftsFolder(folder)      ((folder) != NULL && (folder)->Type == FT_DRAFTS)
+#define isArchiveFolder(folder)     ((folder) != NULL && (folder)->Type == FT_ARCHIVE)
 
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \
