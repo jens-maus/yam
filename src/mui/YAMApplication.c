@@ -376,7 +376,8 @@ static void FlushIndex(struct Folder *folder, time_t minAccessTime)
   // - the index is loaded at all, and
   // - the minimum access time has been exceeded
   // - the folder is not the currently active one
-  if(folder->LoadedMode == LM_VALID &&
+  if(folder != NULL &&
+     folder->LoadedMode == LM_VALID &&
      (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
      folder != GetCurrentFolder())
   {

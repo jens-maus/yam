@@ -135,10 +135,12 @@ void MA_SetSortFlag(void)
 
   ENTER();
 
-  folder = GetCurrentFolder();
-  xset(G->MA->GUI.PG_MAILLIST,
-    MUIA_NList_SortType,  MA_GetSortType(folder->Sort[0]),
-    MUIA_NList_SortType2, MA_GetSortType(folder->Sort[1]));
+  if((folder = GetCurrentFolder()) != NULL)
+  {
+    xset(G->MA->GUI.PG_MAILLIST,
+      MUIA_NList_SortType,  MA_GetSortType(folder->Sort[0]),
+      MUIA_NList_SortType2, MA_GetSortType(folder->Sort[1]));
+  }
 
   LEAVE();
 }
