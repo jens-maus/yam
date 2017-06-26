@@ -353,63 +353,66 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[3] = data->newStr;
     ndm->Array[4] = data->sizeStr;
 
-    // create folderStr
-    FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode);
-
-    switch(entry->Type)
+    if(entry != NULL)
     {
-      case FT_GROUP:
+      // create folderStr
+      FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode);
+
+      switch(entry->Type)
       {
-        ndm->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
-
-        // show group stats for closed nodes only
-        if(isFlagClear(ndm->TreeNode->tn_Flags, TNF_OPEN))
+        case FT_GROUP:
         {
-          // if other folder columns are enabled lets fill the values in
-          if(hasFColTotal(C->FolderCols))
-            snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
+          ndm->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
 
-          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-            snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
+          // show group stats for closed nodes only
+          if(isFlagClear(ndm->TreeNode->tn_Flags, TNF_OPEN))
+          {
+            // if other folder columns are enabled lets fill the values in
+            if(hasFColTotal(C->FolderCols))
+              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
 
-          if(hasFColNew(C->FolderCols) && entry->New != 0)
-            snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
+            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
 
-          if(hasFColSize(C->FolderCols) && entry->Size > 0)
-            FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+            if(hasFColNew(C->FolderCols) && entry->New != 0)
+              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
+
+            if(hasFColSize(C->FolderCols) && entry->Size > 0)
+              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+          }
         }
-      }
-      break;
+        break;
 
-      default:
-      {
-        if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
+        default:
         {
-          if(entry->New != 0)
-            ndm->Preparse[0] = C->StyleFolderNew;
-          else if(entry->Unread != 0)
-            ndm->Preparse[0] = C->StyleFolderUnread;
+          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
+          {
+            if(entry->New != 0)
+              ndm->Preparse[0] = C->StyleFolderNew;
+            else if(entry->Unread != 0)
+              ndm->Preparse[0] = C->StyleFolderUnread;
+            else
+              ndm->Preparse[0] = C->StyleFolderRead;
+
+            // if other folder columns are enabled lets fill the values in
+            if(hasFColTotal(C->FolderCols))
+              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
+
+            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
+
+            if(hasFColNew(C->FolderCols) && entry->New != 0)
+              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
+
+            if(hasFColSize(C->FolderCols) && entry->Size > 0)
+              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+          }
           else
-            ndm->Preparse[0] = C->StyleFolderRead;
+            ndm->Preparse[0] = (char *)MUIX_I;
 
-          // if other folder columns are enabled lets fill the values in
-          if(hasFColTotal(C->FolderCols))
-            snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
-
-          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-            snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
-
-          if(hasFColNew(C->FolderCols) && entry->New != 0)
-            snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
-
-          if(hasFColSize(C->FolderCols) && entry->Size > 0)
-            FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+          if(isProtectedFolder(entry))
+            snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FI_PROTECTED);
         }
-        else
-          ndm->Preparse[0] = (char *)MUIX_I;
-
-        if(isProtectedFolder(entry))
-          snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FI_PROTECTED);
       }
     }
   }
