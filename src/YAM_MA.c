@@ -206,7 +206,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
     // in case the currently active maillist is the mainmaillist we
     // have to save the lastactive mail ID
-    if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
+    if(folder != NULL && xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
       folder->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
 
     active = (mail != NULL);
