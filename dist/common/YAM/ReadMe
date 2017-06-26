@@ -1,4 +1,4 @@
-Short:        YAM 2.9p1 - MUI-based E-mail client
+﻿Short:        YAM 2.9p1 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://yam.ch/)
 Uploader:     Jens Maus <mail@jens-maus.de>
 Type:         comm/yam
@@ -52,6 +52,11 @@ right  away from  there  without  having to  touch  your old  installation.
 Afterwards you  may manually import  the mails from your  old installation.
 Thus, you can in principle now have to independent installation of YAM
 using two completly different versions.
+
+YAM's default imagery consists  of PNG images only.  Although it is possible
+to use themes using other  file formats like  IFF-ILBM or GIF a suitable PNG
+datatype with full  alpha channel support should be available  for the first
+run to avoid tons of warnings about failure to load the individual images.
 
 
 What's new
