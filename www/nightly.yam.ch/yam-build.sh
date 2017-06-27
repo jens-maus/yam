@@ -192,16 +192,12 @@ fi
 output=$(cd ${MODULE}; ${GIT} pull 2>&1)
 if [[ ${force} != "force" ]]; then
   ret=1
-  update_output=$(echo "${output}" | egrep "^Updating .{7}\.\..{7}" | cut -d' ' -f2)
-  for id in ${update_output}; do
-    output=`cd ${MODULE}; ${GIT} diff --name-only ${id}`
-    echo "${update_output}" | egrep ".+\.[chl][d]*$" >/dev/null
-    ret=$?
-    if [[ ${ret} -eq 0 ]]; then
-      echo "${update_output}"
-      break
-    fi
-  done
+  update_output=$(echo "${output}" | egrep "^ .+\.[chl][d]*")
+  echo "${output}" | egrep "^ .+\.[chl][d]*" >/dev/null
+  ret=$?
+  if [[ ${ret} -eq 0 ]]; then
+    echo "${update_output}"
+  fi
   if [[ ${ret} -ne 0 ]]; then
     echo "${output}"
     echo "============================"
