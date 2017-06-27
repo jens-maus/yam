@@ -204,7 +204,7 @@ if [[ ${force} != "force" ]]; then
     echo -n "no relevant changes found. checking last build date..."
     today=`expr \( \`date +%s\` - ${last_build} \) / 86400`
     echo -n "${today} days passed..."
-    if [[ ${today} -gt 29 ]]; then
+    if [[ ${today} -gt 28 ]]; then
       echo "rebuilding."
     else
       echo "no rebuild required."
