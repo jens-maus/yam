@@ -2564,9 +2564,21 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
 
     // set up a path to the themes directory
-    strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
-    if(FileExists(G->ThemesDir) == FALSE)
+    if(FileExists("PROGDIR:Resources/Themes") == TRUE)
+    {
+      strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
+      D(DBF_STARTUP, "using themes directory '%s'", G->ThemesDir);
+    }
+    else if(FileExists("PROGDIR:Themes") == TRUE)
+    {
       strlcpy(G->ThemesDir, "PROGDIR:Themes", sizeof(G->ThemesDir));
+      D(DBF_STARTUP, "using deprecated themes directory '%s'", G->ThemesDir);
+    }
+    else
+    {
+      strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
+      W(DBF_STARTUP, "themes directory '%s' does not exist, but using it nevertheless", G->ThemesDir);
+    }
 
     if(args.maildir == NULL)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
