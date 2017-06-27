@@ -339,7 +339,6 @@ OVERLOAD(MUIM_NListtree_Display)
   {
     GETDATA;
     struct FolderNode *fnode = (struct FolderNode *)ndm->TreeNode->tn_User;
-    struct Folder *entry = fnode->folder;
 
     data->folderStr[0] = '\0';
     data->totalStr[0] = '\0';
@@ -353,8 +352,11 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[3] = data->newStr;
     ndm->Array[4] = data->sizeStr;
 
-    if(entry != NULL)
+fprintf(stderr, "display %08lx %08lx\n", fnode, fnode?fnode->folder:-1);
+    if(fnode != NULL && fnode->folder != NULL)
     {
+      struct Folder *entry = fnode->folder;
+
       // create folderStr
       FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode);
 
