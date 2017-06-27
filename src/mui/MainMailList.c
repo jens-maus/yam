@@ -574,6 +574,19 @@ OVERLOAD(MUIM_NList_Display)
         ndm->preparses[9] = C->StyleMailRead;
       }
     }
+    else
+    {
+      // set some valid strings, even if there is no valid folder
+      ndm->strings[0] = (STRPTR)"";
+      ndm->strings[1] = (STRPTR)"";
+      ndm->strings[2] = (STRPTR)"";
+      ndm->strings[3] = (STRPTR)"";
+      ndm->strings[4] = (STRPTR)"";
+      ndm->strings[5] = (STRPTR)"";
+      ndm->strings[6] = (STRPTR)"";
+      ndm->strings[7] = (STRPTR)"";
+      ndm->strings[8] = (STRPTR)"";
+	}
   }
   else
   {
@@ -612,6 +625,19 @@ OVERLOAD(MUIM_NList_Display)
       // The Folder is just a dummy entry to serve the SearchMailWindow DisplayHook
       ndm->strings[9] = (STRPTR)tr(MSG_Folder);
     }
+    else
+    {
+      // set some valid strings, even if there is no valid folder
+      ndm->strings[0] = (STRPTR)tr(MSG_MA_TitleStatus);
+      ndm->strings[1] = (STRPTR)tr(MSG_From);
+      ndm->strings[2] = (STRPTR)tr(MSG_ReturnAddress);
+      ndm->strings[3] = (STRPTR)tr(MSG_Subject);
+      ndm->strings[4] = (STRPTR)tr(MSG_Date);
+      ndm->strings[5] = (STRPTR)tr(MSG_Size);
+      ndm->strings[6] = (STRPTR)tr(MSG_Filename);
+      ndm->strings[7] = (STRPTR)tr(MSG_DATE_RECEIVED);
+      ndm->strings[8] = (STRPTR)tr(MSG_MAILACCOUNT_TRANSFERRED);
+	}
   }
 
   RETURN(0);
