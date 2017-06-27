@@ -870,7 +870,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       current = folder;
     }
 
-    if(folderChanged == TRUE)
+    if(folder != NULL && folderChanged == TRUE)
     {
       struct MA_GUIData *gui = &G->MA->GUI;
 
