@@ -352,7 +352,6 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[3] = data->newStr;
     ndm->Array[4] = data->sizeStr;
 
-fprintf(stderr, "display %08lx %08lx\n", fnode, fnode?fnode->folder:-1);
     if(fnode != NULL && fnode->folder != NULL)
     {
       struct Folder *entry = fnode->folder;
