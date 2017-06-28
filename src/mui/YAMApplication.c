@@ -1359,7 +1359,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
         else
           snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->msn->description, count);
 
-        AddPath(imagePath, G->ProgDir, "Themes/default/notify", sizeof(imagePath));
+        AddPath(imagePath, G->ThemesDir, "default/notify", sizeof(imagePath));
 
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
