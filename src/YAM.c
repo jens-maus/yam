@@ -2564,21 +2564,23 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
 
     // set up a path to the themes directory
-    if(FileExists("PROGDIR:Resources/Themes") == TRUE)
+    // try the recommended default path "PROGDIR:Resources/Themes" first
+    // NOTE: do not use PROGDIR: here, because OS4's notification system is a different
+    // process with its own PROGDIR: and hence cannot handle such a path correctly
+    // see ticket #656.
+    AddPath(G->ThemesDir, G->ProgDir, "Resources/Themes", sizeof(G->ThemesDir));
+    if(FileExists(G->ThemesDir) == FALSE)
     {
-      strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
-      D(DBF_STARTUP, "using themes directory '%s'", G->ThemesDir);
+      // fall back to "PROGDIR:Themes" if it exists
+      char deprecatedPath[SIZE_PATH];
+
+      AddPath(deprecatedPath, G->ProgDir, "Themes", sizeof(deprecatedPath));
+      if(FileExists(deprecatedPath) == TRUE)
+      {
+        strlcpy(G->ThemesDir, deprecatedPath, sizeof(G->ThemesDir));
+      }
     }
-    else if(FileExists("PROGDIR:Themes") == TRUE)
-    {
-      strlcpy(G->ThemesDir, "PROGDIR:Themes", sizeof(G->ThemesDir));
-      D(DBF_STARTUP, "using deprecated themes directory '%s'", G->ThemesDir);
-    }
-    else
-    {
-      strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
-      W(DBF_STARTUP, "themes directory '%s' does not exist, but using it nevertheless", G->ThemesDir);
-    }
+    D(DBF_STARTUP, "using themes directory '%s'", G->ThemesDir);
 
     if(args.maildir == NULL)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
