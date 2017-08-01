@@ -140,7 +140,7 @@ ifneq ($(HOST), AmigaOS4)
 
   # this is either a cross-compiler build on a UNIX-like system or
   # on MorphOS, so lets use expr/gdate instead of the above ARexx stuff
-  DEVFLAGS = -DDEVWARNING -DEXPDATE="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922 + 31)"
+  DEVFLAGS = -DDEVWARNING -DEXPDATE="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922 + 35)"
   YAMVERID = -D__YAM_VERDATE=\"$(shell $(DATE) +%d.%m.%Y)\" \
              -D__YAM_VERDAYS="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922)" \
              -D__YAM_BUILDDATE=\"$(shell $(DATE) +%Y%m%d)\" \
