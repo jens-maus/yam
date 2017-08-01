@@ -48,11 +48,11 @@ env:
   - BUILD="OS=aros-i386 DEBUG="
   - BUILD="OS=aros-x86_64"
   - BUILD="OS=aros-x86_64 DEBUG="
-  - BUILD="release"
+  - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
 
 # the build command to execute for each test
 script:
-  - make -j1 ${BUILD}
+  - travis_wait 45 make -j1 ${BUILD} ${OUTPUT}
 
 # deploy snapshots to bintray
 deploy:
