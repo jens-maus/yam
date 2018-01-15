@@ -1,10 +1,10 @@
 NAME: NFloattext.mcc
-VERSION: 19.78
-BUILDDATE: 12.01.2018
-URL: * https://github.com/amiga-mui/nlist/releases/download/0.123/MCC_NList-0.123.lha
+VERSION: 19.79
+BUILDDATE: 15.01.2018
+URL: * https://github.com/amiga-mui/nlist/releases/download/0.124/MCC_NList-0.124.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                         NFloattext.mcc - 19.78
+                         NFloattext.mcc - 19.79
 ---------------------------------------------------------------------------
 
 NFloattext.mcc is a MUI custom class for managing multi-line text similar
