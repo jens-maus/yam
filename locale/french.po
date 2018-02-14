@@ -10,14 +10,14 @@
 # Guillaume Boesel, 2015
 # Guillaume Boesel, 2015
 # Jens Maus <mail@jens-maus.de>, 2014
-# Marc JOUAULT <scriptjester@laposte.net>, 2016
+# Marc JOUAULT <scriptjester@laposte.net>, 2016-2017
 # Stefan Haubenthal <polluks@sdf.lonestar.org>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-06-19 06:23+0000\n"
+"PO-Revision-Date: 2018-02-14 10:09+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: French (http://www.transifex.com/ato/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -169,7 +169,7 @@ msgstr "Nom"
 
 msgctxt "MSG_Email (46//)"
 msgid "E-mail address"
-msgstr "Adr. électronique"
+msgstr "Courriel"
 
 msgctxt "MSG_Address (47//)"
 msgid "Address"
@@ -209,7 +209,7 @@ msgstr "Colonnes"
 
 msgctxt "MSG_Version (60//)"
 msgid "Version:"
-msgstr "Version:"
+msgstr "Version :"
 
 msgctxt "MSG_CompilationDate (61//)"
 msgid "Compilation date:"
@@ -1103,7 +1103,7 @@ msgstr "A_ctif"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail on ser_ver"
-msgstr ""
+msgstr "Supprimer le courriel du ser_veur"
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1139,7 +1139,7 @@ msgstr "Fenêtre de _transfert"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "Pr_e-selection"
-msgstr ""
+msgstr "Pré-sél_ction"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1151,7 +1151,7 @@ msgstr "minutes"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "Reques_ter"
-msgstr ""
+msgstr "Requê_te"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1451,7 +1451,7 @@ msgstr "_Fichier de citations"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "Tag_line separator"
-msgstr ""
+msgstr "Separateur de sous-titre"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1575,7 +1575,7 @@ msgstr "Chemins"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "Decode _files to"
-msgstr ""
+msgstr "Decoder _fichiers vers"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
@@ -1583,11 +1583,11 @@ msgstr "_Joindre les fichiers à partir de"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For temp_orary files"
-msgstr ""
+msgstr "Pour fichiers temp_oraires"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
-msgstr "Icône du programme"
+msgstr "Statut de la boîte aux lettres"
 
 msgctxt "MSG_CO_PositionX (512//)"
 msgid "Position _X"
@@ -1615,7 +1615,7 @@ msgstr "Effacer les _messages immédiatement"
 
 msgctxt "MSG_CO_XPK (525//)"
 msgid "XPK/LhA settings"
-msgstr "Réglages XPK/LHA"
+msgstr "Réglages XPK/LhA"
 
 msgctxt "MSG_CO_XPKPack (526//)"
 msgid "Packer"
@@ -5608,7 +5608,7 @@ msgstr "Recherche de messages dans « %s »..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "AppIcon on _Workbench"
-msgstr ""
+msgstr "Icône sur le _Workbench"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7642,7 +7642,7 @@ msgstr "Une erreur est survenue lors de la tentative de lecture du fichier son �
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "C_harset"
-msgstr ""
+msgstr "_Jeu de caractères"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7909,7 +7909,7 @@ msgstr "Le répertoire personnel « %s » de l'utilisateur « %s » n'existe pas
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show text co_lors"
-msgstr ""
+msgstr "Montrer les couleurs de texte"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8345,7 +8345,7 @@ msgstr "Interface ARexx"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search o_n gravatar.com..."
-msgstr ""
+msgstr "Chercher s_ur gravatar.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9290,7 +9290,7 @@ msgstr "Active une barre de recherche\ndans la fenêtre principale pour\nune rec
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "P_osition"
-msgstr ""
+msgstr "P_osition"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9358,7 +9358,7 @@ msgstr "Pièce jointe"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Rem_ove"
-msgstr ""
+msgstr "Supprimer"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9517,11 +9517,11 @@ msgstr "Utilisez le bouton popup pour sélectionner le jeu\nde caractères à ut
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "_Default charset"
-msgstr ""
+msgstr "Jeu de caractères par _défaut"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "Afficher le _jeu de caractères"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9793,7 +9793,7 @@ msgstr "Vérification du courrier sur « %s »"
 #. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "Cc"
-msgstr ""
+msgstr "Cc"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10050,4 +10050,8 @@ msgstr "Télécharger la mise à jour avec le navigateur..."
 
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
+msgstr "\\033bCette version ne sera plus utilisable apès le %s"
+
+msgctxt "MSG_UNKNOWN_SIZE (2583//)"
+msgid "unknown"
 msgstr ""

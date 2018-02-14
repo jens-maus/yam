@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-06-19 06:23+0000\n"
+"PO-Revision-Date: 2018-02-14 10:09+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Greek (http://www.transifex.com/ato/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -1101,7 +1101,7 @@ msgstr "_Ενεργός"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail on ser_ver"
-msgstr ""
+msgstr "_Διαγραφή αλληλογραφίας στον διακομιστή"
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1137,7 +1137,7 @@ msgstr "Παράθυρο _μεταφοράς"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "Pr_e-selection"
-msgstr ""
+msgstr "_Προεπιλογή"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1149,7 +1149,7 @@ msgstr "λεπτά"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "Reques_ter"
-msgstr ""
+msgstr "Παράθυρο _αίτησης"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1449,7 +1449,7 @@ msgstr "Αρ_χείο γραμμών ετικέτας"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "Tag_line separator"
-msgstr ""
+msgstr "Δια_χωριστής ετικέτας"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1573,7 +1573,7 @@ msgstr "Διαδρομές"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "Decode _files to"
-msgstr ""
+msgstr "Αποκωδικοποίηση αρ_χείων σε"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
@@ -1581,7 +1581,7 @@ msgstr "_Επισύναψη αρχείων από"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For temp_orary files"
-msgstr ""
+msgstr "Για προσ_ωρινά αρχεία"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5606,7 +5606,7 @@ msgstr "Αναζήτηση μηνυμάτων στον φάκελο '%s'..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "AppIcon on _Workbench"
-msgstr ""
+msgstr "Εικονίδιο στο _Workbench"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7640,7 +7640,7 @@ msgstr "Ένα σφάλμα συνέβη κατά την προσπάθεια α
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "C_harset"
-msgstr ""
+msgstr "_Κωδικοποίηση"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7907,7 +7907,7 @@ msgstr "Ο αρχικός κατάλογος '%s' του χρήστη '%s' δε�
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show text co_lors"
-msgstr ""
+msgstr "Προβολή _χρωμάτων κειμένου"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8343,7 +8343,7 @@ msgstr "Περιβάλλον ARexx"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search o_n gravatar.com..."
-msgstr ""
+msgstr "Ανα_ζήτηση στο gravator.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9288,7 +9288,7 @@ msgstr "Αν επιλεχτεί, θα εμφανιστεί μια μπάρα α�
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "P_osition"
-msgstr ""
+msgstr "_Θέση"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9356,7 +9356,7 @@ msgstr "Επισύναψη"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Rem_ove"
-msgstr ""
+msgstr "Α_φαίρεση"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9515,11 +9515,11 @@ msgstr "Χρησιμοποιήστε το αναδυόμενο κουμπί γι
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "_Default charset"
-msgstr ""
+msgstr "Π_ροεπιλεγμένη κωδικοποίηση"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "Προ_βολή κωδικοποίησης"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9791,7 +9791,7 @@ msgstr "Έλεγχος αλληλογραφίας από '%s'"
 #. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "Cc"
-msgstr ""
+msgstr "Κοιν."
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10049,3 +10049,7 @@ msgstr "Λήψη ενημέρωσης με περιηγητή..."
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
 msgstr "\\033bAυτή η ημερήσια κατασκευή λήγει στις %s"
+
+msgctxt "MSG_UNKNOWN_SIZE (2583//)"
+msgid "unknown"
+msgstr ""

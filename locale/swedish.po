@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-06-19 06:23+0000\n"
+"PO-Revision-Date: 2018-02-14 10:09+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/ato/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -1100,7 +1100,7 @@ msgstr "A_ktiv"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail on ser_ver"
-msgstr ""
+msgstr "Radera p_ost på server"
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1136,7 +1136,7 @@ msgstr "_Statusfönster"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "Pr_e-selection"
-msgstr ""
+msgstr "V_älj innan"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1148,7 +1148,7 @@ msgstr "minut"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "Reques_ter"
-msgstr ""
+msgstr "Dialogföns_ter"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1448,7 +1448,7 @@ msgstr "_Fil"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "Tag_line separator"
-msgstr ""
+msgstr "Av_delare"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1572,7 +1572,7 @@ msgstr "Sökvägar"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "Decode _files to"
-msgstr ""
+msgstr "Avkoda _filer till"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
@@ -1580,7 +1580,7 @@ msgstr "_Bifoga filer från"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For temp_orary files"
-msgstr ""
+msgstr "För _temporära filer"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5605,7 +5605,7 @@ msgstr "Letar efter meddelanden i mappen '%s'..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "AppIcon on _Workbench"
-msgstr ""
+msgstr "_Appikon på Workbench"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7639,7 +7639,7 @@ msgstr "Ett fel uppstod vid försök att spela\nljudfilen '%s'.\n\nDetta kan ber
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "C_harset"
-msgstr ""
+msgstr "Teckenuppsättning"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7906,7 +7906,7 @@ msgstr "Hemmamappen '%s' för användare '%s' existerar inte!"
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show text co_lors"
-msgstr ""
+msgstr "Visa te_xtfärger"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8342,7 +8342,7 @@ msgstr "ARexx gränssnitt"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search o_n gravatar.com..."
-msgstr ""
+msgstr "Sök på gra_vatar.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9287,7 +9287,7 @@ msgstr "Om vald, visas ett sökfält i huvudfönstret,\nför att snabbt söka ef
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "P_osition"
-msgstr ""
+msgstr "P_osition"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9355,7 +9355,7 @@ msgstr "Bilaga"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Rem_ove"
-msgstr ""
+msgstr "Ta _bort"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9514,11 +9514,11 @@ msgstr "Använd popupp knappen för att välja teckenuppsättningen\ndu vill YAM
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "_Default charset"
-msgstr ""
+msgstr "F_örvald teckenuppsättning"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "_Visa teckenuppsättning"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9790,7 +9790,7 @@ msgstr "Kontrollerar brev från '%s'"
 #. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "Cc"
-msgstr ""
+msgstr "Kopia"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10048,3 +10048,7 @@ msgstr "Ladda ned uppdatering med webbläsare..."
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
 msgstr "\\033bDetta nattliga bygge löper ut %s"
+
+msgctxt "MSG_UNKNOWN_SIZE (2583//)"
+msgid "unknown"
+msgstr ""

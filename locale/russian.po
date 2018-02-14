@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2017-06-19 06:23+0000\n"
+"PO-Revision-Date: 2018-02-14 10:09+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Russian (http://www.transifex.com/ato/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -1102,7 +1102,7 @@ msgstr "_Активен"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail on ser_ver"
-msgstr ""
+msgstr "Удалить почту на сер_вере"
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1138,7 +1138,7 @@ msgstr "По_казать окно передачи"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "Pr_e-selection"
-msgstr ""
+msgstr "Предв. _отбор"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1150,7 +1150,7 @@ msgstr "минут"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "Reques_ter"
-msgstr ""
+msgstr "_Запрос-уведомление"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1450,7 +1450,7 @@ msgstr "_Файл эпилогов"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "Tag_line separator"
-msgstr ""
+msgstr "_Разделитель эпилогов"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1574,7 +1574,7 @@ msgstr "Маршруты"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "Decode _files to"
-msgstr ""
+msgstr "Извлекать _файлы в"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
@@ -1582,7 +1582,7 @@ msgstr "Прикрепл_ять файлы из"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For temp_orary files"
-msgstr ""
+msgstr "Для _временных файлов"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5607,7 +5607,7 @@ msgstr "Ищу сообщения в папке «%s»..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "AppIcon on _Workbench"
-msgstr ""
+msgstr "Иконка приложения на рабочем столе"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7641,7 +7641,7 @@ msgstr "Произошла ошибка при попытке проиграть
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "C_harset"
-msgstr ""
+msgstr "_Кодировка"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7908,7 +7908,7 @@ msgstr "Домашний каталог «%s» для пользователя �
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show text co_lors"
-msgstr ""
+msgstr "Отображать _цветной текст"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8344,7 +8344,7 @@ msgstr "Интерфейс ARexx"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search o_n gravatar.com..."
-msgstr ""
+msgstr "_Искать на gravatar.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9357,7 +9357,7 @@ msgstr "Вложение"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Rem_ove"
-msgstr ""
+msgstr "_Удалить"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9516,11 +9516,11 @@ msgstr "Используйте кнопку со всплывающем меню
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "_Default charset"
-msgstr ""
+msgstr "Кодировка _по умолчанию"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "Показать в _кодировке"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9792,7 +9792,7 @@ msgstr "Проверяю почту с «%s»"
 #. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "Cc"
-msgstr ""
+msgstr "Копия"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10050,3 +10050,7 @@ msgstr "Загрузить обновление через браузер..."
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
 msgstr "\\033bЭта ночная сборка действительна до %s"
+
+msgctxt "MSG_UNKNOWN_SIZE (2583//)"
+msgid "unknown"
+msgstr ""
