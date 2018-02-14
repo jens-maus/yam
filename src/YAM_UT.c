@@ -3337,160 +3337,164 @@ int TZtoMinutes(const char *tzone)
 //  Displays large numbers using group separators
 void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecision)
 {
-  const char *dp;
-  double dsize;
-
   ENTER();
 
-  dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
-  dsize = (double)size;
-
-  // see if the user wants to force a precision output or if he simply
-  // wants to output based on C->SizeFormat (forcedPrecision = SF_AUTO)
-  if(forcedPrecision == SF_AUTO)
-    forcedPrecision = C->SizeFormat;
-
-  // we check what SizeFormat the user has choosen
-  switch(forcedPrecision)
+  if(size >= 0)
   {
-    // the precision modes use sizes as base of 2
-    enum { KB = 1024, MB = 1024 * 1024, GB = 1024 * 1024 * 1024 };
+    const char *dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
+    double dsize = (double)size;
 
-    /*
-    ** ONE Precision mode
-    ** This will result in the following output:
-    ** 1.2 GB - 12.3 MB - 123.4 KB - 1234 B
-    */
-    case SF_1PREC:
+    // see if the user wants to force a precision output or if he simply
+    // wants to output based on C->SizeFormat (forcedPrecision = SF_AUTO)
+    if(forcedPrecision == SF_AUTO)
+      forcedPrecision = C->SizeFormat;
+
+    // we check what SizeFormat the user has choosen
+    switch(forcedPrecision)
     {
-      char *p;
+      // the precision modes use sizes as base of 2
+      enum { KB = 1024, MB = 1024 * 1024, GB = 1024 * 1024 * 1024 };
 
-      if(size < KB)
-        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
-      else if(size < MB)
-        snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
-      else if(size < GB)
-        snprintf(buf, buflen, "%.1f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
-      else
-        snprintf(buf, buflen, "%.1f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
-
-      if((p = strchr(buf, '.')) != NULL)
-        *p = *dp;
-    }
-    break;
-
-    /*
-    ** TWO Precision mode
-    ** This will result in the following output:
-    ** 1.23 GB - 12.34 MB - 123.45 KB - 1234 B
-    */
-    case SF_2PREC:
-    {
-      char *p;
-
-      if(size < KB)
-        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
-      else if(size < MB)
-        snprintf(buf, buflen, "%.2f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
-      else if(size < GB)
-        snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
-      else
-        snprintf(buf, buflen, "%.2f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
-
-      if((p = strchr(buf, '.')) != NULL)
-        *p = *dp;
-    }
-    break;
-
-    /*
-    ** THREE Precision mode
-    ** This will result in the following output:
-    ** 1.234 GB - 12.345 MB - 123.456 KB - 1234 B
-    */
-    case SF_3PREC:
-    {
-      char *p;
-
-      if(size < KB)
-        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
-      else if(size < MB)
-        snprintf(buf, buflen, "%.3f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
-      else if(size < GB)
-        snprintf(buf, buflen, "%.3f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
-      else
-        snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
-
-      if((p = strchr(buf, '.')) != NULL)
-        *p = *dp;
-    }
-    break;
-
-    /*
-    ** MIXED Precision mode
-    ** This will result in the following output:
-    ** 1.234 GB - 12.34 MB - 123.4 KB - 1234 B
-    */
-    case SF_MIXED:
-    {
-      char *p;
-
-      if(size < KB)
-        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
-      else if(size < MB)
-        snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
-      else if(size < GB)
-        snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
-      else
-        snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
-
-      if((p = strchr(buf, '.')) != NULL)
-        *p = *dp;
-    }
-    break;
-
-    /*
-    ** STANDARD mode
-    ** This will result in the following output:
-    ** 1,234,567 (bytes)
-    */
-    case SF_AUTO:
-    default:
-    {
-      const char *gs = G->Locale ? (const char *)G->Locale->loc_GroupSeparator : ",";
-
-      // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
-      enum { KiB = 1000, MiB = 1000 * 1000, GiB = 1000 * 1000 * 1000 };
-
-      if(size < KiB)
+      /*
+      ** ONE Precision mode
+      ** This will result in the following output:
+      ** 1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+      */
+      case SF_1PREC:
       {
-        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
-      }
-      else if(size < MiB)
-      {
-        ldiv_t k;
+        char *p;
 
-        k = ldiv(size, KiB);
-        snprintf(buf, buflen, "%d%s%03d %s", (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
-      }
-      else if(size < GiB)
-      {
-        ldiv_t m, k;
+        if(size < KB)
+          snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
+        else if(size < MB)
+          snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
+        else if(size < GB)
+          snprintf(buf, buflen, "%.1f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
+        else
+          snprintf(buf, buflen, "%.1f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
 
-        m = ldiv(size, MiB);
-        k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d %s", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
+        if((p = strchr(buf, '.')) != NULL)
+          *p = *dp;
       }
-      else
-      {
-        ldiv_t g, m, k;
+      break;
 
-        g = ldiv(size, GiB);
-        m = ldiv(g.rem, MiB);
-        k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d %s", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
+      /*
+      ** TWO Precision mode
+      ** This will result in the following output:
+      ** 1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+      */
+      case SF_2PREC:
+      {
+        char *p;
+
+        if(size < KB)
+          snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
+        else if(size < MB)
+          snprintf(buf, buflen, "%.2f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
+        else if(size < GB)
+          snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
+        else
+          snprintf(buf, buflen, "%.2f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
+
+        if((p = strchr(buf, '.')) != NULL)
+          *p = *dp;
       }
+      break;
+
+      /*
+      ** THREE Precision mode
+      ** This will result in the following output:
+      ** 1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+      */
+      case SF_3PREC:
+      {
+        char *p;
+
+        if(size < KB)
+          snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
+        else if(size < MB)
+          snprintf(buf, buflen, "%.3f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
+        else if(size < GB)
+          snprintf(buf, buflen, "%.3f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
+        else
+          snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
+
+        if((p = strchr(buf, '.')) != NULL)
+          *p = *dp;
+      }
+      break;
+
+      /*
+      ** MIXED Precision mode
+      ** This will result in the following output:
+      ** 1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+      */
+      case SF_MIXED:
+      {
+        char *p;
+
+        if(size < KB)
+          snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
+        else if(size < MB)
+          snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
+        else if(size < GB)
+          snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
+        else
+          snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
+
+        if((p = strchr(buf, '.')) != NULL)
+          *p = *dp;
+      }
+      break;
+
+      /*
+      ** STANDARD mode
+      ** This will result in the following output:
+      ** 1,234,567 (bytes)
+      */
+      case SF_AUTO:
+      default:
+      {
+        const char *gs = G->Locale ? (const char *)G->Locale->loc_GroupSeparator : ",";
+
+        // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
+        enum { KiB = 1000, MiB = 1000 * 1000, GiB = 1000 * 1000 * 1000 };
+
+        if(size < KiB)
+        {
+          snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
+        }
+        else if(size < MiB)
+        {
+          ldiv_t k;
+
+          k = ldiv(size, KiB);
+          snprintf(buf, buflen, "%d%s%03d %s", (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
+        }
+        else if(size < GiB)
+        {
+          ldiv_t m, k;
+
+          m = ldiv(size, MiB);
+          k = ldiv(m.rem, KiB);
+          snprintf(buf, buflen, "%d%s%03d%s%03d %s", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
+        }
+        else
+        {
+          ldiv_t g, m, k;
+
+          g = ldiv(size, GiB);
+          m = ldiv(g.rem, MiB);
+          k = ldiv(m.rem, KiB);
+          snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d %s", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
+        }
+      }
+      break;
     }
-    break;
+  }
+  else
+  {
+    strlcpy(buf, tr(MSG_UNKNOWN_SIZE), buflen);
   }
 
   LEAVE();

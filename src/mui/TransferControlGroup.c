@@ -136,7 +136,7 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
 
     // calculate the estimated remaining time
     remtime = 0;
-    if(speed != 0)
+    if(speed != 0 && data->Size_Tot > 0)
     {
       remtime = (LONG)((data->Size_Tot / speed) - deltatime);
       if(remtime < 0)

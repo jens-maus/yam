@@ -73,7 +73,7 @@ BOOL ReceiveHTTPHeader(struct TransferContext *tc)
 
   // default to a binary receive function
   tc->receiveFunc = ReceiveFromHost;
-  tc->contentLength = 0;
+  tc->contentLength = -1;
 
   // we can request all further lines from our socket
   // until we reach the entity body
@@ -124,7 +124,8 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
   BOOL success = FALSE;
 
   SHOWVALUE(DBF_NET, tc->contentLength);
-  if(tc->contentLength > 0)
+  // contentLength == -1 can only happen if no Content-Length header line was found
+  if(tc->contentLength > 0 || tc->contentLength == -1)
   {
     FILE *out = NULL;
 
