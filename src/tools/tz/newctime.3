@@ -7,7 +7,7 @@ asctime, ctime, difftime, gmtime, localtime, mktime \- convert date and time
 .el ds - \-
 .B #include <time.h>
 .PP
-.B extern char *tzname[2];
+.BR "extern char *tzname[];" " /\(** (optional) \(**/"
 .PP
 .B char *ctime(time_t const *clock);
 .PP
@@ -77,12 +77,12 @@ misleading values for out-of-range years.
 .PP
 The
 .BI * clock
-time stamp represents the time in seconds since 1970-01-01 00:00:00
+timestamp represents the time in seconds since 1970-01-01 00:00:00
 Coordinated Universal Time (UTC).
-The POSIX standard says that time stamps must be nonnegative
+The POSIX standard says that timestamps must be nonnegative
 and must ignore leap seconds.
-Many implementations extend POSIX by allowing negative time stamps,
-and can therefore represent time stamps that predate the
+Many implementations extend POSIX by allowing negative timestamps,
+and can therefore represent timestamps that predate the
 introduction of UTC and are some other flavor of Universal Time (UT).
 Some implementations support leap seconds, in contradiction to POSIX.
 .PP
@@ -191,7 +191,7 @@ extra initial
 argument specifying the time zone to be used for conversion.
 If
 .B zone
-is null, UTC is used; otherwise,
+is null, UT is used; otherwise,
 .B zone
 should be have been allocated by
 .I tzalloc
@@ -213,7 +213,7 @@ includes the following fields:
 .RS
 .PP
 .nf
-.ta .5i +\w'long tm_gmtoff;\0\0'u
+.ta 2n +\w'long tm_gmtoff;nn'u
 	int tm_sec;	/\(** seconds (0\*(en60) \(**/
 	int tm_min;	/\(** minutes (0\*(en59) \(**/
 	int tm_hour;	/\(** hours (0\*(en23) \(**/
@@ -223,20 +223,10 @@ includes the following fields:
 	int tm_wday;	/\(** day of week (Sunday = 0) \(**/
 	int tm_yday;	/\(** day of year (0\*(en365) \(**/
 	int tm_isdst;	/\(** is summer time in effect? \(**/
-	char \(**tm_zone;	/\(** abbreviation of time zone name \(**/
-	long tm_gmtoff;	/\(** offset from UT in seconds \(**/
+	char \(**tm_zone;	/\(** time zone abbreviation (optional) \(**/
+	long tm_gmtoff;	/\(** offset from UT in seconds (optional) \(**/
 .fi
 .RE
-.PP
-The
-.I tm_zone
-and
-.I tm_gmtoff
-fields exist, and are filled in, only if arrangements to do
-so were made when the library containing these functions was
-created.
-There is no guarantee that these fields will continue to exist
-in this form in future releases of this code.
 .PP
 .I Tm_isdst
 is non-zero if summer time is in effect.
@@ -246,21 +236,36 @@ is the offset (in seconds) of the time represented
 from UT, with positive values indicating east
 of the Prime Meridian.
 The field's name is derived from Greenwich Mean Time, a precursor of UT.
+.PP
+In
+.B struct tm
+the
+.I tm_zone
+and
+.I tm_gmtoff
+fields exist, and are filled in, only if arrangements to do
+so were made when the library containing these functions was
+created.
+Similarly, the
+.B tzname
+variable is optional.
+There is no guarantee that these fields and this variable will
+continue to exist in this form in future releases of this code.
 .SH FILES
-.ta \w'/usr/local/etc/zoneinfo/posixrules\0\0'u
-/usr/local/etc/zoneinfo	time zone information directory
+.ta \w'/usr/share/zoneinfo/posixrules\0\0'u
+/usr/share/zoneinfo	time zone information directory
 .br
-/usr/local/etc/zoneinfo/localtime	local time zone file
+/usr/share/zoneinfo/localtime	local time zone file
 .br
-/usr/local/etc/zoneinfo/posixrules	used with POSIX-style TZ's
+/usr/share/zoneinfo/posixrules	used with POSIX-style TZ's
 .br
-/usr/local/etc/zoneinfo/GMT	for UTC leap seconds
+/usr/share/zoneinfo/GMT	for UTC leap seconds
 .sp
 If
-.B /usr/local/etc/zoneinfo/GMT
+.B /usr/share/zoneinfo/GMT
 is absent,
 UTC leap seconds are loaded from
-.BR /usr/local/etc/zoneinfo/posixrules .
+.BR /usr/share/zoneinfo/posixrules .
 .SH SEE ALSO
 getenv(3),
 newstrftime(3),
@@ -277,12 +282,19 @@ and
 point to static data
 overwritten by each call.
 The
+.B tzname
+variable (once set) and the
 .B tm_zone
 field of a returned
 .B "struct tm"
-points to a static array of characters, which
-can be overwritten by later calls to
-.IR tzset .
+both point to an array of characters that
+can be freed or overwritten by later calls to the functions
+.IR localtime ,
+.IR tzfree ,
+and
+.IR tzset ,
+if these functions affect the time zone information that specifies the
+abbreviation in question.
 The remaining functions and data are thread-safe.
 .PP
 .IR Asctime ,
