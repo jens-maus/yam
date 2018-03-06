@@ -27,13 +27,28 @@
 #define HAVE_DECL_ASCTIME_R 1
 #endif
 
+#if !defined HAVE_GENERIC && defined __has_extension
+# if __has_extension(c_generic_selections)
+#  define HAVE_GENERIC 1
+# else
+#  define HAVE_GENERIC 0
+# endif
+#endif
+/* _Generic is buggy in pre-4.9 GCC.  */
+#if !defined HAVE_GENERIC && defined __GNUC__
+# define HAVE_GENERIC (4 < __GNUC__ + (9 <= __GNUC_MINOR__))
+#endif
+#ifndef HAVE_GENERIC
+# define HAVE_GENERIC (201112 <= __STDC_VERSION__)
+#endif
+
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT		0
 #endif /* !defined HAVE_GETTEXT */
 
 #ifndef HAVE_INCOMPATIBLE_CTIME_R
 #define HAVE_INCOMPATIBLE_CTIME_R	0
-#endif /* !defined INCOMPATIBLE_CTIME_R */
+#endif
 
 #ifndef HAVE_LINK
 #define HAVE_LINK		1
@@ -41,6 +56,10 @@
 
 #ifndef HAVE_POSIX_DECLS
 #define HAVE_POSIX_DECLS 1
+#endif
+
+#ifndef HAVE_STDBOOL_H
+#define HAVE_STDBOOL_H (199901 <= __STDC_VERSION__)
 #endif
 
 #ifndef HAVE_STRDUP
@@ -76,12 +95,22 @@
 #define ctime_r _incompatible_ctime_r
 #endif /* HAVE_INCOMPATIBLE_CTIME_R */
 
-/* Enable tm_gmtoff and tm_zone on GNUish systems.  */
+/* Enable tm_gmtoff, tm_zone, and environ on GNUish systems.  */
 #define _GNU_SOURCE 1
 /* Fix asctime_r on Solaris 11.  */
 #define _POSIX_PTHREAD_SEMANTICS 1
 /* Enable strtoimax on pre-C99 Solaris 11.  */
 #define __EXTENSIONS__ 1
+
+/* To avoid having 'stat' fail unnecessarily with errno == EOVERFLOW,
+   enable large files on GNUish systems ...  */
+#ifndef _FILE_OFFSET_BITS
+# define _FILE_OFFSET_BITS 64
+#endif
+/* ... and on AIX ...  */
+#define _LARGE_FILES 1
+/* ... and enable large inode numbers on Mac OS X 10.5 and later.  */
+#define _DARWIN_USE_64_BIT_INODE 1
 
 /*
 ** Nested includes
@@ -104,13 +133,12 @@
 #undef tzalloc
 #undef tzfree
 
-#include "sys/types.h"	/* for time_t */
-#include "stdio.h"
-#include "string.h"
-#include "limits.h"	/* for CHAR_BIT et al. */
-#include "stdlib.h"
+#include <sys/types.h>	/* for time_t */
+#include <string.h>
+#include <limits.h>	/* for CHAR_BIT et al. */
+#include <stdlib.h>
 
-#include "errno.h"
+#include <errno.h>
 
 #ifndef ENAMETOOLONG
 # define ENAMETOOLONG EINVAL
@@ -123,22 +151,11 @@
 #endif
 
 #if HAVE_GETTEXT
-#include "libintl.h"
+#include <libintl.h>
 #endif /* HAVE_GETTEXT */
 
-#if HAVE_SYS_WAIT_H
-#include <sys/wait.h>	/* for WIFEXITED and WEXITSTATUS */
-#endif /* HAVE_SYS_WAIT_H */
-
-#ifndef WIFEXITED
-#define WIFEXITED(status)	(((status) & 0xff) == 0)
-#endif /* !defined WIFEXITED */
-#ifndef WEXITSTATUS
-#define WEXITSTATUS(status)	(((status) >> 8) & 0xff)
-#endif /* !defined WEXITSTATUS */
-
 #if HAVE_UNISTD_H
-#include "unistd.h"	/* for F_OK, R_OK, and other POSIX goodness */
+#include <unistd.h>	/* for R_OK, and other POSIX goodness */
 #endif /* HAVE_UNISTD_H */
 
 #ifndef HAVE_STRFTIME_L
@@ -149,9 +166,22 @@
 # endif
 #endif
 
-#ifndef F_OK
-#define F_OK	0
-#endif /* !defined F_OK */
+#ifndef USG_COMPAT
+# ifndef _XOPEN_VERSION
+#  define USG_COMPAT 0
+# else
+#  define USG_COMPAT 1
+# endif
+#endif
+
+#ifndef HAVE_TZNAME
+# if _POSIX_VERSION < 198808 && !USG_COMPAT
+#  define HAVE_TZNAME 0
+# else
+#  define HAVE_TZNAME 1
+# endif
+#endif
+
 #ifndef R_OK
 #define R_OK	4
 #endif /* !defined R_OK */
@@ -173,7 +203,7 @@
 #endif /* !defined HAVE_STDINT_H */
 
 #if HAVE_STDINT_H
-#include "stdint.h"
+#include <stdint.h>
 #endif /* !HAVE_STDINT_H */
 
 #ifndef HAVE_INTTYPES_H
@@ -335,6 +365,12 @@ typedef unsigned long uintmax_t;
 ** typical platforms.
 */
 #if defined time_tz || EPOCH_LOCAL || EPOCH_OFFSET != 0
+# define TZ_TIME_T 1
+#else
+# define TZ_TIME_T 0
+#endif
+
+#if TZ_TIME_T
 # ifdef LOCALTIME_IMPLEMENTATION
 static time_t sys_time(time_t *x) { return time(x); }
 # endif
@@ -367,6 +403,8 @@ typedef time_tz tz_time_t;
 # define posix2time tz_posix2time
 # undef  posix2time_z
 # define posix2time_z tz_posix2time_z
+# undef  strftime
+# define strftime tz_strftime
 # undef  time
 # define time tz_time
 # undef  time2posix
@@ -389,10 +427,34 @@ typedef time_tz tz_time_t;
 # define tzset tz_tzset
 # undef  tzsetwall
 # define tzsetwall tz_tzsetwall
+# if HAVE_STRFTIME_L
+#  undef  strftime_l
+#  define strftime_l tz_strftime_l
+# endif
+# if HAVE_TZNAME
+#  undef  tzname
+#  define tzname tz_tzname
+# endif
+# if USG_COMPAT
+#  undef  daylight
+#  define daylight tz_daylight
+#  undef  timezone
+#  define timezone tz_timezone
+# endif
+# ifdef ALTZONE
+#  undef  altzone
+#  define altzone tz_altzone
+# endif
 
 char *ctime(time_t const *);
 char *ctime_r(time_t const *, char *);
-double difftime(time_t, time_t);
+double difftime(time_t, time_t) ATTRIBUTE_CONST;
+size_t strftime(char *restrict, size_t, char const *restrict,
+		struct tm const *restrict);
+# if HAVE_STRFTIME_L
+size_t strftime_l(char *restrict, size_t, char const *restrict,
+		  struct tm const *restrict, locale_t);
+# endif
 struct tm *gmtime(time_t const *);
 struct tm *gmtime_r(time_t const *restrict, struct tm *restrict);
 struct tm *localtime(time_t const *);
@@ -406,18 +468,29 @@ void tzset(void);
 extern char *asctime_r(struct tm const *restrict, char *restrict);
 #endif
 
-#if !HAVE_POSIX_DECLS
-# ifdef USG_COMPAT
-#  ifndef timezone
-extern long timezone;
-#  endif
-#  ifndef daylight
-extern int daylight;
-#  endif
+#ifndef HAVE_DECL_ENVIRON
+# if defined environ || defined __USE_GNU
+#  define HAVE_DECL_ENVIRON 1
+# else
+#  define HAVE_DECL_ENVIRON 0
 # endif
 #endif
 
-#if defined ALTZONE && !defined altzone
+#if !HAVE_DECL_ENVIRON
+extern char **environ;
+#endif
+
+#if TZ_TIME_T || !HAVE_POSIX_DECLS
+# if HAVE_TZNAME
+extern char *tzname[];
+# endif
+# if USG_COMPAT
+extern long timezone;
+extern int daylight;
+# endif
+#endif
+
+#ifdef ALTZONE
 extern long altzone;
 #endif
 
@@ -427,25 +500,25 @@ extern long altzone;
 */
 
 #ifdef STD_INSPIRED
-# if !defined tzsetwall || defined time_tz
+# if TZ_TIME_T || !defined tzsetwall
 void tzsetwall(void);
 # endif
-# if !defined offtime || defined time_tz
+# if TZ_TIME_T || !defined offtime
 struct tm *offtime(time_t const *, long);
 # endif
-# if !defined timegm || defined time_tz
+# if TZ_TIME_T || !defined timegm
 time_t timegm(struct tm *);
 # endif
-# if !defined timelocal || defined time_tz
+# if TZ_TIME_T || !defined timelocal
 time_t timelocal(struct tm *);
 # endif
-# if !defined timeoff || defined time_tz
+# if TZ_TIME_T || !defined timeoff
 time_t timeoff(struct tm *, long);
 # endif
-# if !defined time2posix || defined time_tz
+# if TZ_TIME_T || !defined time2posix
 time_t time2posix(time_t);
 # endif
-# if !defined posix2time || defined time_tz
+# if TZ_TIME_T || !defined posix2time
 time_t posix2time(time_t);
 # endif
 #endif
@@ -479,10 +552,10 @@ time_t mktime_z(timezone_t restrict, struct tm *restrict);
 timezone_t tzalloc(char const *);
 void tzfree(timezone_t);
 # ifdef STD_INSPIRED
-#  if !defined posix2time_z || defined time_tz
+#  if TZ_TIME_T || !defined posix2time_z
 time_t posix2time_z(timezone_t, time_t) ATTRIBUTE_PURE;
 #  endif
-#  if !defined time2posix_z || defined time_tz
+#  if TZ_TIME_T || !defined time2posix_z
 time_t time2posix_z(timezone_t, time_t) ATTRIBUTE_PURE;
 #  endif
 # endif
@@ -492,22 +565,16 @@ time_t time2posix_z(timezone_t, time_t) ATTRIBUTE_PURE;
 ** Finally, some convenience items.
 */
 
-#if __STDC_VERSION__ < 199901
+#if HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
 # define true 1
 # define false 0
 # define bool int
-#else
-# include <stdbool.h>
 #endif
 
-#ifndef TYPE_BIT
 #define TYPE_BIT(type)	(sizeof (type) * CHAR_BIT)
-#endif /* !defined TYPE_BIT */
-
-#ifndef TYPE_SIGNED
 #define TYPE_SIGNED(type) (((type) -1) < 0)
-#endif /* !defined TYPE_SIGNED */
-
 #define TWOS_COMPLEMENT(t) ((t) ~ (t) 0 < 0)
 
 /* Max and min values of the integer type T, of which only the bottom
@@ -519,30 +586,34 @@ time_t time2posix_z(timezone_t, time_t) ATTRIBUTE_PURE;
 #define MINVAL(t, b)						\
   ((t) (TYPE_SIGNED(t) ? - TWOS_COMPLEMENT(t) - MAXVAL(t, b) : 0))
 
-/* The minimum and maximum finite time values.  This implementation
-   assumes no padding if time_t is signed and either the compiler is
-   pre-C11 or time_t is not one of the standard signed integer types.  */
-#if 201112 <= __STDC_VERSION__
-static time_t const time_t_min
-  = (TYPE_SIGNED(time_t)
-     ? _Generic((time_t) 0,
-		signed char: SCHAR_MIN, short: SHRT_MIN,
-		int: INT_MIN, long: LONG_MIN, long long: LLONG_MIN,
-		default: MINVAL(time_t, TYPE_BIT(time_t)))
-     : 0);
-static time_t const time_t_max
-  = (TYPE_SIGNED(time_t)
-     ? _Generic((time_t) 0,
-		signed char: SCHAR_MAX, short: SHRT_MAX,
-		int: INT_MAX, long: LONG_MAX, long long: LLONG_MAX,
-		default: MAXVAL(time_t, TYPE_BIT(time_t)))
-     : -1);
+/* The extreme time values, assuming no padding.  */
+#define TIME_T_MIN_NO_PADDING MINVAL(time_t, TYPE_BIT(time_t))
+#define TIME_T_MAX_NO_PADDING MAXVAL(time_t, TYPE_BIT(time_t))
+
+/* The extreme time values.  These are macros, not constants, so that
+   any portability problem occur only when compiling .c files that use
+   the macros, which is safer for applications that need only zdump and zic.
+   This implementation assumes no padding if time_t is signed and
+   either the compiler lacks support for _Generic or time_t is not one
+   of the standard signed integer types.  */
+#if HAVE_GENERIC
+# define TIME_T_MIN \
+    _Generic((time_t) 0, \
+	     signed char: SCHAR_MIN, short: SHRT_MIN, \
+	     int: INT_MIN, long: LONG_MIN, long long: LLONG_MIN, \
+	     default: TIME_T_MIN_NO_PADDING)
+# define TIME_T_MAX \
+    (TYPE_SIGNED(time_t) \
+     ? _Generic((time_t) 0, \
+		signed char: SCHAR_MAX, short: SHRT_MAX, \
+		int: INT_MAX, long: LONG_MAX, long long: LLONG_MAX, \
+		default: TIME_T_MAX_NO_PADDING)			    \
+     : (time_t) -1)
 #else
-static time_t const time_t_min = MINVAL(time_t, TYPE_BIT(time_t));
-static time_t const time_t_max = MAXVAL(time_t, TYPE_BIT(time_t));
+# define TIME_T_MIN TIME_T_MIN_NO_PADDING
+# define TIME_T_MAX TIME_T_MAX_NO_PADDING
 #endif
 
-#ifndef INT_STRLEN_MAXIMUM
 /*
 ** 302 / 1000 is log10(2.0) rounded up.
 ** Subtract one for the sign bit if the type is signed;
@@ -552,13 +623,12 @@ static time_t const time_t_max = MAXVAL(time_t, TYPE_BIT(time_t));
 #define INT_STRLEN_MAXIMUM(type) \
 	((TYPE_BIT(type) - TYPE_SIGNED(type)) * 302 / 1000 + \
 	1 + TYPE_SIGNED(type))
-#endif /* !defined INT_STRLEN_MAXIMUM */
 
 /*
 ** INITIALIZE(x)
 */
 
-#ifdef lint
+#ifdef GCC_LINT
 # define INITIALIZE(x)	((x) = 0)
 #else
 # define INITIALIZE(x)
@@ -574,13 +644,11 @@ static time_t const time_t_max = MAXVAL(time_t, TYPE_BIT(time_t));
 ** The default is to use gettext if available, and use MSGID otherwise.
 */
 
-#ifndef _
 #if HAVE_GETTEXT
 #define _(msgid) gettext(msgid)
 #else /* !HAVE_GETTEXT */
 #define _(msgid) msgid
 #endif /* !HAVE_GETTEXT */
-#endif /* !defined _ */
 
 #if !defined TZ_DOMAIN && defined HAVE_GETTEXT
 # define TZ_DOMAIN "tz"
@@ -593,24 +661,70 @@ char *asctime_r(struct tm const *, char *);
 char *ctime_r(time_t const *, char *);
 #endif /* HAVE_INCOMPATIBLE_CTIME_R */
 
-#ifndef YEARSPERREPEAT
+/* Handy macros that are independent of tzfile implementation.  */
+
 #define YEARSPERREPEAT		400	/* years before a Gregorian repeat */
-#endif /* !defined YEARSPERREPEAT */
+
+#define SECSPERMIN	60
+#define MINSPERHOUR	60
+#define HOURSPERDAY	24
+#define DAYSPERWEEK	7
+#define DAYSPERNYEAR	365
+#define DAYSPERLYEAR	366
+#define SECSPERHOUR	(SECSPERMIN * MINSPERHOUR)
+#define SECSPERDAY	((int_fast32_t) SECSPERHOUR * HOURSPERDAY)
+#define MONSPERYEAR	12
+
+#define TM_SUNDAY	0
+#define TM_MONDAY	1
+#define TM_TUESDAY	2
+#define TM_WEDNESDAY	3
+#define TM_THURSDAY	4
+#define TM_FRIDAY	5
+#define TM_SATURDAY	6
+
+#define TM_JANUARY	0
+#define TM_FEBRUARY	1
+#define TM_MARCH	2
+#define TM_APRIL	3
+#define TM_MAY		4
+#define TM_JUNE		5
+#define TM_JULY		6
+#define TM_AUGUST	7
+#define TM_SEPTEMBER	8
+#define TM_OCTOBER	9
+#define TM_NOVEMBER	10
+#define TM_DECEMBER	11
+
+#define TM_YEAR_BASE	1900
+
+#define EPOCH_YEAR	1970
+#define EPOCH_WDAY	TM_THURSDAY
+
+#define isleap(y) (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
+
+/*
+** Since everything in isleap is modulo 400 (or a factor of 400), we know that
+**	isleap(y) == isleap(y % 400)
+** and so
+**	isleap(a + b) == isleap((a + b) % 400)
+** or
+**	isleap(a + b) == isleap(a % 400 + b % 400)
+** This is true even if % means modulo rather than Fortran remainder
+** (which is allowed by C89 but not by C99 or later).
+** We use this to avoid addition overflow problems.
+*/
+
+#define isleap_sum(a, b)	isleap((a) % 400 + (b) % 400)
+
 
 /*
 ** The Gregorian year averages 365.2425 days, which is 31556952 seconds.
 */
 
-#ifndef AVGSECSPERYEAR
 #define AVGSECSPERYEAR		31556952L
-#endif /* !defined AVGSECSPERYEAR */
-
-#ifndef SECSPERREPEAT
-#define SECSPERREPEAT		((int_fast64_t) YEARSPERREPEAT * (int_fast64_t) AVGSECSPERYEAR)
-#endif /* !defined SECSPERREPEAT */
-
-#ifndef SECSPERREPEAT_BITS
+#define SECSPERREPEAT \
+  ((int_fast64_t) YEARSPERREPEAT * (int_fast64_t) AVGSECSPERYEAR)
 #define SECSPERREPEAT_BITS	34	/* ceil(log2(SECSPERREPEAT)) */
-#endif /* !defined SECSPERREPEAT_BITS */
 
 #endif /* !defined PRIVATE_H */
