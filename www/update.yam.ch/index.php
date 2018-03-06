@@ -22,8 +22,6 @@
  YAM Official Support Site :  http://www.yam.ch/
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id$
-
 ***************************************************************************/
  
 /*
@@ -99,20 +97,20 @@ if($out = fopen($outfile, 'w'))
 {
   // print out some initial output (version of php script and timestamp
   fprintf($out, "<updatecheck>\n");
-  fprintf($out, "\$VER: updatecheck 1.2 (06.11.2009)\n");
+  fprintf($out, "\$VER: updatecheck 1.3 (06.03.2018)\n");
   fprintf($out, "TIME: %s\n", $datetime);
   
   // what we have to do now is: check each single component of YAM for
   // an eventually existing update and report it to the user
   
   // 1. Check if the user uses a nightly build or not
-  if(ereg("(dev|nightly)", $userVERSTR) && (ereg("^[0-9]+$", $userBUILDID) || $userBUILDID == ""))
+  if(preg_match("/(dev|nightly)/i", $userVERSTR) && (preg_match("^[0-9]+$", $userBUILDID) || $userBUILDID == ""))
     $nightly=true;
   else
     $nightly=false;
   
   // 2. Check for "YAM" update itself
-  list($prog, $ver, $system) = split(" ", trim($userVERSTR), 3);
+  list($prog, $ver, $system) = explode(" ", trim($userVERSTR), 3);
   if($nightly == true)
     $updateDir = $NIGHTLYDIR;
   else
@@ -120,19 +118,25 @@ if($out = fopen($outfile, 'w'))
   
   // extract the real userversion, userrevision and
   // patchlevel numbers
-  list($userVER, $userREV, $userPL) = split("(\.|p|-)", trim($ver), 3);
+  list($userVER, $userREV, $userPL) = preg_split("(\.|p|-)", trim($ver), 3);
   $userVER = intval($userVER);
   $userREV = intval($userREV);
   $userPL = intval($userPL);
   
   // analyze the target specification (if present)
-  if(ereg("os4/ppc", $userVERSTR))
+  if(preg_match("/os4\/ppc/i", $userVERSTR))
     $userTARGET = "ppc-amigaos";
-  elseif(ereg("mos/ppc", $userVERSTR))
+  elseif(preg_match("/mos\/ppc/i", $userVERSTR))
     $userTARGET = "ppc-morphos";
+  elseif(preg_match("/aros\/x86_64/i", $userVERSTR))
+    $userTARGET = "x86_64-aros";
+  elseif(preg_match("/aros\/x86/i", $userVERSTR))
+    $userTARGET = "i386-aros";
+  elseif(preg_match("/aros\/ppc/i", $userVERSTR))
+    $userTARGET = "ppc-aros";
   else
     $userTARGET = "m68k-amigaos";
-  
+
   // now we should know all major stuff like the version/revision and
   // if the user version is a nightly build or not. So what we do now is, that
   // we go and check the 'LATEST' file of the stable tree first and in case the
@@ -144,17 +148,17 @@ if($out = fopen($outfile, 'w'))
     while(!feof($fh))
     {
       $line = fgets($fh);
-      list($stableTarget, $stableYAM) = split(": ", trim($line), 2);
+      list($stableTarget, $stableYAM) = explode(": ", trim($line), 2);
   
       // check if we found the target 
       if($userTARGET == $stableTarget)
       {
         // split the stableYAM by version/revision
-        list($stableVER, $stableREV, $stablePL) = split("(\.|p|-)", trim($stableYAM), 3);
+        list($stableVER, $stableREV, $stablePL) = preg_split("(\.|p|-)", trim($stableYAM), 3);
         $stableVER = intval($stableVER);
         $stableREV = intval($stableREV);
         $stablePL = intval($stablePL);
-  
+
         // now break out
         break;
       }
@@ -189,7 +193,7 @@ if($out = fopen($outfile, 'w'))
            while(!feof($fh))
            {
               $line = fgets($fh);
-              list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+              list($tag, $value1, $value2, $value3) = explode(" ", trim($line), 4);
   
               if($changelog == true)
                  fputs($out, $line);
@@ -260,7 +264,7 @@ if($out = fopen($outfile, 'w'))
            while(!feof($fh))
            {
               $line = fgets($fh);
-              list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+              list($tag, $value1, $value2, $value3) = explode(" ", trim($line), 4);
   
               if($changelog == true)
                  fputs($out, $line);
@@ -269,11 +273,11 @@ if($out = fopen($outfile, 'w'))
                  $updateVER = $value1;
   
                  // check if the version is really newer or equal to the user one
-                 list($updateVERSION, $updateREVISION, $updatePL) = split("(\.|p|-)", trim($updateVER), 3);
+                 list($updateVERSION, $updateREVISION, $updatePL) = preg_split("(\.|p|-)", trim($updateVER), 3);
                  $updateVERSION = intval($updateVERSION);
                  $updateREVISION = intval($updateREVISION);
                  $updatePL = intval($updatePL);
-  
+
                  if($userVER > $updateVERSION || 
                     ($userVER == $updateVERSION && $userREV > $updateREVISION) ||
                     ($userVER == $updateVERSION && $userREV == $updateREVISION && $userPL > $updatePL))
@@ -354,14 +358,14 @@ if($out = fopen($outfile, 'w'))
      while(($lib=trim(strtolower($_GET["$var$j"]))) != "")
      {
        // extract the name and version
-       list($name, $verstr) = split("(-)", $lib, 2);
+       list($name, $verstr) = preg_split("(-)", $lib, 2);
   
        // open the version file
        if(file_exists($CONTRIBDIR . "/" . $name . ".$var") &&
           $fh = fopen($CONTRIBDIR . "/" . $name . ".$var", 'r'))
        {
          // extract the correct version/revision parts of verstr
-         list($version, $revision) = split("(\.)", $verstr, 2);
+         list($version, $revision) = preg_split("(\.)", $verstr, 2);
          $version = intval($version);
          $revision = intval($revision);
          $changelog = false;
@@ -369,7 +373,7 @@ if($out = fopen($outfile, 'w'))
          while(!feof($fh))
          {
             $line = fgets($fh);
-            list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+            list($tag, $value1, $value2, $value3) = explode(" ", trim($line), 4);
      
             if($changelog == true)
                fputs($out, $line);
@@ -380,7 +384,7 @@ if($out = fopen($outfile, 'w'))
                $updateVER = trim($value1);
      
                // split the VERSION string into version and revision
-               list($libVersion, $libRevision) = split("(\.)", $updateVER, 2);
+               list($libVersion, $libRevision) = preg_split("(\.)", $updateVER, 2);
                $libVersion = intval($libVersion);
                $libRevision = intval($libRevision);
      
