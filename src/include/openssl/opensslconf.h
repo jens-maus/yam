@@ -28,6 +28,9 @@ extern "C" {
 #ifndef OPENSSL_SYS_AMIGA
 # define OPENSSL_SYS_AMIGA 1
 #endif
+#ifndef OPENSSL_THREADS
+# define OPENSSL_THREADS
+#endif
 #ifndef OPENSSL_NO_ASAN
 # define OPENSSL_NO_ASAN
 #endif
@@ -138,7 +141,7 @@ extern "C" {
 # define DEPRECATEDIN_0_9_8(f)
 #endif
 
-#define OPENSSL_CPUID_OBJ
+
 
 /* Generate 80386 code? */
 #undef I386_ONLY
