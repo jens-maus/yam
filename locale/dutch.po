@@ -6,7 +6,7 @@
 # Jens Maus <mail@jens-maus.de>, 2014
 # Johan Banis <j.banis@banis.info>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# Johan Banis <j.banis@banis.info>, 2014,2017
+# Johan Banis <j.banis@banis.info>, 2014,2017-2018
 # Johan Banis <j.banis@worldonline.nl>, 2010
 # Johan Banis <j.banis@banis.info>, 2014
 msgid ""
@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2018-02-14 10:09+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2018-02-28 10:10+0000\n"
+"Last-Translator: Johan Banis <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/ato/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1100,7 +1100,7 @@ msgstr "_Actief"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail on ser_ver"
-msgstr ""
+msgstr "Wis mailtje op server..."
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1136,7 +1136,7 @@ msgstr "_Transfervenster"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "Pr_e-selection"
-msgstr ""
+msgstr "Selectie:"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1148,7 +1148,7 @@ msgstr "minuten"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "Reques_ter"
-msgstr ""
+msgstr "Requester"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -1448,7 +1448,7 @@ msgstr "Taglinebestand"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "Tag_line separator"
-msgstr ""
+msgstr "T_agline scheidslijn"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
@@ -1572,7 +1572,7 @@ msgstr "Paden"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "Decode _files to"
-msgstr ""
+msgstr "Bestanden decoderen naar"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
@@ -1580,7 +1580,7 @@ msgstr "Bestanden aanhangen vanuit"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For temp_orary files"
-msgstr ""
+msgstr "Voor tijdelijke bestanden"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -5605,7 +5605,7 @@ msgstr "Zoek naar mailtjes in folder %s..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "AppIcon on _Workbench"
-msgstr ""
+msgstr "icoon op Workbench"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
@@ -7639,7 +7639,7 @@ msgstr "Er ging iets mis bij het afspelen van geluidsbestand '%s'.\n\nDit kan ko
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "C_harset"
-msgstr ""
+msgstr "C_harset"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
@@ -7906,7 +7906,7 @@ msgstr "De thuismap '%s' van gebruiker '%s' bestaat niet"
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show text co_lors"
-msgstr ""
+msgstr "Tekstkleur:"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -8342,7 +8342,7 @@ msgstr "ARexx interface"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search o_n gravatar.com..."
-msgstr ""
+msgstr "Zoek op gra_vatar.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -9287,7 +9287,7 @@ msgstr "Als je dit aanvinkt zal een zoekbalk\nte zien zijn in het hoofdvenster, 
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "P_osition"
-msgstr ""
+msgstr "Positie"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9355,7 +9355,7 @@ msgstr "Bijlage"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Rem_ove"
-msgstr ""
+msgstr "Verwijderen"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
@@ -9514,11 +9514,11 @@ msgstr "Gebruik de popup button om de karakterset te kiezen\nwaarvan je wil dat 
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "_Default charset"
-msgstr ""
+msgstr "Stan_daard charset"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "Toon c_harset"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9790,7 +9790,7 @@ msgstr "Controleer mailtjes van'%s'"
 #. (e.g. 'Kopie (Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "Cc"
-msgstr ""
+msgstr "CC"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
@@ -10047,8 +10047,8 @@ msgstr "Update downloaden met browser..."
 
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\\033bThis nightly build expires on %s"
-msgstr ""
+msgstr "\\033bDeze concept-versie verloopt op 1%s"
 
 msgctxt "MSG_UNKNOWN_SIZE (2583//)"
 msgid "unknown"
-msgstr ""
+msgstr "onbekend"
