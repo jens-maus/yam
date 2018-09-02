@@ -50,9 +50,10 @@ env:
   - BUILD="OS=aros-x86_64 DEBUG="
   - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
   global:
-    - secure: "ZkGnfPYL3rKXrJKroqdlPT7CuS95+p4eR7u/pQ9bVE3edpmchYmqxbfzRk3eJSndSO+HGvmtZvP01NA5EnO8pAZMcfH6EkqGGIZRdv2Y3kdUCvEsmtNc3U8hK8zZUc3EfKpePf62yb8niAcfAkox9+Pa+7NIth8ozrg6FEdwJheo9eM8wcU+VZ2sDondr1HSBQ6Yb9qnxOCtKMVg7TGAnf+LnN+pC4hL8HfD4KLLPTu80n+Ru7htbqn9GN4uLn04rIpdbcFFmNdtfAvgZhOVYaLWN3tuh41QOaucD4d78Y7kBlp5ACdKMqyk61ouAZDsKg1P7c0EwyqS61C5oU6k5VRLeGSWsrPWqpvBjkLtUbClAonrKEIbl0knH/UZcNPJ0m248BNzvcp6uNc0HXC98VNY1yV6N8rZil15yFMlz5nn9J6fNa2ms7i9yhX1rBWVyw7iZazRj0S6IHFKDGbcCOsVUb3K/+VXzcGZ384cxdTN7a9fEUmuGqTY5w3PmnvBoTQdqAdsv/Y1RD73NmlGBXfYllfxyIwL9pJaUCI4UkGKU88/4EhYzN5veTGzmxhx2Kh7ZCZS6RAIeIc7CzTJm9/S6C/6SaZ5g6wNo4E2RA2yzXFWH3ZgAxbnEw21oxlxShPFMt97+Syfj858CozA56a+ABekSoCE67kqQAYLnkc="
+    - secure: "eURceayBkrAR4iDChLkg3cb2lLODzjD2tBtowCgQeeEbRygSLp0IdomTeHGSuyXWA37Ik5PatQK4rhOrAEfAn7t7Z8FBlvxX76hlHBZNrn9OjmwvEBUn4dSnBvf4DQ69NVinxgSUPPoX9WD5eNoOGOUNPx5ubPBcmFKpnGIjyNsvXNOifaTOUpRjRk5CizfpEwy8sg0gqzB0bJAkpT8zZ7cWDeZ9pSuylRfvVIfbsq/mrUFbDYMLY67A349l4MFYS9GfH8VfQonS0ZGTQvznvPoThe7X4g87ZrHjaqhirjKbu/tdLSd71CYOJmFt57eXIt0sD7OPzQ23XY23DbGwIRi5cb0ao0JActJJ4LdDUr381G8vtE3MVqnPQpiiPGD9+bKd6HNd7XjxX0y2g7hlIYeX9NEAS22zk0q4LPdtbl6wkLeSnkVkX+hrNs8jUInmcsjrn3+ULEtoJuregMhP13HosJuRyr7onHFXd2C4Ks5y+2mI3d54Zh5SszgOtZWPKmwj5q7eaHn3AXV77g8KVu+7wBenRthIQtr5VMvqsjsbtlN4lupkAKnf5r3OIfPjIBSBx4NOb97Sc/JUgYzD4w6qkOSt2vETLkcA8ZXzd4EyU3etyMirpqDF717l6iDPtZxjl2c08Ulm6gG584AgXxNRjzsvtZfY9aj1tuf4Fd8="
+
 before_install:
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
 
 addons:
   coverity_scan:
