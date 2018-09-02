@@ -36,8 +36,6 @@ before_script:
 # specify a list of variables to test (here we test the build for our supported
 # list of operating systems).
 env:
-  global:
-    - secure: "ZkGnfPYL3rKXrJKroqdlPT7CuS95+p4eR7u/pQ9bVE3edpmchYmqxbfzRk3eJSndSO+HGvmtZvP01NA5EnO8pAZMcfH6EkqGGIZRdv2Y3kdUCvEsmtNc3U8hK8zZUc3EfKpePf62yb8niAcfAkox9+Pa+7NIth8ozrg6FEdwJheo9eM8wcU+VZ2sDondr1HSBQ6Yb9qnxOCtKMVg7TGAnf+LnN+pC4hL8HfD4KLLPTu80n+Ru7htbqn9GN4uLn04rIpdbcFFmNdtfAvgZhOVYaLWN3tuh41QOaucD4d78Y7kBlp5ACdKMqyk61ouAZDsKg1P7c0EwyqS61C5oU6k5VRLeGSWsrPWqpvBjkLtUbClAonrKEIbl0knH/UZcNPJ0m248BNzvcp6uNc0HXC98VNY1yV6N8rZil15yFMlz5nn9J6fNa2ms7i9yhX1rBWVyw7iZazRj0S6IHFKDGbcCOsVUb3K/+VXzcGZ384cxdTN7a9fEUmuGqTY5w3PmnvBoTQdqAdsv/Y1RD73NmlGBXfYllfxyIwL9pJaUCI4UkGKU88/4EhYzN5veTGzmxhx2Kh7ZCZS6RAIeIc7CzTJm9/S6C/6SaZ5g6wNo4E2RA2yzXFWH3ZgAxbnEw21oxlxShPFMt97+Syfj858CozA56a+ABekSoCE67kqQAYLnkc="
   - BUILD="OS=os4"
   - BUILD="OS=os4 DEBUG="
   - BUILD="OS=os3"
@@ -51,7 +49,8 @@ env:
   - BUILD="OS=aros-x86_64"
   - BUILD="OS=aros-x86_64 DEBUG="
   - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
-
+  global:
+    - secure: "ZkGnfPYL3rKXrJKroqdlPT7CuS95+p4eR7u/pQ9bVE3edpmchYmqxbfzRk3eJSndSO+HGvmtZvP01NA5EnO8pAZMcfH6EkqGGIZRdv2Y3kdUCvEsmtNc3U8hK8zZUc3EfKpePf62yb8niAcfAkox9+Pa+7NIth8ozrg6FEdwJheo9eM8wcU+VZ2sDondr1HSBQ6Yb9qnxOCtKMVg7TGAnf+LnN+pC4hL8HfD4KLLPTu80n+Ru7htbqn9GN4uLn04rIpdbcFFmNdtfAvgZhOVYaLWN3tuh41QOaucD4d78Y7kBlp5ACdKMqyk61ouAZDsKg1P7c0EwyqS61C5oU6k5VRLeGSWsrPWqpvBjkLtUbClAonrKEIbl0knH/UZcNPJ0m248BNzvcp6uNc0HXC98VNY1yV6N8rZil15yFMlz5nn9J6fNa2ms7i9yhX1rBWVyw7iZazRj0S6IHFKDGbcCOsVUb3K/+VXzcGZ384cxdTN7a9fEUmuGqTY5w3PmnvBoTQdqAdsv/Y1RD73NmlGBXfYllfxyIwL9pJaUCI4UkGKU88/4EhYzN5veTGzmxhx2Kh7ZCZS6RAIeIc7CzTJm9/S6C/6SaZ5g6wNo4E2RA2yzXFWH3ZgAxbnEw21oxlxShPFMt97+Syfj858CozA56a+ABekSoCE67kqQAYLnkc="
 before_install:
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
