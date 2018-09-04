@@ -33,6 +33,10 @@ install:
 before_script:
   - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
 
+env:
+  global:
+    - secure: "eURceayBkrAR4iDChLkg3cb2lLODzjD2tBtowCgQeeEbRygSLp0IdomTeHGSuyXWA37Ik5PatQK4rhOrAEfAn7t7Z8FBlvxX76hlHBZNrn9OjmwvEBUn4dSnBvf4DQ69NVinxgSUPPoX9WD5eNoOGOUNPx5ubPBcmFKpnGIjyNsvXNOifaTOUpRjRk5CizfpEwy8sg0gqzB0bJAkpT8zZ7cWDeZ9pSuylRfvVIfbsq/mrUFbDYMLY67A349l4MFYS9GfH8VfQonS0ZGTQvznvPoThe7X4g87ZrHjaqhirjKbu/tdLSd71CYOJmFt57eXIt0sD7OPzQ23XY23DbGwIRi5cb0ao0JActJJ4LdDUr381G8vtE3MVqnPQpiiPGD9+bKd6HNd7XjxX0y2g7hlIYeX9NEAS22zk0q4LPdtbl6wkLeSnkVkX+hrNs8jUInmcsjrn3+ULEtoJuregMhP13HosJuRyr7onHFXd2C4Ks5y+2mI3d54Zh5SszgOtZWPKmwj5q7eaHn3AXV77g8KVu+7wBenRthIQtr5VMvqsjsbtlN4lupkAKnf5r3OIfPjIBSBx4NOb97Sc/JUgYzD4w6qkOSt2vETLkcA8ZXzd4EyU3etyMirpqDF717l6iDPtZxjl2c08Ulm6gG584AgXxNRjzsvtZfY9aj1tuf4Fd8="
+
 # specify a list of variables to test (here we test the build for our supported
 # list of operating systems).
 env:
@@ -49,8 +53,6 @@ env:
   - BUILD="OS=aros-x86_64"
   - BUILD="OS=aros-x86_64 DEBUG="
   - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
-  global:
-    - secure: "eURceayBkrAR4iDChLkg3cb2lLODzjD2tBtowCgQeeEbRygSLp0IdomTeHGSuyXWA37Ik5PatQK4rhOrAEfAn7t7Z8FBlvxX76hlHBZNrn9OjmwvEBUn4dSnBvf4DQ69NVinxgSUPPoX9WD5eNoOGOUNPx5ubPBcmFKpnGIjyNsvXNOifaTOUpRjRk5CizfpEwy8sg0gqzB0bJAkpT8zZ7cWDeZ9pSuylRfvVIfbsq/mrUFbDYMLY67A349l4MFYS9GfH8VfQonS0ZGTQvznvPoThe7X4g87ZrHjaqhirjKbu/tdLSd71CYOJmFt57eXIt0sD7OPzQ23XY23DbGwIRi5cb0ao0JActJJ4LdDUr381G8vtE3MVqnPQpiiPGD9+bKd6HNd7XjxX0y2g7hlIYeX9NEAS22zk0q4LPdtbl6wkLeSnkVkX+hrNs8jUInmcsjrn3+ULEtoJuregMhP13HosJuRyr7onHFXd2C4Ks5y+2mI3d54Zh5SszgOtZWPKmwj5q7eaHn3AXV77g8KVu+7wBenRthIQtr5VMvqsjsbtlN4lupkAKnf5r3OIfPjIBSBx4NOb97Sc/JUgYzD4w6qkOSt2vETLkcA8ZXzd4EyU3etyMirpqDF717l6iDPtZxjl2c08Ulm6gG584AgXxNRjzsvtZfY9aj1tuf4Fd8="
 
 before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
@@ -70,11 +72,11 @@ script:
   - travis_wait 45 make -j1 ${BUILD} ${OUTPUT}
 
 # deploy snapshots to bintray
-deploy:
-  provide: bintray
-  user: jens-maus
-  on:
-    branch: master
-    condition: ${BUILD} =~ snapshot
-  key:
-    secure: bvgGEg+zjiMffttyeiYp393H9AaeJ1M/c5WCeXu+f4bZYvzDN1n8EydFrfogYxjV/khIWGtlZMGVItQTJPy7XfKKZhgakhBzpihkXBBKybRkKKyAUzrP+3P4a8A97I+7do+4L7Gj8iH/UNIumc7geiIqY+8cf8z9nOxc8SOZLO4brLlGYCPDjbQalPp74CHQjyCSZU+4r4YzYpqX/S98fAHU3e+EKuBOh8yQhJ20zTND5KKE6C4B+Kop5eoGv1D3d+qbI67YUitPqAPspFAJwOPVxyNR26Sztc6DUem81CW6BhZUKuZ1Jm2goS+nSKFF1Te2WfFWiqtxxdHJdoZNVc9y8yge7o/TUNv6DdF1DyHs0MjxffULrZiCF8l7UPIIhqulM+ZneJ64yoY6nqYgHpaiBjC6mpMPHqwYoy1v9iSa96qel+mlRYfnYy9Jj72ZvgdZNBviQYhRRMOX4LqqsFm+r4h38PPU9ZTAuCKYom2vjQ5zQ+DTvzWjCuWxOlxVPyYRPC0QRb1YOtaIuOPCQG0zpx669MK3H2AMmaTQIn0g2qZWfADf3b5rPywvST5dg4Z2NrPWEAC9xRBtRCn6I5wBep/UTquyeVE0SbP3KII8OejARHUue73ODuUJz8HsTfoJekWVQ5C+6aH5YaUgthnb9KfgFbEw7ptolV8y1DE=
+#deploy:
+#  provide: bintray
+#  user: jens-maus
+#  on:
+#    branch: master
+#    condition: ${BUILD} =~ snapshot
+#  key:
+#    secure: bvgGEg+zjiMffttyeiYp393H9AaeJ1M/c5WCeXu+f4bZYvzDN1n8EydFrfogYxjV/khIWGtlZMGVItQTJPy7XfKKZhgakhBzpihkXBBKybRkKKyAUzrP+3P4a8A97I+7do+4L7Gj8iH/UNIumc7geiIqY+8cf8z9nOxc8SOZLO4brLlGYCPDjbQalPp74CHQjyCSZU+4r4YzYpqX/S98fAHU3e+EKuBOh8yQhJ20zTND5KKE6C4B+Kop5eoGv1D3d+qbI67YUitPqAPspFAJwOPVxyNR26Sztc6DUem81CW6BhZUKuZ1Jm2goS+nSKFF1Te2WfFWiqtxxdHJdoZNVc9y8yge7o/TUNv6DdF1DyHs0MjxffULrZiCF8l7UPIIhqulM+ZneJ64yoY6nqYgHpaiBjC6mpMPHqwYoy1v9iSa96qel+mlRYfnYy9Jj72ZvgdZNBviQYhRRMOX4LqqsFm+r4h38PPU9ZTAuCKYom2vjQ5zQ+DTvzWjCuWxOlxVPyYRPC0QRb1YOtaIuOPCQG0zpx669MK3H2AMmaTQIn0g2qZWfADf3b5rPywvST5dg4Z2NrPWEAC9xRBtRCn6I5wBep/UTquyeVE0SbP3KII8OejARHUue73ODuUJz8HsTfoJekWVQ5C+6aH5YaUgthnb9KfgFbEw7ptolV8y1DE=
