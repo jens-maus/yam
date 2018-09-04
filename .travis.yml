@@ -33,26 +33,25 @@ install:
 before_script:
   - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
 
+# specify a list of variables to test (here we test the build for our supported
+# list of operating systems).
 env:
   global:
     - secure: "hE1ONE7h4DXu8nebEsXRmC9DzVThjNJlb70aRVuRecyfpO6K58BPMHv622ZMhKnyezbRdYe9cdQaKlYXuklTAo4tqdBAuko/7+M//J4vMeNQwMvHDMyaNhfu329cpzCvLUHSXJ3YiszEHypcxi3iyhHiG9OqbJMdIewlUYdnXTWyhkNE79jCetADTQD/s7mmMMBJrttuBHFoPCOXvVQrAWQMnDLfMOO3+Eku111VyTDH46A/skcKZOjZCslMjFaJtb6oQvPcdS48dumr9R36mLLaQQIznE2TelpnX83DYcXkuBxaevp9bF9KbY3JQ2YHDT3uXyX6/nvahfLlJf3Lkd2j38c4coDnbQNyrl5XYvD+gZWMhZzieN0XoyJG8P8Az06iRtd9usQdv/A4vtThZEGgQZrKb6oRzAzq9Jy7U0xdZer63Ol7rCDkoN6dk3FIfQuO4jTAtZaugskuCR8gDcVjzXgFjark7wlOut77rtOyBLgzdLvfegr0d3htkrGBN6Buim0dmvocNS5mCcSrJ97PbQxSyhJoucvujiwKU3+zB7LMcfo8nAmiXgfqEbT11X4oOyO3/cVK2yXUathLuv6bu+pqPIHnk13EXboRCGgyx1K/mOlGndPPIs98Lr2gU37H+WJdUktLkVFgQtOvnC/77VKVR72K7876s2J6wUA="
-
-# specify a list of variables to test (here we test the build for our supported
-# list of operating systems).
-matrix:
-  - env: BUILD="OS=os4"
-  - env: BUILD="OS=os4 DEBUG="
-  - env: BUILD="OS=os3"
-  - env: BUILD="OS=os3 DEBUG="
-  - env: BUILD="OS=mos"
-  - env: BUILD="OS=mos DEBUG="
-  - env: BUILD="OS=aros-ppc"
-  - env: BUILD="OS=aros-ppc DEBUG="
-  - env: BUILD="OS=aros-i386"
-  - env: BUILD="OS=aros-i386 DEBUG="
-  - env: BUILD="OS=aros-x86_64"
-  - env: BUILD="OS=aros-x86_64 DEBUG="
-  - env: BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
+  matrix:
+    - BUILD="OS=os4"
+    - BUILD="OS=os4 DEBUG="
+    - BUILD="OS=os3"
+    - BUILD="OS=os3 DEBUG="
+    - BUILD="OS=mos"
+    - BUILD="OS=mos DEBUG="
+    - BUILD="OS=aros-ppc"
+    - BUILD="OS=aros-ppc DEBUG="
+    - BUILD="OS=aros-i386"
+    - BUILD="OS=aros-i386 DEBUG="
+    - BUILD="OS=aros-x86_64"
+    - BUILD="OS=aros-x86_64 DEBUG="
+    - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
 
 before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
