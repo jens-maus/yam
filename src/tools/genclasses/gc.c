@@ -487,7 +487,11 @@ void add_overload( struct classdef *cd, char *name )
 {
   struct overloaddef *od;
   if (!(od = (struct overloaddef *) calloc(1, sizeof(struct overloaddef)))) return;
-  if (!(od->name = stralloc(name))) return;
+  if (!(od->name = stralloc(name)))
+  {
+    free(od);
+    return;
+  }
   list_saveitem(&cd->overloadlist, od->name, od);
 }
 
@@ -499,7 +503,9 @@ void add_declare( struct classdef *cd, char *name, char *params )
   dd->params = stralloc(params);
   if (!dd->name || !dd->params)
   {
-    free_declare(dd); return;
+    free_declare(dd);
+    free(dd);
+    return;
   }
   list_saveitem(&cd->declarelist, dd->name, dd);
 }
@@ -508,7 +514,11 @@ void add_exportblk( struct classdef *cd, char *textblk )
 {
   struct exportdef *ed;
   if (!(ed = (struct exportdef *) calloc(1, sizeof(struct exportdef)))) return;
-  if (!(ed->exporttext = stralloc(textblk))) return;
+  if (!(ed->exporttext = stralloc(textblk)))
+  {
+    free(ed);
+    return;
+  }
   list_saveitem(&cd->exportlist, ed->exporttext, ed);
 }
 
@@ -516,7 +526,11 @@ void add_includeblk( struct classdef *cd, char *textblk )
 {
   struct includedef *id;
   if (!(id = (struct includedef *) calloc(1, sizeof(struct includedef)))) return;
-  if (!(id->includetext = stralloc(textblk))) return;
+  if (!(id->includetext = stralloc(textblk)))
+  {
+    free(id);
+    return;
+  }
   list_saveitem(&cd->includelist, id->includetext, id);
 }
 
@@ -531,6 +545,7 @@ void add_attr( struct classdef *cd, char *name )
       fprintf(stdout, "ATTR '%s' already collected, skipped.\n", name);
 
     free_attr(ad);
+    free(ad);
     return;
   }
   list_saveitem(&cd->attrlist, ad->name, ad);
@@ -622,6 +637,7 @@ struct classdef *processclasssrc( char *path )
           strcpy(cd->classdata, blk);
 
         free(blk);
+        blk = NULL;
         break;
       }
     }
@@ -687,6 +703,7 @@ struct classdef *processclasssrc( char *path )
           }
           add_exportblk(cd, blk);
           free(blk);
+          blk = NULL;
           break;
         }
 
@@ -705,17 +722,20 @@ struct classdef *processclasssrc( char *path )
           lineno++; epos = ftell(fp);
           if (!(p = strstr(line, "*/"))) continue;
           epos += (p - line) - 3; /* + offset into line... */
-          fseek(fp, spos, SEEK_SET);
-          if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
+          if(fseek(fp, spos, SEEK_SET) == 0)
           {
-            fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, out of memory!\n", exlineno); break;
+            if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
+            {
+              fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, out of memory!\n", exlineno); break;
+            }
+            if (fread(blk, (size_t)(epos - spos), 1, fp) != 1)
+            {
+              fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, fread fails!\n", exlineno); break;
+            }
+            add_includeblk(cd, blk);
+            free(blk);
+            blk = NULL;
           }
-          if (fread(blk, (size_t)(epos - spos), 1, fp) != 1)
-          {
-            fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, fread fails!\n", exlineno); break;
-          }
-          add_includeblk(cd, blk);
-          free(blk);
           break;
         }
 
@@ -743,6 +763,9 @@ struct classdef *processclasssrc( char *path )
     cd = NULL;
   }
 */
+  if (blk != NULL)
+    free(blk);
+
   fclose(fp);
   return cd;
 }
