@@ -7,7 +7,7 @@
 # Andrei Shestakov <mobydick@amiga.org.ru>, 2014-2017
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# Michael Malyshev, 2014-2015
+# Michael Malyshev, 2014-2015,2018
 # Oleg Sergeev <bigblack@mail.lanck.net>, 2000
 # Andrei Shestakov <mobydick@amiga.org.ru>, 2014
 # Vlad Vinogradov, 2005
@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2018-02-14 10:09+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2018-03-20 14:14+0000\n"
+"Last-Translator: Michael Malyshev\n"
 "Language-Team: Russian (http://www.transifex.com/ato/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9289,7 +9289,7 @@ msgstr "Здесь Вы можете указать положение\nполя
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "P_osition"
-msgstr ""
+msgstr "П_оложение"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -10053,4 +10053,4 @@ msgstr "\\033bЭта ночная сборка действительна до %
 
 msgctxt "MSG_UNKNOWN_SIZE (2583//)"
 msgid "unknown"
-msgstr ""
+msgstr "неизвестно"

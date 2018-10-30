@@ -36,30 +36,46 @@ before_script:
 # specify a list of variables to test (here we test the build for our supported
 # list of operating systems).
 env:
-  - BUILD="OS=os4"
-  - BUILD="OS=os4 DEBUG="
-  - BUILD="OS=os3"
-  - BUILD="OS=os3 DEBUG="
-  - BUILD="OS=mos"
-  - BUILD="OS=mos DEBUG="
-  - BUILD="OS=aros-ppc"
-  - BUILD="OS=aros-ppc DEBUG="
-  - BUILD="OS=aros-i386"
-  - BUILD="OS=aros-i386 DEBUG="
-  - BUILD="OS=aros-x86_64"
-  - BUILD="OS=aros-x86_64 DEBUG="
-  - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
+  global:
+    - secure: "hE1ONE7h4DXu8nebEsXRmC9DzVThjNJlb70aRVuRecyfpO6K58BPMHv622ZMhKnyezbRdYe9cdQaKlYXuklTAo4tqdBAuko/7+M//J4vMeNQwMvHDMyaNhfu329cpzCvLUHSXJ3YiszEHypcxi3iyhHiG9OqbJMdIewlUYdnXTWyhkNE79jCetADTQD/s7mmMMBJrttuBHFoPCOXvVQrAWQMnDLfMOO3+Eku111VyTDH46A/skcKZOjZCslMjFaJtb6oQvPcdS48dumr9R36mLLaQQIznE2TelpnX83DYcXkuBxaevp9bF9KbY3JQ2YHDT3uXyX6/nvahfLlJf3Lkd2j38c4coDnbQNyrl5XYvD+gZWMhZzieN0XoyJG8P8Az06iRtd9usQdv/A4vtThZEGgQZrKb6oRzAzq9Jy7U0xdZer63Ol7rCDkoN6dk3FIfQuO4jTAtZaugskuCR8gDcVjzXgFjark7wlOut77rtOyBLgzdLvfegr0d3htkrGBN6Buim0dmvocNS5mCcSrJ97PbQxSyhJoucvujiwKU3+zB7LMcfo8nAmiXgfqEbT11X4oOyO3/cVK2yXUathLuv6bu+pqPIHnk13EXboRCGgyx1K/mOlGndPPIs98Lr2gU37H+WJdUktLkVFgQtOvnC/77VKVR72K7876s2J6wUA="
+  matrix:
+    - BUILD="OS=os4"
+    - BUILD="OS=os4 DEBUG="
+    - BUILD="OS=os3"
+    - BUILD="OS=os3 DEBUG="
+    - BUILD="OS=mos"
+    - BUILD="OS=mos DEBUG="
+    - BUILD="OS=aros-ppc"
+    - BUILD="OS=aros-ppc DEBUG="
+    - BUILD="OS=aros-i386"
+    - BUILD="OS=aros-i386 DEBUG="
+    - BUILD="OS=aros-x86_64"
+    - BUILD="OS=aros-x86_64 DEBUG="
+    - BUILD="release" OUTPUT=">/dev/null 2>/dev/null"
+
+before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
+
+addons:
+  coverity_scan:
+    project:
+      name: "jens-maus/yam"
+      description: "A MIME-compliant open-source Internet email client written for Amiga-based computer systems"
+    notification_email: svn@yam.ch
+    build_command_prepend: ""
+    build_command: "make -j1 ${BUILD} ${OUTPUT}"
+    branch_pattern: master
 
 # the build command to execute for each test
 script:
   - travis_wait 45 make -j1 ${BUILD} ${OUTPUT}
 
 # deploy snapshots to bintray
-deploy:
-  provide: bintray
-  user: jens-maus
-  on:
-    branch: master
-    condition: ${BUILD} =~ snapshot
-  key:
-    secure: bvgGEg+zjiMffttyeiYp393H9AaeJ1M/c5WCeXu+f4bZYvzDN1n8EydFrfogYxjV/khIWGtlZMGVItQTJPy7XfKKZhgakhBzpihkXBBKybRkKKyAUzrP+3P4a8A97I+7do+4L7Gj8iH/UNIumc7geiIqY+8cf8z9nOxc8SOZLO4brLlGYCPDjbQalPp74CHQjyCSZU+4r4YzYpqX/S98fAHU3e+EKuBOh8yQhJ20zTND5KKE6C4B+Kop5eoGv1D3d+qbI67YUitPqAPspFAJwOPVxyNR26Sztc6DUem81CW6BhZUKuZ1Jm2goS+nSKFF1Te2WfFWiqtxxdHJdoZNVc9y8yge7o/TUNv6DdF1DyHs0MjxffULrZiCF8l7UPIIhqulM+ZneJ64yoY6nqYgHpaiBjC6mpMPHqwYoy1v9iSa96qel+mlRYfnYy9Jj72ZvgdZNBviQYhRRMOX4LqqsFm+r4h38PPU9ZTAuCKYom2vjQ5zQ+DTvzWjCuWxOlxVPyYRPC0QRb1YOtaIuOPCQG0zpx669MK3H2AMmaTQIn0g2qZWfADf3b5rPywvST5dg4Z2NrPWEAC9xRBtRCn6I5wBep/UTquyeVE0SbP3KII8OejARHUue73ODuUJz8HsTfoJekWVQ5C+6aH5YaUgthnb9KfgFbEw7ptolV8y1DE=
+#deploy:
+#  provide: bintray
+#  user: jens-maus
+#  on:
+#    branch: master
+#    condition: ${BUILD} =~ snapshot
+#  key:
+#    secure: bvgGEg+zjiMffttyeiYp393H9AaeJ1M/c5WCeXu+f4bZYvzDN1n8EydFrfogYxjV/khIWGtlZMGVItQTJPy7XfKKZhgakhBzpihkXBBKybRkKKyAUzrP+3P4a8A97I+7do+4L7Gj8iH/UNIumc7geiIqY+8cf8z9nOxc8SOZLO4brLlGYCPDjbQalPp74CHQjyCSZU+4r4YzYpqX/S98fAHU3e+EKuBOh8yQhJ20zTND5KKE6C4B+Kop5eoGv1D3d+qbI67YUitPqAPspFAJwOPVxyNR26Sztc6DUem81CW6BhZUKuZ1Jm2goS+nSKFF1Te2WfFWiqtxxdHJdoZNVc9y8yge7o/TUNv6DdF1DyHs0MjxffULrZiCF8l7UPIIhqulM+ZneJ64yoY6nqYgHpaiBjC6mpMPHqwYoy1v9iSa96qel+mlRYfnYy9Jj72ZvgdZNBviQYhRRMOX4LqqsFm+r4h38PPU9ZTAuCKYom2vjQ5zQ+DTvzWjCuWxOlxVPyYRPC0QRb1YOtaIuOPCQG0zpx669MK3H2AMmaTQIn0g2qZWfADf3b5rPywvST5dg4Z2NrPWEAC9xRBtRCn6I5wBep/UTquyeVE0SbP3KII8OejARHUue73ODuUJz8HsTfoJekWVQ5C+6aH5YaUgthnb9KfgFbEw7ptolV8y1DE=
