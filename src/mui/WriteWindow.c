@@ -314,6 +314,10 @@ static enum Encoding WhichEncodingForFile(const char *fname,
           break;
       }
 
+      // take care of no LF within the first 4000 bytes
+      if(linesize > 998 && longlines == 0)
+        longlines++;
+
       fclose(fh);
 
       D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld b:%ld", fname, total, longlines, binarychars);
@@ -326,11 +330,15 @@ static enum Encoding WhichEncodingForFile(const char *fname,
         if(binarychars == 0 && isApplication == FALSE)
         {
           // no binary characters and no binary attachment so far
-          if(longlines != 0 || unsafechars != 0 || hasServer8bit(msn) == FALSE)
+          if(longlines != 0)
           {
-            // use quoted-printable if there are either long lines or
-            // non-7bit ASCII characters or if the SMTP server does not
-            // support 7bit characters
+            // use base64 encoding if there are too long lines, just to be safe
+            encoding = ENC_B64;
+          }
+		  else if(unsafechars != 0 || hasServer8bit(msn) == FALSE)
+          {
+            // use quoted-printable if there are non-7bit ASCII characters or
+            // if the SMTP server does not support 7bit characters
             encoding = ENC_QP;
           }
           else
