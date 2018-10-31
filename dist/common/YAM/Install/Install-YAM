@@ -388,8 +388,8 @@
     (select #detectedSystem "os3" "os4" "mos" "aros")
 )
 
-(if (= #detectedSystem "os4")
-    ; AmigaOS 4.x uses english locale names only
+(if (or (= #detectedSystem "os4") (= #detectedSystem "aros"))
+    ; AmigaOS 4.x and AROS use english locale names only
     (
         (set #cat_name_bosnian               "bosnian")
         (set #cat_name_czech                 "czech")
