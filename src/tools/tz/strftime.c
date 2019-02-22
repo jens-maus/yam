@@ -226,7 +226,7 @@ label:
 				**	%Ec %EC %Ex %EX %Ey %EY
 				**	%Od %oe %OH %OI %Om %OM
 				**	%OS %Ou %OU %OV %Ow %OW %Oy
-				** are supposed to provide alternate
+				** are supposed to provide alternative
 				** representations.
 				*/
 				goto label;
@@ -489,7 +489,8 @@ label:
 				/*
 				** C99 and later say that %Z must be
 				** replaced by the empty string if the
-				** time zone is not determinable.
+				** time zone abbreviation is not
+				** determinable.
 				*/
 				continue;
 			case 'z':
