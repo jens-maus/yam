@@ -1,3 +1,5 @@
+/* Dump time zone data in a textual format.  */
+
 /*
 ** This file is in the public domain, so clarified as of
 ** 2009-05-17 by Arthur David Olson.
@@ -5,18 +7,8 @@
 
 #include "version.h"
 
-/*
-** This code has been made independent of the rest of the time
-** conversion package to increase confidence in the verification it provides.
-** You can use this code to help in verifying other implementations.
-** To do this, compile with -DUSE_LTZ=0 and link without the tz library.
-*/
-
 #ifndef NETBSD_INSPIRED
 # define NETBSD_INSPIRED 1
-#endif
-#ifndef USE_LTZ
-# define USE_LTZ 1
 #endif
 
 #include "private.h"
@@ -146,7 +138,7 @@ sumsize(size_t a, size_t b)
 
 /* Return a pointer to a newly allocated buffer of size SIZE, exiting
    on failure.  SIZE should be nonzero.  */
-static void *
+static void * ATTRIBUTE_MALLOC
 xmalloc(size_t size)
 {
   void *p = malloc(size);
@@ -392,7 +384,7 @@ static void
 usage(FILE * const stream, const int status)
 {
 	fprintf(stream,
-_("%s: usage: %s OPTIONS ZONENAME ...\n"
+_("%s: usage: %s OPTIONS TIMEZONE ...\n"
   "Options include:\n"
   "  -c [L,]U   Start at year L (default -500), end before year U (default 2500)\n"
   "  -t [L,]U   Start at time L, end before time U (in seconds since 1970)\n"
@@ -815,8 +807,10 @@ my_snprintf(char *s, size_t size, char const *format, ...)
     arglen = strlen(arg);
   } else {
     n = vsprintf(buf, format, args);
-    if (n < 0)
+    if (n < 0) {
+      va_end(args);
       return n;
+    }
     arg = buf;
     arglen = n;
   }
