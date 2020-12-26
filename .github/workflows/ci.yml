@@ -25,8 +25,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64]
+        #platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64]
+        platform: [os4, os3, mos, release]
         build: [release, debug]
+
+        exclude:
+          - platform: release
+            build: debug
 
     steps:
     - uses: actions/checkout@v2
@@ -56,8 +61,16 @@ jobs:
     #  if: matrix.platform == 'os4'
 
     - name: build ${{ matrix.platform }}-${{ matrix.build }}
+      if: matrix.platform != 'release'
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
         if [[ ${{ matrix.build }} =~ release ]]; then make -j1 OS=${{ matrix.platform }} DEBUG= ; fi
         if [[ ${{ matrix.build }} =~ debug ]]; then make -j1 OS=${{ matrix.platform }} ; fi
+
+    - name: build release
+      if: matrix.platform == 'release'
+      timeout-minutes: 480
+      run: |
+        export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
+        make -j1 release
