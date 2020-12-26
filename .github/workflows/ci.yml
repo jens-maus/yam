@@ -48,12 +48,12 @@ jobs:
     - name: install adtools build env
       run: |
         curl -L https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 | sudo tar xj -C /
-        if [[ ${{ matrix.platform }} =~ os3|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
-        if [[ ${{ matrix.platform }} =~ os4|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
-        if [[ ${{ matrix.platform }} =~ mos|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
-        if [[ ${{ matrix.platform }} =~ aros-ppc|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
-        if [[ ${{ matrix.platform }} =~ aros-i386|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
-        if [[ ${{ matrix.platform }} =~ aros-x86_64|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ os3|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ os4|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ mos|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-ppc|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-i386|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-x86_64|release|nightly ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
 
     #- name: cleanup old action artifacts
     #  run: .github/workflows/purge_artifacts.sh ${{ secrets.REPO_ACCESS_TOKEN }}
