@@ -1,10 +1,10 @@
 NAME: BetterString.mcc
-VERSION: 11.33
-BUILDDATE: 29.10.2018
-URL: * https://github.com/amiga-mui/betterstring/releases/download/11.33/MCC_BetterString-11.33.lha
+VERSION: 11.35
+BUILDDATE: 18.12.2020
+URL: * https://github.com/amiga-mui/betterstring/releases/download/11.35/MCC_BetterString-11.35.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                       BetterString.mcc - 11.32
+                       BetterString.mcc - 11.35
 ---------------------------------------------------------------------------
 
 BetterString.mcc is the MUI custom class used for managing the string

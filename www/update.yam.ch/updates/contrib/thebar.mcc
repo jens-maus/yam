@@ -1,10 +1,10 @@
 NAME: TheBar.mcc
-VERSION: 26.19
-BUILDDATE: 15.01.2018
-URL: * https://github.com/amiga-mui/thebar/releases/download/26.19/MCC_TheBar-26.19.lha
+VERSION: 26.21
+BUILDDATE: 18.12.2020
+URL: * https://github.com/amiga-mui/thebar/releases/download/26.21/MCC_TheBar-26.21.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                          TheBar.mcc - 26.19
+                          TheBar.mcc - 26.21
 ---------------------------------------------------------------------------
 
 TheBar.mcc is the MUI custom class used for managing the toolbars in YAM.
