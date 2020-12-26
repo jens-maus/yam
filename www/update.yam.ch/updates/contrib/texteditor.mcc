@@ -1,10 +1,10 @@
 NAME: TextEditor.mcc
-VERSION: 15.51
-BUILDDATE: 29.10.2018
-URL: * https://github.com/amiga-mui/texteditor/releases/download/15.51/MCC_TextEditor-15.51.lha
+VERSION: 15.55
+BUILDDATE: 18.12.2020
+URL: * https://github.com/amiga-mui/texteditor/releases/download/15.55/MCC_TextEditor-15.55.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                        TextEditor.mcc - 15.50
+                        TextEditor.mcc - 15.55
 ---------------------------------------------------------------------------
 
 TextEditor.mcc is the MUI custom class used for creating/editing and

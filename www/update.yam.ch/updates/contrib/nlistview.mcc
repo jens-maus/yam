@@ -1,10 +1,10 @@
 NAME: NListview.mcc
-VERSION: 19.98
-BUILDDATE: 15.01.2018
-URL: * https://github.com/amiga-mui/nlist/releases/download/0.124/MCC_NList-0.124.lha
+VERSION: 19.101
+BUILDDATE: 18.12.2020
+URL: * https://github.com/amiga-mui/nlist/releases/download/0.127/MCC_NList-0.127.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                         NListview.mcc - 19.98
+                         NListview.mcc - 19.101
 ---------------------------------------------------------------------------
 
 NListview.mcc is a MUI custom class used for managing large amount of data in
