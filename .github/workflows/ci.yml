@@ -63,7 +63,7 @@ jobs:
     #  if: matrix.platform == 'os4'
 
     - name: build ${{ matrix.platform }}-${{ matrix.build }}
-      if: matrix.platform != 'release' && matrix.platform != 'debug'
+      if: matrix.platform != 'release' && matrix.platform != 'nightly'
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
