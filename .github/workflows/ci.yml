@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64, release]
+        platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64]
 
     steps:
     - uses: actions/checkout@v2
