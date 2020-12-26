@@ -900,9 +900,9 @@ release: distclean
 	@cd ..; scripts/mkdist.sh release os3
 	@cd ..; scripts/mkdist.sh release os4
 	@cd ..; scripts/mkdist.sh release mos
-	@cd ..; scripts/mkdist.sh release aros-i386
-	@cd ..; scripts/mkdist.sh release aros-ppc
-	@cd ..; scripts/mkdist.sh release aros-x86_64
+	#@cd ..; scripts/mkdist.sh release aros-i386
+	#@cd ..; scripts/mkdist.sh release aros-ppc
+	#@cd ..; scripts/mkdist.sh release aros-x86_64
 	#@cd ..; scripts/mkdist.sh release aros-arm
 
 ## TO CREATE A NIGHTLY-BUILD ARCHIVE #######
@@ -912,9 +912,9 @@ nightly: distclean
 	@cd ..; scripts/mkdist.sh nightly os3
 	@cd ..; scripts/mkdist.sh nightly os4
 	@cd ..; scripts/mkdist.sh nightly mos
-	@cd ..; scripts/mkdist.sh nightly aros-i386
-	@cd ..; scripts/mkdist.sh nightly aros-ppc
-	@cd ..; scripts/mkdist.sh nightly aros-x86_64
+	#@cd ..; scripts/mkdist.sh nightly aros-i386
+	#@cd ..; scripts/mkdist.sh nightly aros-ppc
+	#@cd ..; scripts/mkdist.sh nightly aros-x86_64
 	#@cd ..; scripts/mkdist.sh nightly aros-arm
 
 ## TO CREATE A SNAPSHOT ARCHIVE #######

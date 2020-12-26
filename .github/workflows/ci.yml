@@ -26,11 +26,13 @@ jobs:
       fail-fast: false
       matrix:
         #platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64]
-        platform: [os4, os3, mos, release]
+        platform: [os4, os3, mos, release, nightly]
         build: [release, debug]
 
         exclude:
           - platform: release
+            build: debug
+          - platform: nightly
             build: debug
 
     steps:
@@ -61,7 +63,7 @@ jobs:
     #  if: matrix.platform == 'os4'
 
     - name: build ${{ matrix.platform }}-${{ matrix.build }}
-      if: matrix.platform != 'release'
+      if: matrix.platform != 'release' && matrix.platform != 'debug'
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
@@ -74,3 +76,10 @@ jobs:
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
         make -j1 release
+
+    - name: build nightly
+      if: matrix.platform == 'nightly'
+      timeout-minutes: 480
+      run: |
+        export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
+        make -j1 nightly
