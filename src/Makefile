@@ -128,7 +128,7 @@ CDTHIS=
 
 # Special macros for version ID and developer builds via Arexx
 # and C:Date calls
-DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+35"`
+DEVFLAGS = -DDEVWARNING #`rx "say '-DEXPDATE=' || date(I)+35"`
 YAMVERID = -D__YAM_BUILDID=$(BUILDID) \
            `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x"` \
            `rx "say '-D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
@@ -140,7 +140,7 @@ ifneq ($(HOST), AmigaOS4)
 
   # this is either a cross-compiler build on a UNIX-like system or
   # on MorphOS, so lets use expr/gdate instead of the above ARexx stuff
-  DEVFLAGS = -DDEVWARNING -DEXPDATE="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922 + 35)"
+  DEVFLAGS = -DDEVWARNING #-DEXPDATE="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922 + 35)"
   YAMVERID = -D__YAM_VERDATE=\"$(shell $(DATE) +%d.%m.%Y)\" \
              -D__YAM_VERDAYS="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922)" \
              -D__YAM_BUILDDATE=\"$(shell $(DATE) +%Y%m%d)\" \
