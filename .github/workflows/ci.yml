@@ -35,6 +35,7 @@ jobs:
         sudo dpkg --add-architecture i386
         sudo apt-get update -y -qq || true
         sudo apt-get -qq install libc6:i386
+        sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
 
     - name: install adtools build env
       run: |
@@ -49,9 +50,9 @@ jobs:
     #- name: cleanup old action artifacts
     #  run: .github/workflows/purge_artifacts.sh ${{ secrets.REPO_ACCESS_TOKEN }}
 
-    #- name: remote debug tmate session
-    #  uses: mxschmitt/action-tmate@v1
-    #  if: matrix.platform == 'ova'
+    - name: remote debug tmate session
+      uses: mxschmitt/action-tmate@v1
+      if: matrix.platform == 'os4'
 
     - name: build ${{ matrix.platform }}
       timeout-minutes: 480
