@@ -30,12 +30,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: rename worker directory
-      working-directory: ../
-      run: |
-        mv RaspberryMatic b
-        ln -s b RaspberryMatic
-
     - name: setup dependencies
       run: |
         sudo dpkg --add-architecture i386
