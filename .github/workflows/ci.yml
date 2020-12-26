@@ -1,0 +1,66 @@
+name: CI
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *' # run at 0 AM UTC
+
+jobs:
+  repo-check:
+    name: repository commit check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - id: commit-check
+        run: 'echo ::set-output name=has-commits::$(git --no-pager log --pretty=oneline --since="24 hours ago" | wc -l)'
+    outputs:
+      has-commits: ${{ steps.commit-check.outputs.has-commits }}
+
+  build:
+    runs-on: ubuntu-20.04
+    needs: repo-check
+    timeout-minutes: 480
+    if: always() && github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [os4, os3, mos, aros-ppc, aros-i386, aros-x86_64, release]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: rename worker directory
+      working-directory: ../
+      run: |
+        mv RaspberryMatic b
+        ln -s b RaspberryMatic
+
+    - name: setup dependencies
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update -y -qq || true
+        sudo apt-get -qq install libc6:i386
+
+    - name: install adtools build env
+      run: |
+        curl -L https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 | sudo tar xj -C /
+        if [[ ${{ matrix.platform }} =~ os3|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ os4|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ mos|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-ppc|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-i386|release ]]; then then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
+        if [[ ${{ matrix.platform }} =~ aros-x86_64|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
+
+    #- name: cleanup old action artifacts
+    #  run: .github/workflows/purge_artifacts.sh ${{ secrets.REPO_ACCESS_TOKEN }}
+
+    #- name: remote debug tmate session
+    #  uses: mxschmitt/action-tmate@v1
+    #  if: matrix.platform == 'ova'
+
+    - name: build ${{ matrix.platform }}
+      timeout-minutes: 480
+      run: |
+        export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
+        make -j1 OS=${{ matrix.platform }}
