@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    needs: repo-check
     timeout-minutes: 480
 
     strategy:
