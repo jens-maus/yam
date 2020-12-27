@@ -1,7 +1,7 @@
 name: nightly
 on:
   schedule:
-    - cron: '30 15 * * *' # run at 1 AM UTC
+    - cron: '0 16 * * *' # run at 1 AM UTC
 
 jobs:
   repo-change-check:
