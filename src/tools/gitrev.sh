@@ -13,7 +13,7 @@ function echo_git_info {
       return
     fi
     BRANCH=$(git symbolic-ref HEAD 2>/dev/null | cut -b 12-)
-    COMMIT=$(git log --pretty=format:%h -1)
+    COMMIT=$(git log --pretty=format:%h -1 | head -c7)
     if [[ ${BRANCH} == "master" ]]; then
       echo "${COMMIT}"
     else
