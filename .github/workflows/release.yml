@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-20.04
     timeout-minutes: 480
 
@@ -24,7 +24,7 @@ jobs:
     - name: setup env
       run : |
         echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >>$GITHUB_ENV
-        echo "YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '\"' -f2)" >>$GITHUB_ENV
+        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2) >>$GITHUB_ENV
 
     - name: install adtools build env
       run: |
