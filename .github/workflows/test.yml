@@ -1,0 +1,19 @@
+name: test
+on:
+  schedule:
+    - cron: '*/15 * * * *' # run at 1 AM UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 480
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: test run
+      run: |
+        echo WORKS
