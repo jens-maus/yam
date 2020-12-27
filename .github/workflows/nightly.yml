@@ -1,7 +1,7 @@
 name: nightly
 on:
   schedule:
-    - cron: '0 1 * * *' # run at 1 AM UTC
+    - cron: '30 15 * * *' # run at 1 AM UTC
 
 jobs:
   repo-change-check:
@@ -36,7 +36,7 @@ jobs:
       run : |
         echo "DATE=$(date +%Y%m%d)" >>$GITHUB_ENV
         echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >>$GITHUB_ENV
-        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2) >>$GITHUB_ENV
+        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2 | tr -d ".") >>$GITHUB_ENV
 
     - name: install adtools build env
       run: |
@@ -60,6 +60,78 @@ jobs:
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
         make -j1 nightly
+
+    - name: upload AmigaOS4 nightly build archive
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS4.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: upload AmigaOS4 nightly build archive [debug]
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4-debug.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS4-debug.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: upload AmigaOS3 nightly build archive
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS3.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: upload AmigaOS3 nightly build archive [debug]
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3-debug.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS3-debug.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: upload MorphOS nightly build archive
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-MorphOS.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: upload MorphOS nightly build archive [debug]
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/3108434/assets{?name,label}
+        release_id: 3108434
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS-debug.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-MorphOS-debug.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
 
     - name: upload AmigaOS4 files as workflow artifact [release]
       uses: actions/upload-artifact@v2
