@@ -1,7 +1,7 @@
 name: nightly
 on:
   schedule:
-    - cron: '0 16 * * *' # run at 1 AM UTC
+    - cron: '*/15 * * * *' # run at 1 AM UTC
 
 jobs:
   repo-change-check:
@@ -16,7 +16,7 @@ jobs:
 
   build:
     runs-on: ubuntu-20.04
-    needs: repo-check
+    needs: repo-change-check
     timeout-minutes: 480
 
     strategy:
