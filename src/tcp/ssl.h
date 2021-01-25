@@ -34,12 +34,12 @@
 // forward declarations
 struct Connection;
 
-// make sure to open at least 4.3 of amisslmaster.library
+// make sure to open at least 4.4 of amisslmaster.library
 #define AMISSLMASTER_VERSION  4
-#define AMISSLMASTER_REVISION 3
+#define AMISSLMASTER_REVISION 4
 
 // AmiSSL/OpenSSL minimum version to use
-#define AMISSL_VERSION AMISSL_V111a
+#define AMISSL_VERSION AMISSL_V11x
 
 // SSL certificate verification failures
 #define SSL_CERT_ERR_NONE         (0<<0) // no error
