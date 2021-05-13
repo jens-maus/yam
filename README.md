@@ -1,11 +1,10 @@
-# &nbsp;![YAM](https://yam.ch/chrome/site/yam.gif)
-<img src="https://yam.ch/chrome/site/mainabout.png" width=300 align="right" />
+# &nbsp;![YAM](www/yam.gif)
+<img src="www/mainabout.png" width=300 align="right" />
 
 [![Release](https://img.shields.io/github/release/jens-maus/yam.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/jens-maus/yam/latest/total.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Issues](https://img.shields.io/github/issues/jens-maus/yam.svg)](https://github.com/jens-maus/yam/issues)
 [![Build](https://github.com/jens-maus/yam/workflows/CI/badge.svg)](https://github.com/jens-maus/yam/actions)
-[![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam)
 [![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
 
