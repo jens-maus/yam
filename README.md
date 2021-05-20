@@ -4,9 +4,9 @@
 [![Release](https://img.shields.io/github/release/jens-maus/yam.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/jens-maus/yam/latest/total.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Issues](https://img.shields.io/github/issues/jens-maus/yam.svg)](https://github.com/jens-maus/yam/issues)
+[![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Build](https://github.com/jens-maus/yam/workflows/CI/badge.svg)](https://github.com/jens-maus/yam/actions)
 [![Nightly Build](https://github.com/jens-maus/yam/workflows/nightly/badge.svg)](https://github.com/jens-maus/yam/releases/nightly-builds)
-[![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
 
 YAM (short for **Y**et **A**nother **M**ailer) is a MIME-compliant open-source mail user agent (MUA) written for Amiga-based computer
