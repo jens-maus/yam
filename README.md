@@ -3,6 +3,7 @@
 
 [![Release](https://img.shields.io/github/release/jens-maus/yam.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/jens-maus/yam/latest/total.svg)](https://github.com/jens-maus/yam/releases/latest)
+[![Commits since last release](https://img.shields.io/github/commits-since/jens-maus/yam/latest.svg)](https://github.com/jens-maus/yam/releases/latest)
 [![Issues](https://img.shields.io/github/issues/jens-maus/yam.svg)](https://github.com/jens-maus/yam/issues)
 [![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Build](https://github.com/jens-maus/yam/workflows/CI/badge.svg)](https://github.com/jens-maus/yam/actions)
