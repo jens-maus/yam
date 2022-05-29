@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2019 YAM Open Source Team
+ Copyright (C) 2000-2022 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -167,6 +167,9 @@ struct Library* xadMasterBase     = NULL;
 struct Library* XpkBase           = NULL;
 struct Library* AmiSSLMasterBase  = NULL;
 struct Library* AmiSSLBase        = NULL;
+#if !defined(__amigaos4__)
+struct Library* AmiSSLExtBase     = NULL;
+#endif
 struct Device*  TimerBase         = NULL;
 struct Library* GfxBase           = NULL;
 struct Library* LayersBase        = NULL;
@@ -207,9 +210,6 @@ struct GraphicsIFace*     IGraphics     = NULL;
 struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
-#if !defined(__amigaos4__)
-struct CyberGfxIFace*     ICyberGfx     = NULL;
-#endif
 struct ExpatIFace*        IExpat        = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 struct TimezoneIFace*     ITimezone     = NULL;

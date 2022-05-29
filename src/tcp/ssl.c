@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2019 YAM Open Source Team
+ Copyright (C) 2000-2022 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -352,7 +352,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         // DNS:
         case GEN_DNS:
         {
-          char *name = (char *)ASN1_STRING_data(nm->d.ia5);
+          char *name = (char *)ASN1_STRING_get0_data(nm->d.ia5);
           D(DBF_NET, "GEN_DNS: '%s'", name);
 
           if(identity != NULL && found == 0)
@@ -437,7 +437,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     }
 
     // extract the string from the entry
-    cname = strdup((char *)ASN1_STRING_data(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, lastidx))));
+    cname = strdup((char *)ASN1_STRING_get0_data(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, lastidx))));
     if(identity != NULL)
       *identity = strdup(cname);
 
@@ -519,7 +519,7 @@ static char *ExtractReadableDN(const X509_NAME *dname)
       if(flag++)
         dstrcat(&result, ", ");
 
-      dstrcat(&result, (char *)ASN1_STRING_data(X509_NAME_ENTRY_get_data(ent)));
+      dstrcat(&result, (char *)ASN1_STRING_get0_data(X509_NAME_ENTRY_get_data(ent)));
     }
   }
 
@@ -1033,104 +1033,96 @@ BOOL InitSSLConnections(void)
 
   // try to open amisslmaster.library first
   if((AmiSSLMasterBase = OpenLibrary("amisslmaster.library", AMISSLMASTER_VERSION)) != NULL &&
-     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) &&
+     /* LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) && */
      GETINTERFACE("main", 1, IAmiSSLMaster, AmiSSLMasterBase))
   {
-    if(InitAmiSSLMaster(AMISSL_VERSION, TRUE))
+    if(OpenAmiSSLTags(AMISSL_VERSION,
+                      AmiSSL_UsesOpenSSLStructs, TRUE,
+                      AmiSSL_GetAmiSSLBase, &AmiSSLBase,
+                      #if !defined(__amigaos4__)
+                      AmiSSL_GetAmiSSLExtBase, &AmiSSLExtBase,
+                      #else
+                      AmiSSL_GetIAmiSSL, &IAmiSSL,
+                      #endif
+                      TAG_DONE) == 0) // 0 signals NO error
     {
-      if((AmiSSLBase = OpenAmiSSL()) != NULL &&
-         GETINTERFACE("main", 1, IAmiSSL, AmiSSLBase))
+      char tmp[24+1];
+
+      D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
+
+      // initialize AmiSSL/OpenSSL related stuff that
+      // needs to be initialized before each threads spans
+      // own initializations
+      OPENSSL_init_ssl(OPENSSL_INIT_SSL_DEFAULT, NULL); // Initialize OpenSSL's SSL libraries
+
+      // seed the random number generator with some valuable entropy
+      D(DBF_NET, "AmiSSL: seeding random number generator");
+      snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
+      RAND_seed(tmp, strlen(tmp));
+
+      // 1) now we create a common SSL_CTX object which all our SSL connections will share
+      if((G->sslCtx = SSL_CTX_new(TLS_client_method())) == NULL)
+        E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
+      // 2) set minimum allowed protocol version to SSL3 (SSLv2 is deprecated/insecure)
+      else if(SSL_CTX_set_min_proto_version(G->sslCtx, SSL3_VERSION) == 0)
+        E(DBF_NET, "AmiSSL: couldn't set minimum protocol version to SSL3. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+      else
       {
-        // we have to call InitAmiSSLA() also from the main initializing
-        // thread so that AmiSSL is prepared correctly.
-        if(InitAmiSSLA(NULL) == 0) // 0 signals NO error
+        int rc = 0; // make sure set_default_verify_paths() is called
+
+        D(DBF_NET, "AmiSSL: SSL ctx timeout: %ld s", SSL_CTX_get_timeout(G->sslCtx));
+
+        if(FileExists(DEFAULT_CAPATH) == TRUE)
         {
-          char tmp[24+1];
+          D(DBF_NET, "AmiSSL: CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
 
-          D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
+          if(FileExists(DEFAULT_CAFILE) == FALSE)
+            ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
 
-          // initialize AmiSSL/OpenSSL related stuff that
-          // needs to be initialized before each threads spans
-          // own initializations
-          ERR_load_BIO_strings(); // Load BIO error strings
-          SSL_load_error_strings(); // Load SSL error strings
-          OpenSSL_add_all_algorithms(); // Load all available encryption algorithms
-          SSL_library_init(); // Initialize OpenSSL's SSL libraries
-
-          // seed the random number generator with some valuable entropy
-          D(DBF_NET, "AmiSSL: seeding random number generator");
-          snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
-          RAND_seed(tmp, strlen(tmp));
-
-          // 1) now we create a common SSL_CTX object which all our SSL connections will share
-          if((G->sslCtx = SSL_CTX_new(TLS_client_method())) == NULL)
-            E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
-          // 2) set minimum allowed protocol version to SSL3 (SSLv2 is deprecated/insecure)
-          else if(SSL_CTX_set_min_proto_version(G->sslCtx, SSL3_VERSION) == 0)
-            E(DBF_NET, "AmiSSL: couldn't set minimum protocol version to SSL3. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+          // 3) load the certificates (e.g. CA) from either a file or a directory path
+          if(FileExists(DEFAULT_CAFILE) == TRUE)
+            rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
           else
+            rc = SSL_CTX_load_verify_locations(G->sslCtx, NULL, DEFAULT_CAPATH);
+
+          if(rc == 0)
           {
-            int rc = 0; // make sure set_default_verify_paths() is called
+            W(DBF_NET, "AmiSSL: setting default verify locations failed!");
 
-            D(DBF_NET, "AmiSSL: SSL ctx timeout: %ld s", SSL_CTX_get_timeout(G->sslCtx));
-
-            if(FileExists(DEFAULT_CAPATH) == TRUE)
-            {
-              D(DBF_NET, "AmiSSL: CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
-
-              if(FileExists(DEFAULT_CAFILE) == FALSE)
-                ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
-
-              // 3) load the certificates (e.g. CA) from either a file or a directory path
-              if(FileExists(DEFAULT_CAFILE) == TRUE)
-                rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
-              else
-                rc = SSL_CTX_load_verify_locations(G->sslCtx, NULL, DEFAULT_CAPATH);
-
-              if(rc == 0)
-              {
-                W(DBF_NET, "AmiSSL: setting default verify locations failed!");
-
-                ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
-              }
-            }
-            else
-              ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
-
-            // 4) if no CA file or path is given we set the default pathes
-            if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(G->sslCtx)) == 0)
-              E(DBF_NET, "AmiSSL: setting default verify locations failed");
-
-            // 5) get a new ssl Data Index for storing application specific data
-            if(rc != 0 && (G->sslDataIndex = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL)) < 0)
-            {
-              E(DBF_NET, "AmiSSL: SSL_get_ex_new_index() failed");
-              rc = 0; // error
-            }
-
-            // 6) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
-            //    function wheter the connection should continue or if it should be terminated right away.
-            SSL_CTX_set_verify(G->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
-
-            // 7) set the ciphers we want to use and exclude unwanted ones
-            if(rc != 0 && (rc = SSL_CTX_set_cipher_list(G->sslCtx, C->DefaultSSLCiphers)) == 0)
-               E(DBF_NET, "AmiSSL: SSL_CTX_set_cipher_list() error!");
-            else
-            {
-              D(DBF_STARTUP, "AmiSSL: successfully initialized");
-
-              result = TRUE;
-            }
+            ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
           }
         }
         else
-          E(DBF_NET, "AmiSSL: InitAmiSSLA(NULL) returned an error");
+          ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
+
+        // 4) if no CA file or path is given we set the default pathes
+        if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(G->sslCtx)) == 0)
+          E(DBF_NET, "AmiSSL: setting default verify locations failed");
+
+        // 5) get a new ssl Data Index for storing application specific data
+        if(rc != 0 && (G->sslDataIndex = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL)) < 0)
+        {
+          E(DBF_NET, "AmiSSL: SSL_get_ex_new_index() failed");
+          rc = 0; // error
+        }
+
+        // 6) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
+        //    function wheter the connection should continue or if it should be terminated right away.
+        SSL_CTX_set_verify(G->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
+
+        // 7) set the ciphers we want to use and exclude unwanted ones
+        if(rc != 0 && (rc = SSL_CTX_set_cipher_list(G->sslCtx, C->DefaultSSLCiphers)) == 0)
+           E(DBF_NET, "AmiSSL: SSL_CTX_set_cipher_list() error!");
+        else
+        {
+          D(DBF_STARTUP, "AmiSSL: successfully initialized");
+
+          result = TRUE;
+        }
       }
-      else
-        E(DBF_NET, "AmiSSL: OpenAmiSSL() returned an error");
     }
     else
-      E(DBF_NET, "AmiSSL: InitAmiSSLMaster() returned an error");
+      E(DBF_NET, "AmiSSL: OpenAmiSSLTags() returned an error");
   }
   else
     W(DBF_NET, "AmiSSL: Couldn't open required amisslmaster lib version %d.%d", AMISSLMASTER_VERSION, AMISSLMASTER_REVISION);
@@ -1138,8 +1130,6 @@ BOOL InitSSLConnections(void)
   // if an error occurred make sure to have everything cleaned up correctly.
   if(result == FALSE)
     CleanupSSLConnections();
-  else
-    CleanupAmiSSLA(NULL); // sub threads will call InitAmiSSL() themselves.
 
   RETURN(result);
   return result;
@@ -1161,8 +1151,6 @@ void CleanupSSLConnections(void)
   // close amissl
   if(AmiSSLBase != NULL)
   {
-    CleanupAmiSSLA(NULL);
-    DROPINTERFACE(IAmiSSL);
     CloseAmiSSL();
     AmiSSLBase = NULL;
   }
