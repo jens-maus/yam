@@ -4,20 +4,24 @@
 /***************************************************************************
 
  AmiSSL - OpenSSL wrapper for AmigaOS-based systems
- Copyright (C) 1999-2006 Andrija Antonijevic, Stefan Burstroem
- Copyright (C) 2006-2017 AmiSSL Open Source Team
+ Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
+ Copyright (c) 2006-2022 AmiSSL Open Source Team.
+ All Rights Reserved.
 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 3 of the License, or (at your option) any later version.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License in the file LICENSE in the
+ source distribution or at
 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
+     http://www.apache.org/licenses/LICENSE-2.0
 
- AmiSSL Official Support Site:  https://github.com/jens-maus/amissl
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ AmiSSL Official Support Site: https://github.com/jens-maus/amissl
 
 ***************************************************************************/
 
@@ -34,7 +38,7 @@
 /****************************************************************************/
 
 #ifndef __NOLIBBASE__
- extern struct Library * AmiSSLBase;
+extern struct Library * AmiSSLBase, *AmiSSLExtBase;
 #endif /* __NOLIBBASE__ */
 
 /****************************************************************************/
@@ -57,19 +61,24 @@
  #if defined(__GNUC__)
   #ifdef __AROS__
    #include <defines/amissl.h>
+   #include <defines/amisslext.h>
   #else
    #ifndef __PPC__
     #include <inline/amissl.h>
+    #include <inline/amisslext.h>
    #else /* __PPC__ */
     #include <ppcinline/amissl.h>
+    #include <ppcinline/amisslext.h>
    #endif /* __PPC__ */
   #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/amissl_protos.h>
+   #include <inline/amisslext_protos.h>
   #endif /* __PPC__ */
  #else /* __GNUC__ */
   #include <pragmas/amissl_pragmas.h>
+  #include <pragmas/amisslext_pragmas.h>
  #endif /* __GNUC__ */
 #endif /* __amigaos4__ */
 

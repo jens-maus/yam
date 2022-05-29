@@ -1,19 +1,35 @@
-#if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
-#include <proto/amissl.h>
-#endif
 /*
+ * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
+ * Copyright (c) 2014-2022 AmiSSL Open Source Team.
+ * All Rights Reserved.
+ *
+ * This file has been modified for use with AmiSSL for AmigaOS-based systems.
+ *
  * Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved.
  *
- * Licensed under the OpenSSL license (the "License").  You may not use
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
  * in the file LICENSE in the source distribution or at
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef HEADER_MODES_H
-# define HEADER_MODES_H
+#if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
+# include <proto/amissl.h>
+#endif
+
+#ifndef OPENSSL_MODES_H
+# define OPENSSL_MODES_H
+# if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3))
+#  pragma once
+# endif
+
+# include <openssl/macros.h>
+# ifndef OPENSSL_NO_DEPRECATED_3_0
+#  define HEADER_MODES_H
+# endif
 
 # include <stddef.h>
+# include <openssl/types.h>
 
 # ifdef  __cplusplus
 extern "C" {
@@ -24,6 +40,10 @@ typedef void (*block128_f) (const unsigned char in[16],
 typedef void (*cbc128_f) (const unsigned char *in, unsigned char *out,
                           size_t len, const void *key,
                           unsigned char ivec[16], int enc);
+
+typedef void (*ecb128_f) (const unsigned char *in, unsigned char *out,
+                          size_t len, const void *key,
+                          int enc);
 
 typedef void (*ctr128_f) (const unsigned char *in, unsigned char *out,
                           size_t blocks, const void *key,
