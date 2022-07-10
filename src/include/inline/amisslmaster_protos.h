@@ -1,4 +1,4 @@
-/* Automatically generated header (sfdc 1.11)! Do not edit! */
+/* Automatically generated header (sfdc 1.12)! Do not edit! */
 
 #ifndef _INLINE_AMISSLMASTER_H
 #define _INLINE_AMISSLMASTER_H
@@ -26,5 +26,13 @@ struct Library * __OpenAmiSSLCipher(__reg("a6") struct Library * , __reg("d0") L
 
 void __CloseAmiSSLCipher(__reg("a6") struct Library * , __reg("a0") struct Library * CipherBase ) = "\tjsr\t-54(a6)";
 #define CloseAmiSSLCipher(CipherBase) __CloseAmiSSLCipher(AmiSSLMasterBase, (CipherBase))
+
+LONG __OpenAmiSSLTagList(__reg("a6") struct Library * , __reg("d0") LONG APIVersion , __reg("a0") struct TagItem * tagList ) = "\tjsr\t-60(a6)";
+#define OpenAmiSSLTagList(APIVersion, tagList) __OpenAmiSSLTagList(AmiSSLMasterBase, (APIVersion), (tagList))
+
+#if !defined(NO_INLINE_STDARG) && (__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L)
+LONG __OpenAmiSSLTags(__reg("a6") struct Library * , __reg("d0") LONG APIVersion , Tag tag , ... ) = "\tmove.l\ta0,-(a7)\n\tlea\t4(a7),a0\n\tjsr\t-60(a6)\n\tmovea.l\t(a7)+,a0";
+#define OpenAmiSSLTags(APIVersion, ...) __OpenAmiSSLTags(AmiSSLMasterBase, (APIVersion), __VA_ARGS__)
+#endif
 
 #endif /* !_INLINE_AMISSLMASTER_H */

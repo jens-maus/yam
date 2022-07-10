@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2019 YAM Open Source Team
+ Copyright (C) 2000-2022 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -34,12 +34,12 @@
 // forward declarations
 struct Connection;
 
-// make sure to open at least 4.4 of amisslmaster.library
-#define AMISSLMASTER_VERSION  4
-#define AMISSLMASTER_REVISION 4
+// make sure to open at least 5.1 of amisslmaster.library
+#define AMISSLMASTER_VERSION  5
+#define AMISSLMASTER_REVISION 1
 
 // AmiSSL/OpenSSL minimum version to use
-#define AMISSL_VERSION AMISSL_V11x
+#define AMISSL_VERSION AMISSL_CURRENT_VERSION
 
 // SSL certificate verification failures
 #define SSL_CERT_ERR_NONE         (0<<0) // no error

@@ -1,3 +1,27 @@
+/***************************************************************************
+
+ AmiSSL - OpenSSL wrapper for AmigaOS-based systems
+ Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
+ Copyright (c) 2006-2022 AmiSSL Open Source Team.
+ All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License in the file LICENSE in the
+ source distribution or at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ AmiSSL Official Support Site: https://github.com/jens-maus/amissl
+
+***************************************************************************/
+
 /* 
  * Make sure that this file is included from proto/amissl.h
  * so that the dependancies don't cause errors
@@ -8,10 +32,6 @@
 
 #ifndef AMISSL_AMISSL_H
 #define AMISSL_AMISSL_H
-
-#ifdef __SASC
-#define ssize_t int
-#endif
 
 #include <openssl/opensslconf.h>
 
@@ -33,14 +53,24 @@
 #ifndef OPENSSL_NO_CAST
 #include <openssl/cast.h>
 #endif
+#ifndef OPENSSL_NO_CMAC
 #include <openssl/cmac.h>
+#endif
+#ifndef OPENSSL_NO_CMP
+#include <openssl/cmp.h>
+#endif
 #include <openssl/comp.h>
 #include <openssl/conf.h>
 #include <openssl/conf_api.h>
+#include <openssl/core.h>
+#ifndef OPENSSL_NO_CRMF
+#include <openssl/crmf.h>
+#endif
 #include <openssl/crypto.h>
 #ifndef OPENSSL_NO_CT
 #include <openssl/ct.h>
 #endif
+#include <openssl/decoder.h>
 #ifndef OPENSSL_NO_DES
 #include <openssl/des.h>
 #endif
@@ -55,20 +85,17 @@
 #ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
 #endif
-#ifndef OPENSSL_NO_ECDH
-#include <openssl/ecdh.h>
-#endif
-#ifndef OPENSSL_NO_ECDSA
-#include <openssl/ecdsa.h>
-#endif
+#include <openssl/encoder.h>
 #ifndef OPENSSL_NO_ENGINE
 #include <openssl/engine.h>
 #endif
 #include <openssl/err.h>
+#include <openssl/ess.h>
 #include <openssl/evp.h>
 #ifndef OPENSSL_NO_HMAC
 #include <openssl/hmac.h>
 #endif
+#include <openssl/http.h>
 #ifndef OPENSSL_NO_IDEA
 #include <openssl/idea.h>
 #endif
@@ -91,13 +118,14 @@
 #include <openssl/objects.h>
 #include <openssl/ocsp.h>
 #include <openssl/opensslv.h>
-#include <openssl/ossl_typ.h>
 #include <openssl/pem.h>
 #include <openssl/pem2.h>
 #include <openssl/pkcs12.h>
 #include <openssl/pkcs7.h>
+#include <openssl/params.h>
+#include <openssl/param_build.h>
+#include <openssl/provider.h>
 #include <openssl/rand.h>
-#include <openssl/rand_drbg.h>
 #ifndef OPENSSL_NO_RC2
 #include <openssl/rc2.h>
 #endif
@@ -117,6 +145,7 @@
 #ifndef OPENSSL_NO_SEED
 #include <openssl/seed.h>
 #endif
+#include <openssl/self_test.h>
 #ifndef OPENSSL_NO_SHA
 #include <openssl/sha.h>
 #endif
@@ -131,8 +160,12 @@
 #include <openssl/store.h>
 #include <openssl/symhacks.h>
 #include <openssl/tls1.h>
+#include <openssl/trace.h>
+#ifndef OPENSSL_NO_TS
 #include <openssl/ts.h>
+#endif
 #include <openssl/txt_db.h>
+#include <openssl/types.h>
 #include <openssl/ui.h>
 #ifndef OPENSSL_NO_WHIRLPOOL
 #include <openssl/whrlpool.h>

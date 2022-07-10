@@ -1,4 +1,4 @@
-/* Automatically generated header (sfdc 1.11)! Do not edit! */
+/* Automatically generated header (sfdc 1.12)! Do not edit! */
 
 #ifndef _INLINE_AMISSLMASTER_H
 #define _INLINE_AMISSLMASTER_H
@@ -43,5 +43,16 @@ typedef ULONG _sfdc_vararg;
       AROS_LC1(void, CloseAmiSSLCipher, \
  AROS_LCA(struct Library *, (___CipherBase), A0), \
      struct Library *, AMISSLMASTER_BASE_NAME, 9, Amisslmaster)
+
+#define OpenAmiSSLTagList(___APIVersion, ___tagList) \
+      AROS_LC2(LONG, OpenAmiSSLTagList, \
+ AROS_LCA(LONG, (___APIVersion), D0), \
+ AROS_LCA(struct TagItem *, (___tagList), A0), \
+     struct Library *, AMISSLMASTER_BASE_NAME, 10, Amisslmaster)
+
+#ifndef NO_INLINE_STDARG
+#define OpenAmiSSLTags(___APIVersion, ___tag, ...) \
+    ({_sfdc_vararg _tags[] = { ___tag, __VA_ARGS__ }; OpenAmiSSLTagList((___APIVersion), (struct TagItem *) _tags); })
+#endif /* !NO_INLINE_STDARG */
 
 #endif /* !_INLINE_AMISSLMASTER_H */

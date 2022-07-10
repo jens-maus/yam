@@ -1,4 +1,4 @@
-/* Automatically generated header (sfdc 1.11)! Do not edit! */
+/* Automatically generated header (sfdc 1.12)! Do not edit! */
 
 #ifndef _INLINE_AMISSLMASTER_H
 #define _INLINE_AMISSLMASTER_H
@@ -39,5 +39,14 @@ typedef ULONG _sfdc_vararg;
 #define CloseAmiSSLCipher(___CipherBase) \
       LP1NR(0x36, CloseAmiSSLCipher , struct Library *, ___CipherBase, a0,\
       , AMISSLMASTER_BASE_NAME)
+
+#define OpenAmiSSLTagList(___APIVersion, ___tagList) \
+      LP2(0x3c, LONG, OpenAmiSSLTagList , LONG, ___APIVersion, d0, struct TagItem *, ___tagList, a0,\
+      , AMISSLMASTER_BASE_NAME)
+
+#ifndef NO_INLINE_STDARG
+#define OpenAmiSSLTags(___APIVersion, ___tag, ...) \
+    ({_sfdc_vararg _tags[] = { ___tag, __VA_ARGS__ }; OpenAmiSSLTagList((___APIVersion), (struct TagItem *) _tags); })
+#endif /* !NO_INLINE_STDARG */
 
 #endif /* !_INLINE_AMISSLMASTER_H */

@@ -1,4 +1,4 @@
-/* Automatically generated header (sfdc 1.11)! Do not edit! */
+/* Automatically generated header (sfdc 1.12)! Do not edit! */
 #ifndef PRAGMAS_AMISSLMASTER_PRAGMAS_H
 #define PRAGMAS_AMISSLMASTER_PRAGMAS_H
 
@@ -57,5 +57,19 @@
 #ifdef __CLIB_PRAGMA_AMICALL
  #pragma amicall(AmiSSLMasterBase, 0x36, CloseAmiSSLCipher(a0))
 #endif /* __CLIB_PRAGMA_AMICALL */
+#ifdef __CLIB_PRAGMA_LIBCALL
+ #pragma libcall AmiSSLMasterBase OpenAmiSSLTagList 3c 8002
+#endif /* __CLIB_PRAGMA_LIBCALL */
+#ifdef __CLIB_PRAGMA_AMICALL
+ #pragma amicall(AmiSSLMasterBase, 0x3c, OpenAmiSSLTagList(d0,a0))
+#endif /* __CLIB_PRAGMA_AMICALL */
+#ifdef __CLIB_PRAGMA_TAGCALL
+ #ifdef __CLIB_PRAGMA_LIBCALL
+  #pragma tagcall AmiSSLMasterBase OpenAmiSSLTags 3c 8002
+ #endif /* __CLIB_PRAGMA_LIBCALL */
+ #ifdef __CLIB_PRAGMA_AMICALL
+  #pragma tagcall(AmiSSLMasterBase, 0x3c, OpenAmiSSLTags(d0,a0))
+ #endif /* __CLIB_PRAGMA_AMICALL */
+#endif /* __CLIB_PRAGMA_TAGCALL */
 
 #endif /* PRAGMAS_AMISSLMASTER_PRAGMAS_H */

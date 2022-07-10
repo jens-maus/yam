@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2019 YAM Open Source Team
+ Copyright (C) 2000-2022 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -88,6 +88,10 @@ LONG XpkPackTags(Tag tag, ...)
 LONG XpkUnpackTags(Tag tag, ...)
 { return XpkUnpack((struct TagItem *)&tag); }
 
+#include <proto/amisslmaster.h>
+LONG (OpenAmiSSLTags)(LONG APIVersion, Tag tag1, ...)
+{ return OpenAmiSSLTagList(APIVersion, (struct TagItem *)&tag1); }
+
 #include <proto/amissl.h>
 LONG InitAmiSSL(Tag tag, ...)
 { return InitAmiSSLA((struct TagItem *)&tag); }
@@ -157,6 +161,14 @@ LONG XpkUnpackTags(Tag tag1, ...)
 {
   AROS_SLOWSTACKTAGS_PRE(tag1)
   retval = XpkUnpack((struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
+  AROS_SLOWSTACKTAGS_POST
+}
+
+#include <proto/amisslmaster.h>
+long OpenAmiSSLTags(LONG APIVersion, Tag tag1, ...)
+{
+  AROS_SLOWSTACKTAGS_PRE(tag1)
+  retval = (IPTR)OpenAmiSSLTagList(APIVersion, (struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
   AROS_SLOWSTACKTAGS_POST
 }
 
