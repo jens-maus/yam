@@ -2,8 +2,8 @@ Short:    Library handling codesets and character conversions
 Author:   codesets.library Open Source Team
 Uploader: Jens Maus <mail@jens-maus.de>
 Type:     util/libs
-Version:  6.19
-Replaces: util/libs/codesets-6.18.lha
+Version:  6.21
+Replaces: util/libs/codesets-6.20.lha
 Requires: AmigaOS 3.0+, MorphOS or AROS
 Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
@@ -69,10 +69,10 @@ The library is available for AmigaOS3 (m68k), AmigaOS4 (PPC), MorphOS (PPC)
 or for AROS.
 
 It is an open-source development effort of many people and is
-kindly hosted on SourceForge. The project name is "codesetslib" and the
+kindly hosted on Github. The project name is "libcodesets" and the
 project's page can be found at:
 
-http://sf.net/p/codesetslib/
+https://github.com/jens-maus/libcodesets
 
 Please use this address for further updates, bug reports and feature
 requests and try to avoid direct mail contact to single developers. We really

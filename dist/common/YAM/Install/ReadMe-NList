@@ -1,9 +1,9 @@
-Short:        NList custom classes for MUI, V0.120
+Short:        NList custom classes for MUI
 Author:       NList Open Source Team
 Uploader:     Jens Maus <mail@jens-maus.de>
 Type:         dev/mui
-Version:      0.120
-Replaces:     dev/mui/MCC_NList-0.119.lha
+Version:      0.128
+Replaces:     dev/mui/MCC_NList-0.127.lha
 Requires:     AmigaOS V37+, MorphOS or AROS, MUI 3.8+, HotkeyString.mcc
 Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
@@ -27,14 +27,14 @@ enabling copy to clipboard and key moving.
 
 This package includes:
 
-NList.mcc         20.139    21.03.2014
-NListview.mcc     19.94     21.03.2014
-NFloattext.mcc    19.75     21.03.2014
-NListviews.mcp    19.90     21.03.2014
-NListtree.mcc     18.46     21.03.2014
-NListtree.mcp     18.34     21.03.2014
-NBitmap.mcc       15.24     21.03.2014
-NBalance.mcc      15.20     21.03.2014
+NList.mcc         20.147    31.08.2021
+NListview.mcc     19.102    31.08.2021
+NFloattext.mcc    19.83     31.08.2021
+NListviews.mcp    19.98     31.08.2021
+NListtree.mcc     18.54     31.08.2021
+NListtree.mcp     18.42     31.08.2021
+NBitmap.mcc       15.32     31.08.2021
+NBalance.mcc      15.28     31.08.2021
 
 
 INSTALLATION
@@ -67,12 +67,12 @@ The NList/NListview/NFloattext classes were originally written in 1996
 and are Copyright (C) 1996-1997 by Gilles Masson, whereas the NListtree
 classes were originally written in 1999 and are Copyright (C) 1999-2001
 by Carsten Scholling. Since 2001, both class families are maintained and
-Copyright (C) 2001-2014 NList Open Source Team.
+Copyright (C) 2001-2021 NList Open Source Team.
 
 The complete NList package is distributed under the GNU Lesser General
-Public License (LGPL) and the development is hosted at SourceForge.net:
+Public License (LGPL) and the development is hosted at github.com:
 
-         http://sf.net/p/nlist-classes/
+         https://github.com/amiga-mui/nlist
 
 Please consult the included "COPYING" file for more detailed information
 about the licensing of the classes and their source code.

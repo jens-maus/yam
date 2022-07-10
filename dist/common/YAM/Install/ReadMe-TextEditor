@@ -1,9 +1,9 @@
-Short:        TextEditor custom class for MUI, V15.46
+Short:        TextEditor custom class for MUI
 Author:       TextEditor.mcc Open Source Team
 Uploader:     Jens Maus <mail@jens-maus.de>
 Type:         dev/mui
-Version:      15.46
-Replaces:     dev/mui/MCC_TextEditor-15.45.lha
+Version:      15.56
+Replaces:     dev/mui/MCC_TextEditor-15.55.lha
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
@@ -29,6 +29,8 @@ YAM or SimpleMail as the main text editing gadget. Its main features are:
 - Ability to have a bitmap as a background
 - Support for proportional fonts with floating word wrap, as well as
   antialiased fonts
+- Horizontal scrolling in no word wrap mode.
+- Support for very long lines (more than 50000 chars in a single line).
 - Pixel smooth scrolling
 - AREXX interface for scripted programming
 
@@ -59,12 +61,12 @@ LEGALESE
 
 TextEditor.mcc was originally written in 1997 and is Copyright (C) 1997-2000
 by Allan Odgaard. As of version 15.10, released in April 2005, the gadget is
-maintained and Copyright (C) 2005-2015 TextEditor.mcc Open Source Team.
+maintained and Copyright (C) 2005-2021 TextEditor.mcc Open Source Team.
 
 TextEditor.mcc is distributed under the GNU Lesser General Public License
-(LGPL) and the development is hosted at SourceForge.net:
+(LGPL) and the development is hosted at github.com:
 
-            http://sf.net/p/texteditor-mcc/
+  https://github.com/amiga-mui/texteditor
 
 Please consult the included "COPYING" file for more detailed information
 about the licensing of the gadget and its source code.
