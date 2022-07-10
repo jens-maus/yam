@@ -1,4 +1,4 @@
-# &nbsp;![YAM](www/yam.gif)
+# &nbsp;![YAM](www/yam.png)
 <img src="www/mainabout.png" width=300 align="right" />
 
 [![Release](https://img.shields.io/github/release/jens-maus/yam.svg)](https://github.com/jens-maus/yam/releases/latest)
@@ -66,20 +66,6 @@ Contributing your own code/modifications to YAM is quite straight forward since 
 
 YAM is distributed and license under the GNU General Public License Version 2. See [COPYING](COPYING) for more detailed information.
 
-## Authors
+## Authors / Contributors
 
-* Allan Odgaard
-* Andrew Bell
-* Christian Hattemer
-* Dirk Stöcker
-* Emmanuel Lesueur
-* Frank Weber
-* Gunther Nikl
-* Jacob Laursen
-* Jens Maus
-* Jörg Strohmayer
-* Marcel Beck
-* Matthias Bethke
-* Matthias Rustler
-* Nicholai Benalal
-* Thore Böckelmann
+See [contributors list](https://github.com/jens-maus/yam/graphs/contributors) for all contributions over all years.
