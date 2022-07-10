@@ -9,7 +9,7 @@ jobs:
     name: repository change check
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: commit-check
         run: 'echo ::set-output name=has-commits::$(git --no-pager log --pretty=oneline --since="24 hours ago" | wc -l)'
     outputs:
@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: setup dependencies
       run: |
