@@ -114,7 +114,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(SIZE_STACK) "\n";
 #ifndef __YAM_DEVEL
 #define __YAM_DEVEL     "-dev"
 #endif
-#define __YAM_COPYRIGHT     "Copyright (C) 2000-2019 YAM Open Source Team"
+#define __YAM_COPYRIGHT     "Copyright (C) 2000-2022 YAM Open Source Team"
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
 
 // find out something about the compiler used
