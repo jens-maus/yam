@@ -57,7 +57,7 @@ jobs:
         if [[ ${{ matrix.build }} =~ debug ]]; then make -j1 OS=${{ matrix.platform }} snapshot ; fi
 
     - name: upload build as workflow artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: src/YAM_${{ matrix.platform }}_*.lha
         name: YAM${{ env.YAMVER }}_${{ matrix.platform }}_${{ env.GITHUB_SHA7 }}-${{ matrix.build }}.lha
