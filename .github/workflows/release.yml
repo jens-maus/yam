@@ -50,21 +50,21 @@ jobs:
         make -j1 release
 
     - name: upload os4 release files as workflow artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: YAM*-AmigaOS4-*.lha*
         name: YAM${{ env.YAMVER }}-AmigaOS4-${{ env.GITHUB_SHA7 }}.lha
       continue-on-error: true
 
     - name: upload os3 release files as workflow artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: YAM*-AmigaOS3-*.lha*
         name: YAM${{ env.YAMVER }}-AmigaOS3-${{ env.GITHUB_SHA7 }}.lha
       continue-on-error: true
 
     - name: upload mos release files as workflow artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: YAM*-MorphOS-*.lha*
         name: YAM${{ env.YAMVER }}-MorphOS-${{ env.GITHUB_SHA7 }}.lha
