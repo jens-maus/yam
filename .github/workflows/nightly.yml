@@ -64,7 +64,7 @@ jobs:
         make -j1 nightly
 
     - name: upload AmigaOS4 nightly build archive
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -76,7 +76,7 @@ jobs:
         max_releases: 3
 
     - name: upload AmigaOS4 nightly build archive [debug]
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -88,7 +88,7 @@ jobs:
         max_releases: 3
 
     - name: upload AmigaOS3 nightly build archive
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -100,7 +100,7 @@ jobs:
         max_releases: 3
 
     - name: upload AmigaOS3 nightly build archive [debug]
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -112,7 +112,7 @@ jobs:
         max_releases: 3
 
     - name: upload MorphOS nightly build archive
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -124,7 +124,7 @@ jobs:
         max_releases: 3
 
     - name: upload MorphOS nightly build archive [debug]
-      uses: WebFreak001/deploy-nightly@v1.1.0
+      uses: WebFreak001/deploy-nightly@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
