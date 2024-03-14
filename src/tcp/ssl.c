@@ -794,6 +794,8 @@ BOOL MakeSecureConnection(struct Connection *conn)
             BOOL errorState = FALSE;
             int res;
 
+            SSL_set_tlsext_host_name(conn->ssl, conn->server->hostname);
+
             // 5) establish the ssl connection and take care of non-blocking IO
             D(DBF_NET, "connect SSL context %08lx", conn->ssl);
             STARTCLOCK(DBF_NET);
