@@ -7,7 +7,7 @@ on:
 jobs:
   repo-change-check:
     name: repository change check
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - id: commit-check
@@ -16,7 +16,7 @@ jobs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: repo-change-check
     timeout-minutes: 480
 
