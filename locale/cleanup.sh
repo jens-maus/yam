@@ -5,8 +5,6 @@
 # automatically removed from the .pot file and a cleaned up "YAM.pot" file will be
 # written back.
 #
-# $Id$
-#
 
 POTFILE="./YAM.pot"
 POFILE="./*.po"

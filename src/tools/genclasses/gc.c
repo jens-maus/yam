@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2000-2022 YAM Open Source Team
+ Copyright (C) 2000-2025 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
- $Id$
 
  TODO
     - Handle object creation order.
@@ -1017,7 +1015,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 Marcel Beck\n"
-  " Copyright (C) 2000-2022 YAM Open Source Team\n"
+  " Copyright (C) 2000-2025 YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"
@@ -1038,7 +1036,7 @@ void gen_gpl( FILE *fp )
   " Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
   "\n"
   " YAM Official Support Site :  http://www.yam.ch/\n"
-  " YAM OpenSource project    :  http://sourceforge.net/projects/yamos/\n"
+  " YAM OpenSource project    :  https://github.com/jens-maus/yam/\n"
   "\n"
   "***************************************************************************/\n");
 }
