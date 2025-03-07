@@ -74,7 +74,7 @@
 #endif
 
 /* Define true, false and bool if they don't work out of the box.  */
-#if PORT_TO_C89 && __STDC_VERSION__ < 199901
+#if PORT_TO_C89 || __STDC_VERSION__ < 199901
 # define true 1
 # define false 0
 # define bool int
@@ -610,7 +610,7 @@ typedef unsigned long uintmax_t;
 #endif
 
 #if (__STDC_VERSION__ < 199901 && !defined restrict \
-     && (PORT_TO_C89 || defined _MSC_VER))
+     && (PORT_TO_C89 || defined _MSC_VER || defined AMIGA))
 # define restrict /* empty */
 #endif
 
