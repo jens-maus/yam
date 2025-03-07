@@ -1,5 +1,1456 @@
 News for the tz database
 
+Release 2025a - 2025-01-15 10:47:24 -0800
+
+  Briefly:
+    Paraguay adopts permanent -03 starting spring 2024.
+    Improve pre-1991 data for the Philippines.
+    Etc/Unknown is now reserved.
+
+  Changes to future timestamps
+
+    Paraguay will stop changing its clocks after the spring-forward
+    transition on 2024-10-06, so it is now permanently at -03.
+    (Thanks to Heitor David Pinto and Even Scharning.)
+    This affects timestamps starting 2025-03-22, as well as the
+    obsolescent tm_isdst flags starting 2024-10-15.
+
+  Changes to past timestamps
+
+    Correct timestamps for the Philippines before 1900, and from 1937
+    through 1990.  (Thanks to P Chan for the heads-up and citations.)
+    This includes adjusting local mean time before 1899; fixing
+    transitions in September 1899, January 1937, and June 1954; adding
+    transitions in December 1941, November 1945, March and September
+    1977, and May and July 1990; and removing incorrect transitions in
+    March and September 1978.
+
+  Changes to data
+
+    Add zone1970.tab lines for the Concordia and Eyre Bird Observatory
+    research stations.  (Thanks to Derick Rethans and Jule Dabars.)
+
+  Changes to code
+
+    strftime %s now generates the correct numeric string even when the
+    represented number does not fit into time_t.  This is better than
+    generating the numeric equivalent of (time_t) -1, as strftime did
+    in TZDB releases 96a (when %s was introduced) through 2020a and in
+    releases 2022b through 2024b.  It is also better than failing and
+    returning 0, as strftime did in releases 2020b through 2022a.
+
+    strftime now outputs an invalid conversion specifier as-is,
+    instead of eliding the leading '%', which confused debugging.
+
+    An invalid TZ now generates the time zone abbreviation "-00", not
+    "UTC", to help the user see that an error has occurred.  (Thanks
+    to Arthur David Olson for suggesting a "wrong result".)
+
+    mktime and timeoff no longer incorrectly fail merely because a
+    struct tm component near INT_MIN or INT_MAX overflows when a
+    lower-order component carries into it.
+
+    TZNAME_MAXIMUM, the maximum number of bytes in a proleptic TZ
+    string's time zone abbreviation, now defaults to 254 not 255.
+    This helps reduce the size of internal state from 25480 to 21384
+    on common platforms.  This change should not be a problem, as
+    nobody uses such long "abbreviations" and the longstanding tzcode
+    maximum was 16 until release 2023a.  For those who prefer no
+    arbitrary limits, you can now specify TZNAME_MAXIMUM values up to
+    PTRDIFF_MAX, a limit forced by C anyway; formerly tzcode silently
+    misbehaved unless TZNAME_MAXIMUM was less than INT_MAX.
+
+    tzset and related functions no longer leak a file descriptor if
+    another thread forks or execs at about the same time and if the
+    platform has O_CLOFORK and O_CLOEXEC respectively.  Also, the
+    functions no longer let a TZif file become a controlling terminal.
+
+    'zdump -' now reads TZif data from /dev/stdin.
+    (From a question by Arthur David Olson.)
+
+  Changes to documentation
+
+    The name Etc/Unknown is now reserved: it will not be used by TZDB.
+    This is for compatibility with CLDR, which uses the string
+    "Etc/Unknown" for an unknown or invalid timezone.  (Thanks to
+    Justin Grant, Mark Davis, and Guy Harris.)
+
+    Cite Internet RFC 9636, which obsoletes RFC 8536 for TZif format.
+
+
+Release 2024b - 2024-09-04 12:27:47 -0700
+
+  Briefly:
+    Improve historical data for Mexico, Mongolia, and Portugal.
+    System V names are now obsolescent.
+    The main data form now uses %z.
+    The code now conforms to RFC 8536 for early timestamps.
+    Support POSIX.1-2024, which removes asctime_r and ctime_r.
+    Assume POSIX.2-1992 or later for shell scripts.
+    SUPPORT_C89 now defaults to 1.
+
+  Changes to past timestamps
+
+    Asia/Choibalsan is now an alias for Asia/Ulaanbaatar rather than
+    being a separate Zone with differing behavior before April 2008.
+    This seems better given our wildly conflicting information about
+    Mongolia's time zone history.  (Thanks to Heitor David Pinto.)
+
+    Historical transitions for Mexico have been updated based on
+    official Mexican decrees.  The affected timestamps occur during
+    the years 1921-1927, 1931, 1945, 1949-1970, and 1981-1997.
+    The affected zones are America/Bahia_Banderas, America/Cancun,
+    America/Chihuahua, America/Ciudad_Juarez, America/Hermosillo,
+    America/Mazatlan, America/Merida, America/Mexico_City,
+    America/Monterrey, America/Ojinaga, and America/Tijuana.
+    (Thanks to Heitor David Pinto.)
+
+    Historical transitions for Portugal, represented by Europe/Lisbon,
+    Atlantic/Azores, and Atlantic/Madeira, have been updated based on a
+    close reading of old Portuguese legislation, replacing previous data
+    mainly originating from Whitman and Shanks & Pottenger.  These
+    changes affect a few transitions in 1917-1921, 1924, and 1940
+    throughout these regions by a few hours or days, and various
+    timestamps between 1977 and 1993 depending on the region.  In
+    particular, the Azores and Madeira did not observe DST from 1977 to
+    1981.  Additionally, the adoption of standard zonal time in former
+    Portuguese colonies have been adjusted: Africa/Maputo in 1909, and
+    Asia/Dili by 22 minutes at the start of 1912.
+    (Thanks to Tim Parenti.)
+
+  Changes to past tm_isdst flags
+
+    The period from 1966-04-03 through 1966-10-02 in Portugal is now
+    modeled as DST, to more closely reflect how contemporaneous changes
+    in law entered into force.
+
+  Changes to data
+
+    Names present only for compatibility with UNIX System V
+    (last released in the 1990s) have been moved to 'backward'.
+    These names, which for post-1970 timestamps mostly just duplicate
+    data of geographical names, were confusing downstream uses.
+    Names moved to 'backward' are now links to geographical names.
+    This affects behavior for TZ='EET' for some pre-1981 timestamps,
+    for TZ='CET' for some pre-1947 timestamps, and for TZ='WET' for
+    some pre-1996 timestamps.  Also, TZ='MET' now behaves like
+    TZ='CET' and so uses the abbreviation "CET" rather than "MET".
+    Those needing the previous TZDB behavior, which does not match any
+    real-world clocks, can find the old entries in 'backzone'.
+    (Problem reported by Justin Grant.)
+
+    The main source files' time zone abbreviations now use %z,
+    supported by zic since release 2015f and used in vanguard form
+    since release 2022b.  For example, America/Sao_Paulo now contains
+    the zone continuation line "-3:00 Brazil %z", which is less error
+    prone than the old "-3:00 Brazil -03/-02".  This does not change
+    the represented data: the generated TZif files are unchanged.
+    Rearguard form still avoids %z, to support obsolescent parsers.
+
+    Asia/Almaty has been removed from zonenow.tab as it now agrees
+    with Asia/Tashkent for future timestamps, due to Kazakhstan's
+    2024-02-29 time zone change.  Similarly, America/Scoresbysund
+    has been removed, as it now agrees with America/Nuuk due to
+    its 2024-03-31 time zone change.
+
+  Changes to code
+
+    localtime.c now always uses a TZif file's time type 0 to handle
+    timestamps before the file's first transition.  Formerly,
+    localtime.c sometimes inferred a different time type, in order to
+    handle problematic data generated by zic 2018e or earlier.  As it
+    is now safe to assume more recent versions of zic, there is no
+    longer a pressing need to fail to conform RFC 8536 section 3.2,
+    which requires using time type 0 in this situation.  This change
+    does not affect behavior when reading TZif files generated by zic
+    2018f and later.
+
+    POSIX.1-2024 removes asctime_r and ctime_r and does not let
+    libraries define them, so remove them except when needed to
+    conform to earlier POSIX.  These functions are dangerous as they
+    can overrun user buffers.  If you still need them, add
+    -DSUPPORT_POSIX2008 to CFLAGS.
+
+    The SUPPORT_C89 option now defaults to 1 instead of 0, fixing a
+    POSIX-conformance bug introduced in 2023a.
+
+    tzselect now supports POSIX.1-2024 proleptic TZ strings.  Also, it
+    assumes POSIX.2-1992 or later, as practical porting targets now
+    all support that, and it uses some features from POSIX.1-2024 if
+    available.
+
+  Changes to build procedure
+
+    'make check' no longer requires curl and Internet access.
+
+    The build procedure now assumes POSIX.2-1992 or later, to simplify
+    maintenance.  To build on Solaris 10, the only extant system still
+    defaulting to pre-POSIX, prepend /usr/xpg4/bin to PATH.
+
+  Changes to documentation
+
+    The documentation now reflects POSIX.1-2024.
+
+  Changes to commentary
+
+    Commentary about historical transitions in Portugal and her former
+    colonies has been expanded with links to relevant legislation.
+    (Thanks to Tim Parenti.)
+
+
+Release 2024a - 2024-02-01 09:28:56 -0800
+
+  Briefly:
+    Kazakhstan unifies on UTC+5 beginning 2024-03-01.
+    Palestine springs forward a week later after Ramadan.
+    zic no longer pretends to support indefinite-past DST.
+    localtime no longer mishandles Ciudad Juárez in 2422.
+
+  Changes to future timestamps
+
+    Kazakhstan unifies on UTC+5.  This affects Asia/Almaty and
+    Asia/Qostanay which together represent the eastern portion of the
+    country that will transition from UTC+6 on 2024-03-01 at 00:00 to
+    join the western portion.  (Thanks to Zhanbolat Raimbekov.)
+
+    Palestine springs forward a week later than previously predicted
+    in 2024 and 2025.  (Thanks to Heba Hamad.)  Change spring-forward
+    predictions to the second Saturday after Ramadan, not the first;
+    this also affects other predictions starting in 2039.
+
+  Changes to past timestamps
+
+    Asia/Ho_Chi_Minh's 1955-07-01 transition occurred at 01:00
+    not 00:00.  (Thanks to Đoàn Trần Công Danh.)
+
+    From 1947 through 1949, Toronto's transitions occurred at 02:00
+    not 00:00.  (Thanks to Chris Walton.)
+
+    In 1911 Miquelon adopted standard time on June 15, not May 15.
+
+  Changes to code
+
+    The FROM and TO columns of Rule lines can no longer be "minimum"
+    or an abbreviation of "minimum", because TZif files do not support
+    DST rules that extend into the indefinite past - although these
+    rules were supported when TZif files had only 32-bit data, this
+    stopped working when 64-bit TZif files were introduced in 1995.
+    This should not be a problem for realistic data, since DST was
+    first used in the 20th century.  As a transition aid, FROM columns
+    like "minimum" are now diagnosed and then treated as if they were
+    the year 1900; this should suffice for TZif files on old systems
+    with only 32-bit time_t, and it is more compatible with bugs in
+    2023c-and-earlier localtime.c.  (Problem reported by Yoshito
+    Umaoka.)
+
+    localtime and related functions no longer mishandle some
+    timestamps that occur about 400 years after a switch to a time
+    zone with a DST schedule.  In 2023d data this problem was visible
+    for some timestamps in November 2422, November 2822, etc. in
+    America/Ciudad_Juarez.  (Problem reported by Gilmore Davidson.)
+
+    strftime %s now uses tm_gmtoff if available.  (Problem and draft
+    patch reported by Dag-Erling Smørgrav.)
+
+  Changes to build procedure
+
+    The leap-seconds.list file is now copied from the IERS instead of
+    from its downstream counterpart at NIST, as the IERS version is
+    now in the public domain too and tends to be more up-to-date.
+    (Thanks to Martin Burnicki for liaisoning with the IERS.)
+
+  Changes to documentation
+
+    The strftime man page documents which struct tm members affect
+    which conversion specs, and that tzset is called.  (Problems
+    reported by Robert Elz and Steve Summit.)
+
+
+Release 2023d - 2023-12-21 20:02:24 -0800
+
+  Briefly:
+    Ittoqqortoormiit, Greenland changes time zones on 2024-03-31.
+    Vostok, Antarctica changed time zones on 2023-12-18.
+    Casey, Antarctica changed time zones five times since 2020.
+    Code and data fixes for Palestine timestamps starting in 2072.
+    A new data file zonenow.tab for timestamps starting now.
+
+  Changes to future timestamps
+
+    Ittoqqortoormiit, Greenland (America/Scoresbysund) joins most of
+    the rest of Greenland's timekeeping practice on 2024-03-31, by
+    changing its time zone from -01/+00 to -02/-01 at the same moment
+    as the spring-forward transition.  Its clocks will therefore not
+    spring forward as previously scheduled.  The time zone change
+    reverts to its common practice before 1981.  (Thanks to Jule Dabars.)
+
+    Fix predictions for DST transitions in Palestine in 2072-2075,
+    correcting a typo introduced in 2023a.  (Thanks to Jule Dabars.)
+
+  Changes to past and future timestamps
+
+    Vostok, Antarctica changed to +05 on 2023-12-18.  It had been at
+    +07 (not +06) for years.  (Thanks to Zakhary V. Akulov.)
+
+    Change data for Casey, Antarctica to agree with timeanddate.com,
+    by adding five time zone changes since 2020.  Casey is now at +08
+    instead of +11.
+
+  Changes to past tm_isdst flags
+
+    Much of Greenland, represented by America/Nuuk, changed its
+    standard time from -03 to -02 on 2023-03-25, not on 2023-10-28.
+    This does not affect UTC offsets, only the tm_isdst flag.
+    (Thanks to Thomas M. Steenholdt.)
+
+  New data file
+
+    A new data file zonenow.tab helps configure applications that use
+    timestamps dated from now on.  This simplifies configuration,
+    since users choose from a smaller Zone set.  The file's format is
+    experimental and subject to change.
+
+  Changes to code
+
+    localtime.c no longer mishandles TZif files that contain a single
+    transition into a DST regime.  Previously, it incorrectly assumed
+    DST was in effect before the transition too.  (Thanks to Alois
+    Treindl for debugging help.)
+
+    localtime.c's timeoff no longer collides with OpenBSD 7.4.
+
+    The C code now uses _Generic only if __STDC_VERSION__ says the
+    compiler is C11 or later.
+
+    tzselect now optionally reads zonenow.tab, to simplify when
+    configuring only for timestamps dated from now on.
+
+    tzselect no longer creates temporary files.
+
+    tzselect no longer mishandles the following:
+
+      Spaces and most other special characters in BUGEMAIL, PACKAGE,
+      TZDIR, and VERSION.
+
+      TZ strings when using mawk 1.4.3, which mishandles regular
+      expressions of the form /X{2,}/.
+
+      ISO 6709 coordinates when using an awk that lacks the GNU
+      extension of newlines in -v option-arguments.
+
+      Non UTF-8 locales when using an iconv command that lacks the GNU
+      //TRANSLIT extension.
+
+    zic no longer mishandles data for Palestine after the year 2075.
+    Previously, it incorrectly omitted post-2075 transitions that are
+    predicted for just before and just after Ramadan.  (Thanks to Ken
+    Murchison for debugging help.)
+
+    zic now works again on Linux 2.6.16 and 2.6.17 (2006).
+    (Problem reported by Rune Torgersen.)
+
+  Changes to build procedure
+
+    The Makefile is now more compatible with POSIX:
+     * It no longer defines AR, CC, CFLAGS, LDFLAGS, and SHELL.
+     * It no longer uses its own 'cc' in place of CC.
+     * It now uses ARFLAGS, with default specified by POSIX.
+     * It does not use LFLAGS incompatibly with POSIX.
+     * It uses the special .POSIX target.
+     * It quotes special characters more carefully.
+     * It no longer mishandles builds in an ISO 8859 locale.
+    Due to the CC changes, TZDIR is now #defined in a file tzdir.h
+    built by 'make', not in a $(CC) -D option.  Also, TZDEFAULT is
+    now treated like TZDIR as they have similar roles.
+
+  Changes to commentary
+
+     Limitations and hazards of the optional support for obsolescent
+     C89 platforms are documented better, along with a tentative
+     schedule for removing this support.
+
+
+Release 2023c - 2023-03-28 12:42:14 -0700
+
+  Changes to past and future timestamps
+
+    Model Lebanon's DST chaos by reverting data to tzdb 2023a.
+    (Thanks to Rany Hany for the heads-up.)
+
+
+Release 2023b - 2023-03-23 19:50:38 -0700
+
+  Changes to future timestamps
+
+    This year Lebanon springs forward April 20/21 not March 25/26.
+    (Thanks to Saadallah Itani.)  [This was reverted in 2023c.]
+
+
+Release 2023a - 2023-03-22 12:39:33 -0700
+
+  Briefly:
+    Egypt now uses DST again, from April through October.
+    This year Morocco springs forward April 23, not April 30.
+    Palestine delays the start of DST this year.
+    Much of Greenland still uses DST from 2024 on.
+    America/Yellowknife now links to America/Edmonton.
+    tzselect can now use current time to help infer timezone.
+    The code now defaults to C99 or later.
+    Fix use of C23 attributes.
+
+  Changes to future timestamps
+
+    Starting in 2023, Egypt will observe DST from April's last Friday
+    through October's last Thursday.  (Thanks to Ahmad ElDardiry.)
+    Assume the transition times are 00:00 and 24:00, respectively.
+
+    In 2023 Morocco's spring-forward transition after Ramadan
+    will occur April 23, not April 30.  (Thanks to Milamber.)
+    Adjust predictions for future years accordingly.  This affects
+    predictions for 2023, 2031, 2038, and later years.
+
+    This year Palestine will delay its spring forward from
+    March 25 to April 29 due to Ramadan.  (Thanks to Heba Hamad.)
+    Make guesses for future Ramadans too.
+
+    Much of Greenland, represented by America/Nuuk, will continue to
+    observe DST using European Union rules.  When combined with
+    Greenland's decision not to change the clocks in fall 2023,
+    America/Nuuk therefore changes from -03/-02 to -02/-01 effective
+    2023-10-29 at 01:00 UTC.  (Thanks to Thomas M. Steenholdt.)
+    This change from 2022g doesn't affect timestamps until 2024-03-30,
+    and doesn't affect tm_isdst until 2023-03-25.
+
+  Changes to past timestamps
+
+    America/Yellowknife has changed from a Zone to a backward
+    compatibility Link, as it no longer differs from America/Edmonton
+    since 1970.  (Thanks to Almaz Mingaleev.)  This affects some
+    pre-1948 timestamps.  The old data are now in 'backzone'.
+
+  Changes to past time zone abbreviations
+
+    When observing Moscow time, Europe/Kirov and Europe/Volgograd now
+    use the abbreviations MSK/MSD instead of numeric abbreviations,
+    for consistency with other timezones observing Moscow time.
+
+  Changes to code
+
+    You can now tell tzselect local time, to simplify later choices.
+    Select the 'time' option in its first prompt.
+
+    You can now compile with -DTZNAME_MAXIMUM=N to limit time zone
+    abbreviations to N bytes (default 255).  The reference runtime
+    library now rejects POSIX-style TZ strings that contain longer
+    abbreviations, treating them as UTC.  Previously the limit was
+    platform dependent and abbreviations were silently truncated to
+    16 bytes even when the limit was greater than 16.
+
+    The code by default is now designed for C99 or later.  To build on
+    a mostly-C89 platform, compile with -DPORT_TO_C89; this should
+    work on C89 platforms that also support C99 'long long' and
+    perhaps a few other extensions to C89.  To support C89 callers of
+    tzcode's library, compile with -DSUPPORT_C89; however, this could
+    trigger latent bugs in C99-or-later callers.  The two new macros
+    are transitional aids planned to be removed in a future version
+    (say, in 2029), when C99 or later will be required.
+
+    The code now builds again on pre-C99 platforms, if you compile
+    with -DPORT_TO_C89.  This fixes a bug introduced in 2022f.
+
+    On C23-compatible platforms tzcode no longer uses syntax like
+    'static [[noreturn]] void usage(void);'.  Instead, it uses
+    '[[noreturn]] static void usage(void);' as strict C23 requires.
+    (Problem reported by Houge Langley.)
+
+    The code's functions now constrain their arguments with the C
+    'restrict' keyword consistently with their documentation.
+    This may allow future optimizations.
+
+    zdump again builds standalone with ckdadd and without setenv,
+    fixing a bug introduced in 2022g.  (Problem reported by panic.)
+
+    leapseconds.awk can now process a leap seconds file that never
+    expires; this might be useful if leap seconds are discontinued.
+
+  Changes to commentary
+
+    tz-link.html has a new section "Coordinating with governments and
+    distributors".  (Thanks to Neil Fuller for some of the text.)
+
+    To improve tzselect diagnostics, zone1970.tab's comments column is
+    now limited to countries that have multiple timezones.
+
+    Note that there are plans to discontinue leap seconds by 2035.
+
+
+Release 2022g - 2022-11-29 08:58:31 -0800
+
+  Briefly:
+    The northern edge of Chihuahua changes to US timekeeping.
+    Much of Greenland stops changing clocks after March 2023.
+    Fix some pre-1996 timestamps in northern Canada.
+    C89 is now deprecated; please use C99 or later.
+    Portability fixes for AIX, libintl, MS-Windows, musl, z/OS
+    In C code, use more C23 features if available.
+    C23 timegm now supported by default
+    Fixes for unlikely integer overflows
+
+  Changes to future timestamps
+
+    In the Mexican state of Chihuahua, the border strip near the US
+    will change to agree with nearby US locations on 2022-11-30.
+    The strip's western part, represented by Ciudad Juárez, switches
+    from -06 all year to -07/-06 with US DST rules, like El Paso, TX.
+    The eastern part, represented by Ojinaga, will observe US DST next
+    year, like Presidio, TX.  (Thanks to Heitor David Pinto.)
+    A new Zone America/Ciudad_Juarez splits from America/Ojinaga.
+
+    Much of Greenland, represented by America/Nuuk, stops observing
+    winter time after March 2023, so its daylight saving time becomes
+    standard time.  (Thanks to Jonas Nyrup and Jürgen Appel.)
+
+  Changes to past timestamps
+
+    Changes for pre-1996 northern Canada (thanks to Chris Walton):
+
+      Merge America/Iqaluit and America/Pangnirtung into the former,
+      with a backward compatibility link for the latter name.
+      There is no good evidence the two locations differ since 1970.
+      This change affects pre-1996 America/Pangnirtung timestamps.
+
+      Cambridge Bay, Inuvik, Iqaluit, Rankin Inlet, Resolute and
+      Yellowknife did not observe DST in 1965, and did observe DST
+      from 1972 through 1979.
+
+      Whitehorse moved from -09 to -08 on 1966-02-27, not 1967-05-28.
+
+    Colombia's 1993 fallback was 02-06 24:00, not 04-04 00:00.
+    (Thanks to Alois Treindl.)
+
+    Singapore's 1981-12-31 change was at 16:00 UTC (23:30 local time),
+    not 24:00 local time.  (Thanks to Geoff Clare via Robert Elz.)
+
+  Changes to code
+
+    Although tzcode still works with C89, bugs found in recent routine
+    maintenance indicate that bitrot has set in and that in practice
+    C89 is no longer used to build tzcode.  As it is a maintenance
+    burden, support for C89 is planned to be removed soon.  Instead,
+    please use compilers compatible with C99, C11, C17, or C23.
+
+    timegm, which tzcode implemented in 1989, will finally be
+    standardized 34 years later as part of C23, so timegm is now
+    supported even if STD_INSPIRED is not defined.
+
+    Fix bug in zdump's tzalloc emulation on hosts that lack tm_zone.
+    (Problem reported by Đoàn Trần Công Danh.)
+
+    Fix bug in zic on hosts where malloc(0) yields NULL on success.
+    (Problem reported by Tim McBrayer for AIX 6.1.)
+
+    Fix zic configuration to avoid linkage failures on some platforms.
+    (Problems reported by Gilmore Davidson and Igor Ivanov.)
+
+    Work around MS-Windows nmake incompatibility with POSIX.
+    (Problem reported by Manuela Friedrich.)
+
+    Port mktime and strftime to debugging platforms where accessing
+    uninitialized data has undefined behavior (strftime problem
+    reported by Robert Elz).
+
+    Check more carefully for unlikely integer overflows, preferring
+    C23 <stdckdint.h> to overflow checking by hand, as the latter has
+    had obscure bugs.
+
+  Changes to build procedure
+
+    New Makefile rule check_mild that skips checking whether Link
+    lines are in the file 'backward'.  (Inspired by a suggestion from
+    Stephen Colebourne.)
+
+
+Release 2022f - 2022-10-28 18:04:57 -0700
+
+  Briefly:
+    Mexico will no longer observe DST except near the US border.
+    Chihuahua moves to year-round -06 on 2022-10-30.
+    Fiji no longer observes DST.
+    Move links to 'backward'.
+    In vanguard form, GMT is now a Zone and Etc/GMT a link.
+    zic now supports links to links, and vanguard form uses this.
+    Simplify four Ontario zones.
+    Fix a Y2438 bug when reading TZif data.
+    Enable 64-bit time_t on 32-bit glibc platforms.
+    Omit large-file support when no longer needed.
+    In C code, use some C23 features if available.
+    Remove no-longer-needed workaround for Qt bug 53071.
+
+  Changes to future timestamps
+
+    Mexico will no longer observe DST after 2022, except for areas
+    near the US border that continue to observe US DST rules.
+    On 2022-10-30 at 02:00 the Mexican state of Chihuahua moves
+    from -07 (-06 with DST) to year-round -06, thus not changing
+    its clocks that day.  The new law states that Chihuahua
+    near the US border no longer observes US DST.
+    (Thanks to gera for the heads-up about Chihuahua.)
+
+    Fiji will not observe DST in 2022/3.  (Thanks to Shalvin Narayan.)
+    For now, assume DST is suspended indefinitely.
+
+  Changes to data
+
+    Move links to 'backward' to ease and simplify link maintenance.
+    This affects generated data only if you use 'make BACKWARD='.
+
+    GMT is now a Zone and Etc/GMT a link instead of vice versa,
+    as GMT is needed for leap second support whereas Etc/GMT is not.
+    However, this change exposes a bug in TZUpdater 2.3.2 so it is
+    present only in vanguard form for now.
+
+    Vanguard form now uses links to links, as zic now supports this.
+
+  Changes to past timestamps
+
+    Simplify four Ontario zones, as most of the post-1970 differences
+    seem to have been imaginary.  (Problem reported by Chris Walton.)
+    Move America/Nipigon, America/Rainy_River, and America/Thunder_Bay
+    to 'backzone'; backward-compatibility links still work, albeit
+    with some different timestamps before November 2005.
+
+  Changes to code
+
+    zic now supports links to links regardless of input line order.
+    For example, if Australia/Sydney is a Zone, the lines
+      Link Australia/Canberra Australia/ACT
+      Link Australia/Sydney Australia/Canberra
+    now work correctly, even though the shell commands
+      ln Australia/Canberra Australia/ACT
+      ln Australia/Sydney Australia/Canberra
+    would fail because the first command attempts to use a link
+    Australia/Canberra that does not exist until after the second
+    command is executed.  Previously, zic had unspecified behavior if
+    a Link line's target was another link, and zic often misbehaved if
+    a Link line's target was a later Link line.
+
+    Fix line number in zic's diagnostic for a link to a link.
+
+    Fix a bug that caused localtime to mishandle timestamps starting
+    in the year 2438 when reading data generated by 'zic -b fat' when
+    distant-future DST transitions occur at times given in standard
+    time or in UT, not the usual case of local time.  This occurs when
+    the corresponding .zi Rule lines specify DST transitions with TO
+    columns of 'max' and AT columns that end in 's' or 'u'.  The
+    number 2438 comes from the 32-bit limit in the year 2038, plus the
+    400-year Gregorian cycle.  (Problem reported by Bradley White.)
+
+    On glibc 2.34 and later, which optionally supports 64-bit time_t
+    on platforms like x86 where time_t was traditionally 32 bits,
+    default time_t to 64 instead of 32 bits.  This lets functions like
+    localtime support timestamps after the year 2038, and fixes
+    year-2038 problems in zic when accessing files dated after 2038.
+    To continue to limit time_t to 32 bits on these platforms, use
+    "make CFLAGS='-D_TIME_BITS=32'".
+
+    In C code, do not enable large-file support on platforms like AIX
+    and macOS that no longer need it now that tzcode does not use
+    off_t or related functions like 'stat'.  Large-file support is
+    still enabled by default on GNU/Linux, as it is needed for 64-bit
+    time_t support.
+
+    In C code, prefer C23 keywords to pre-C23 macros for alignof,
+    bool, false, and true.  Also, use the following C23 features if
+    available: __has_include, unreachable.
+
+    zic no longer works around Qt bug 53071, as the relevant Qt
+    releases have been out of support since 2019.  This change affects
+    only fat TZif files, as thin files never had the workaround.
+
+    zdump no longer modifies the environ vector when compiled on
+    platforms lacking tm_zone or when compiled with -DUSE_LTZ=0.
+    This avoid undefined behavior on POSIX platforms.
+
+
+Release 2022e - 2022-10-11 11:13:02 -0700
+
+  Briefly:
+    Jordan and Syria switch from +02/+03 with DST to year-round +03.
+
+  Changes to future timestamps
+
+    Jordan and Syria are abandoning the DST regime and are changing to
+    permanent +03, so they will not fall back from +03 to +02 on
+    2022-10-28.  (Thanks to Steffen Thorsen and Issam Al-Zuwairi.)
+
+  Changes to past timestamps
+
+    On 1922-01-01 Tijuana adopted standard time at 00:00, not 01:00.
+
+  Changes to past time zone abbreviations and DST flags
+
+    The temporary advancement of clocks in central Mexico in summer
+    1931 is now treated as daylight saving time, instead of as two
+    changes to standard time.
+
+
+Release 2022d - 2022-09-23 12:02:57 -0700
+
+  Briefly:
+    Palestine transitions are now Saturdays at 02:00.
+    Simplify three Ukraine zones into one.
+
+  Changes to future timestamps
+
+    Palestine now springs forward and falls back at 02:00 on the
+    first Saturday on or after March 24 and October 24, respectively.
+    This means 2022 falls back 10-29 at 02:00, not 10-28 at 01:00.
+    (Thanks to Heba Hamad.)
+
+  Changes to past timestamps
+
+    Simplify three Ukraine zones to one, since the post-1970
+    differences seem to have been imaginary.  Move Europe/Uzhgorod and
+    Europe/Zaporozhye to 'backzone'; backward-compatibility links
+    still work, albeit with different timestamps before October 1991.
+
+
+Release 2022c - 2022-08-15 17:47:18 -0700
+
+  Briefly:
+    Work around awk bug in FreeBSD, macOS, etc.
+    Improve tzselect on intercontinental Zones.
+
+  Changes to code
+
+    Work around a bug in onetrueawk that broke commands like
+    'make traditional_tarballs' on FreeBSD, macOS, etc.
+    (Problem reported by Deborah Goldsmith.)
+
+    Add code to tzselect that uses experimental structured comments in
+    zone1970.tab to clarify whether Zones like Africa/Abidjan and
+    Europe/Istanbul cross continent or ocean boundaries.
+    (Inspired by a problem reported by Peter Krefting.)
+
+    Fix bug with 'zic -d /a/b/c' when /a is unwritable but the
+    directory /a/b already exists.
+
+    Remove zoneinfo2tdf.pl, as it was unused and triggered false
+    malware alarms on some email servers.
+
+
+Release 2022b - 2022-08-10 15:38:32 -0700
+
+  Briefly:
+    Chile's DST is delayed by a week in September 2022.
+    Iran no longer observes DST after 2022.
+    Rename Europe/Kiev to Europe/Kyiv.
+    New zic -R option
+    Vanguard form now uses %z.
+    Finish moving duplicate-since-1970 zones to 'backzone'.
+    New build option PACKRATLIST
+    New tailored_tarballs target, replacing rearguard_tarballs
+
+  Changes to future timestamps
+
+    Chile's 2022 DST start is delayed from September 4 to September 11.
+    (Thanks to Juan Correa.)
+
+    Iran plans to stop observing DST permanently, after it falls back
+    on 2022-09-21.  (Thanks to Ali Mirjamali.)
+
+  Changes to past timestamps
+
+    Finish moving to 'backzone' the location-based zones whose
+    timestamps since 1970 are duplicates; adjust links accordingly.
+    This change ordinarily affects only pre-1970 timestamps, and with
+    the new PACKRATLIST option it does not affect any timestamps.
+    In this round the affected zones are Antarctica/Vostok,
+    Asia/Brunei, Asia/Kuala_Lumpur, Atlantic/Reykjavik,
+    Europe/Amsterdam, Europe/Copenhagen, Europe/Luxembourg,
+    Europe/Monaco, Europe/Oslo, Europe/Stockholm, Indian/Christmas,
+    Indian/Cocos, Indian/Kerguelen, Indian/Mahe, Indian/Reunion,
+    Pacific/Chuuk, Pacific/Funafuti, Pacific/Majuro, Pacific/Pohnpei,
+    Pacific/Wake and Pacific/Wallis, and the affected links are
+    Arctic/Longyearbyen, Atlantic/Jan_Mayen, Iceland, Pacific/Ponape,
+    Pacific/Truk, and Pacific/Yap.
+
+    From fall 1994 through fall 1995, Shanks wrote that Crimea's
+    DST transitions were at 02:00 standard time, not at 00:00.
+    (Thanks to Michael Deckers.)
+
+    Iran adopted standard time in 1935, not 1946.  In 1977 it observed
+    DST from 03-21 23:00 to 10-20 24:00; its 1978 transitions were on
+    03-24 and 08-05, not 03-20 and 10-20; and its spring 1979
+    transition was on 05-27, not 03-21.
+    (Thanks to Roozbeh Pournader and Francis Santoni.)
+
+    Chile's observance of -04 from 1946-08-29 through 1947-03-31 was
+    considered DST, not standard time.  Santiago and environs had moved
+    their clocks back to rejoin the rest of mainland Chile; put this
+    change at the end of 1946-08-28.  (Thanks to Michael Deckers.)
+
+    Some old, small clock transitions have been removed, as people at
+    the time did not change their clocks.  This affects Asia/Hong_Kong
+    in 1904, Asia/Ho_Chi_Minh in 1906, and Europe/Dublin in 1880.
+
+  Changes to zone name
+
+    Rename Europe/Kiev to Europe/Kyiv, as "Kyiv" is more common in
+    English now.  Spelling of other names in Ukraine has not yet
+    demonstrably changed in common English practice so for now these
+    names retain old spellings, as in other countries (e.g.,
+    Europe/Prague not "Praha", and Europe/Sofia not "Sofiya").
+
+  Changes to code
+
+    zic has a new option '-R @N' to output explicit transitions < N.
+    (Need suggested by Almaz Mingaleev.)
+
+    'zic -r @N' no longer outputs bad data when N < first transition.
+    (Problem introduced in 2021d and reported by Peter Krefting.)
+
+    zic now checks its input for NUL bytes and unterminated lines, and
+    now supports input line lengths up to 2048 (not 512) bytes.
+
+    gmtime and related code now use the abbreviation "UTC" not "GMT".
+    POSIX is being revised to require this.
+
+    When tzset and related functions set vestigial static variables
+    like tzname, they now prefer specified timestamps to unspecified ones.
+    (Problem reported by Almaz Mingaleev.)
+
+    zic no longer complains "can't determine time zone abbreviation to
+    use just after until time" when a transition to a new standard
+    time occurs simultaneously with the first DST fallback transition.
+
+  Changes to build procedure
+
+    Source data in vanguard form now uses the %z notation, introduced
+    in release 2015f.  For example, for America/Sao_Paulo vanguard
+    form contains the zone continuation line "-3:00 Brazil %z", which
+    is simpler and more reliable than the line "-3:00 Brazil -03/-02"
+    used in main and rearguard forms.  The plan is for the main form
+    to use %z eventually; in the meantime maintainers of zi parsers
+    are encouraged to test the parsers on vanguard.zi.
+
+    The Makefile has a new PACKRATLIST option to select a subset of
+    'backzone'.  For example, 'make PACKRATDATA=backzone
+    PACKRATLIST=zone.tab' now generates TZif files identical to those
+    of the global-tz project.
+
+    The Makefile has a new tailored_tarballs target for generating
+    special-purpose tarballs.  It generalizes and replaces the
+    rearguard_tarballs target and related targets and macros, which
+    are now obsolescent.
+
+    'make install' now defaults LOCALTIME to Factory not GMT,
+    which means the default abbreviation is now "-00" not "GMT".
+
+    Remove the posix_packrat target, marked obsolescent in 2016a.
+
+
+Release 2022a - 2022-03-15 23:02:01 -0700
+
+  Briefly:
+    Palestine will spring forward on 2022-03-27, not -03-26.
+    zdump -v now outputs better failure indications.
+    Bug fixes for code that reads corrupted TZif data.
+
+  Changes to future timestamps
+
+    Palestine will spring forward on 2022-03-27, not 2022-03-26.
+    (Thanks to Heba Hamad.)  Predict future transitions for first
+    Sunday >= March 25.  Additionally, predict fallbacks to be the first
+    Friday on or after October 23, not October's last Friday, to be more
+    consistent with recent practice.  The first differing fallback
+    prediction is on 2025-10-24, not 2025-10-31.
+
+  Changes to past timestamps
+
+    From 1992 through spring 1996, Ukraine's DST transitions were at
+    02:00 standard time, not at 01:00 UTC.  (Thanks to Alois Treindl.)
+
+    Chile's Santiago Mean Time and its LMT precursor have been adjusted
+    eastward by 1 second to align with past and present law.
+
+  Changes to commentary
+
+    Add several references for Chile's 1946/1947 transitions, some of
+    which only affected portions of the country.
+
+  Changes to code
+
+    Fix bug when mktime gets confused by truncated TZif files with
+    unspecified local time.  (Problem reported by Almaz Mingaleev.)
+
+    Fix bug when 32-bit time_t code reads malformed 64-bit TZif data.
+    (Problem reported by Christos Zoulas.)
+
+    When reading a version 2 or later TZif file, the TZif reader now
+    validates the version 1 header and data block only enough to skip
+    over them, as recommended by RFC 8536 section 4.  Also, the TZif
+    reader no longer mistakenly attempts to parse a version 1 TZIf
+    file header as a TZ string.
+
+    zdump -v now outputs "(localtime failed)" and "(gmtime failed)"
+    when local time and UT cannot be determined for a timestamp.
+
+  Changes to build procedure
+
+    Distribution tarballs now use standard POSIX.1-1988 ustar format
+    instead of GNU format.  Although the formats are almost identical
+    for these tarballs, ustar headers' magic fields contain "ustar"
+    instead of "ustar ", and their version fields contain "00" instead
+    of " ".  The two formats are planned to diverge more significantly
+    for tzdb releases after 2242-03-16 12:56:31 UTC, when the ustar
+    format becomes obsolete and the tarballs switch to pax format, an
+    extension of ustar.  For details about these formats, please see
+    "pax - portable archive interchange", IEEE Std 1003.1-2017,
+    <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13>.
+
+
+Release 2021e - 2021-10-21 18:41:00 -0700
+
+  Changes to future timestamps
+
+    Palestine will fall back 10-29 (not 10-30) at 01:00.
+    (Thanks to P Chan and Heba Hemad.)
+
+
+Release 2021d - 2021-10-15 13:48:18 -0700
+
+  Briefly:
+    Fiji suspends DST for the 2021/2022 season.
+    'zic -r' marks unspecified timestamps with "-00".
+
+  Changes to future timestamps
+
+    Fiji will suspend observance of DST for the 2021/2022 season.
+    Assume for now that it will return next year.  (Thanks to Jashneel
+    Kumar and P Chan.)
+
+  Changes to code
+
+    'zic -r' now uses "-00" time zone abbreviations for intervals
+    with UT offsets that are unspecified due to -r truncation.
+    This implements a change in draft Internet RFC 8536bis.
+
+
+Release 2021c - 2021-10-01 14:21:49 -0700
+
+  Briefly:
+    Revert most 2021b changes to 'backward'.
+    Fix 'zic -b fat' bug in pre-1970 32-bit data.
+    Fix two Link line typos.
+    Distribute SECURITY file.
+
+    This release is intended as a bugfix release, to fix compatibility
+    problems and typos reported since 2021b was released.
+
+  Changes to Link directives
+
+    Revert almost all of 2021b's changes to the 'backward' file,
+    by moving Link directives back to where they were in 2021a.
+    Although 'zic' doesn't care which source file contains a Link
+    directive, some downstream uses ran into trouble with the move.
+    (Problem reported by Stephen Colebourne for Joda-Time.)
+
+    Fix typo that linked Atlantic/Jan_Mayen to the wrong location
+    (problem reported by Chris Walton).
+
+    Fix 'backzone' typo that linked America/Virgin to the wrong
+    location (problem reported by Michael Deckers).
+
+  Changes to code
+
+    Fix a bug in 'zic -b fat' that caused old timestamps to be
+    mishandled in 32-bit-only readers (problem reported by Daniel
+    Fischer).
+
+  Changes to documentation
+
+    Distribute the SECURITY file (problem reported by Andreas Radke).
+
+
+Release 2021b - 2021-09-24 16:23:00 -0700
+
+  Briefly:
+    Jordan now starts DST on February's last Thursday.
+    Samoa no longer observes DST.
+    Merge more location-based Zones whose timestamps agree since 1970.
+    Move some backward-compatibility links to 'backward'.
+    Rename Pacific/Enderbury to Pacific/Kanton.
+    Correct many pre-1993 transitions in Malawi, Portugal, etc.
+    zic now creates each output file or link atomically.
+    zic -L no longer omits the POSIX TZ string in its output.
+    zic fixes for truncation and leap second table expiration.
+    zic now follows POSIX for TZ strings using all-year DST.
+    Fix some localtime crashes and bugs in obscure cases.
+    zdump -v now outputs more-useful boundary cases.
+    tzfile.5 better matches a draft successor to RFC 8536.
+    A new file SECURITY.
+
+    This release is prompted by recent announcements by Jordan and Samoa.
+    It incorporates many other changes that had accumulated since 2021a.
+    However, it omits most proposed changes that merged all Zones
+    agreeing since 1970, as concerns were raised about doing too many of
+    these changes at once.  It does keeps some of these changes in the
+    interest of making tzdb more equitable one step at a time; see
+    "Merge more location-based Zones" below.
+
+  Changes to future timestamps
+
+    Jordan now starts DST on February's last Thursday.
+    (Thanks to Steffen Thorsen.)
+
+    Samoa no longer observes DST.  (Thanks to Geoffrey D. Bennett.)
+
+  Changes to zone name
+
+    Rename Pacific/Enderbury to Pacific/Kanton.  When we added
+    Enderbury in 1993, we did not know that it is uninhabited and that
+    Kanton (population two dozen) is the only inhabited location in
+    that timezone.  The old name is now a backward-compatibility link.
+
+  Changes to past timestamps
+
+    Correct many pre-1993 transitions, fixing entries originally
+    derived from Shanks, Whitman, and Mundell.  The fixes include:
+      - Barbados: standard time was introduced in 1911, not 1932; and
+	DST was observed in 1942-1944
+      - Cook Islands: In 1899 they switched from east to west of GMT,
+	celebrating Christmas for two days.  They (and Niue) switched
+	to standard time in 1952, not 1901.
+      - Guyana: corrected LMT for Georgetown; the introduction of
+	standard time in 1911, not 1915; and corrections to 1975 and
+	1992 transitions
+      - Kanton: uninhabited before 1937-08-31
+      - Niue: only observed -11:20 from 1952 through 1964, then went to
+        -11 instead of -11:30
+      - Portugal: DST was observed in 1950
+      - Tonga: corrected LMT; the introduction of standard time in 1945,
+        not 1901; and corrections to the transition from +12:20 to +13
+        in 1961, not 1941
+    Additional fixes to entries in the 'backzone' file include:
+      - Enderbury: inhabited only 1860/1885 and 1938-03-06/1942-02-09
+      - The Gambia: 1933 and 1942 transitions
+      - Malawi: several 1911 through 1925 transitions
+      - Sierra Leone: several 1913 through 1941 transitions, and DST
+	was NOT observed in 1957 through 1962
+    (Thanks to P Chan, Michael Deckers, Alexander Krivenyshev and
+    Alois Treindl.)
+
+    Merge more location-based Zones whose timestamps agree since 1970,
+    as pre-1970 timestamps are out of scope.  This is part of a
+    process that has been ongoing since 2013.  This does not affect
+    post-1970 timestamps, and timezone historians who build with 'make
+    PACKRATDATA=backzone' should see no changes to pre-1970 timestamps.
+    When merging, keep the most-populous location's data, and move
+    data for other locations to 'backzone' with a backward
+    link in 'backward'.  For example, move America/Creston data to
+    'backzone' with a link in 'backward' from America/Phoenix because
+    the two timezones' timestamps agree since 1970; this change
+    affects some pre-1968 timestamps in America/Creston because
+    Creston and Phoenix disagreed before 1968.  The affected Zones
+    are Africa/Accra, America/Atikokan, America/Blanc-Sablon,
+    America/Creston, America/Curacao, America/Nassau,
+    America/Port_of_Spain, Antarctica/DumontDUrville, and
+    Antarctica/Syowa.
+
+  Changes to maintenance procedure
+
+    The new file SECURITY covers how to report security-related bugs.
+
+    Several backward-compatibility links have been moved to the
+    'backward' file.  These links, which range from Africa/Addis_Ababa
+    to Pacific/Saipan, are only for compatibility with now-obsolete
+    guidelines suggesting an entry for every ISO 3166 code.
+    The intercontinental convenience links Asia/Istanbul and
+    Europe/Nicosia have also been moved to 'backward'.
+
+  Changes to code
+
+    zic now creates each output file or link atomically,
+    possibly by creating a temporary file and then renaming it.
+    This avoids races where a TZ setting would temporarily stop
+    working while zic was installing a replacement file or link.
+
+    zic -L no longer omits the POSIX TZ string in its output.
+    Starting with 2020a, zic -L truncated its output according to the
+    "Expires" directive or "#expires" comment in the leapseconds file.
+    The resulting TZif files omitted daylight saving transitions after
+    the leap second table expired, which led to far less accurate
+    predictions of times after the expiry.  Although future timestamps
+    cannot be converted accurately in the presence of leap seconds, it
+    is more accurate to convert near-future timestamps with a few
+    seconds error than with an hour error, so zic -L no longer
+    truncates output in this way.
+
+    Instead, when zic -L is given the "Expires" directive, it now
+    outputs the expiration by appending a no-change entry to the leap
+    second table.  Although this should work well with most TZif
+    readers, it does not conform to Internet RFC 8536 and some pickier
+    clients (including tzdb 2017c through 2021a) reject it, so
+    "Expires" directives are currently disabled by default.  To enable
+    them, set the EXPIRES_LINE Makefile variable.  If a TZif file uses
+    this new feature it is marked with a new TZif version number 4,
+    a format intended to be documented in a successor to RFC 8536.
+    The old-format "#expires" comments are now treated solely as
+    comments and have no effect on the TZif files.
+
+    zic -L LEAPFILE -r @LO no longer generates an invalid TZif file
+    that omits leap second information for the range LO..B when LO
+    falls between two leap seconds A and B.  Instead, it generates a
+    TZif version 4 file that represents the previously missing
+    information.
+
+    The TZif reader now allows the leap second table to begin with a
+    correction other than -1 or +1, and to contain adjacent
+    transitions with equal corrections.  This supports TZif version 4.
+
+    The TZif reader now lets leap seconds occur less than 28 days
+    apart.  This supports possible future TZif extensions.
+
+    Fix bug that caused 'localtime' etc. to crash when TZ was
+    set to a all-year DST string like "EST5EDT4,0/0,J365/25" that does
+    not conform to POSIX but does conform to Internet RFC 8536.
+
+    Fix another bug that caused 'localtime' etc. to crash when TZ was
+    set to a POSIX-conforming but unusual TZ string like
+    "EST5EDT4,0/0,J365/0", where almost all the year is DST.
+
+    Fix yet another bug that caused 'localtime' etc. to mishandle slim
+    TZif files containing leap seconds after the last explicit
+    transition in the table, or when handling far-future timestamps
+    in slim TZif files lacking leap seconds.
+
+    Fix localtime misbehavior involving positive leap seconds.
+    This change affects only behavior for "right" system time,
+    which contains leap seconds, and only if the UT offset is
+    not a multiple of 60 seconds when a positive leap second occurs.
+    (No such timezone exists in tzdb, luckily.)  Without the fix,
+    the timestamp was ambiguous during a positive leap second.
+    With the fix, any seconds occurring after a positive leap second
+    and within the same localtime minute are counted through 60, not
+    through 59; their UT offset (tm_gmtoff) is the same as before.
+    Here is how the fix affects timestamps in a timezone with UT
+    offset +01:23:45 (5025 seconds) and with a positive leap second at
+    1972-06-30 23:59:60 UTC (78796800):
+
+	time_t    without the fix      with the fix
+	78796800  1972-07-01 01:23:45  1972-07-01 01:23:45 (leap second)
+	78796801  1972-07-01 01:23:45  1972-07-01 01:23:46
+	...
+	78796815  1972-07-01 01:23:59  1972-07-01 01:23:60
+	78796816  1972-07-01 01:24:00  1972-07-01 01:24:00
+
+    Fix an unlikely bug that caused 'localtime' etc. to misbehave if
+    civil time changes a few seconds before time_t wraps around, when
+    leap seconds are enabled.
+
+    Fix bug in zic -r; in some cases, the dummy time type after the
+    last time transition disagreed with the TZ string, contrary to
+    Internet RFC 8563 section 3.3.
+
+    Fix a bug with 'zic -r @X' when X is a negative leap second that
+    has a nonnegative correction.  Without the fix, the output file
+    was truncated so that X appeared to be a positive leap second.
+    Fix a similar, even less likely bug when truncating at a positive
+    leap second that has a nonpositive correction.
+
+    zic -r now reports an error if given rolling leap seconds, as this
+    usage has never generally worked and is evidently unused.
+
+    zic now generates a POSIX-conforming TZ string for TZif files
+    where all-year DST is predicted for the indefinite future.
+    For example, for all-year Eastern Daylight Time, zic now generates
+    "XXX3EDT4,0/0,J365/23" where it previously generated
+    "EST5EDT,0/0,J365/25" or "".  (Thanks to Michael Deckers for
+    noting the possibility of POSIX conformance.)
+
+    zic.c no longer requires sys/wait.h (thanks to spazmodius for
+    noting it wasn't needed).
+
+    When reading slim TZif files, zdump no longer mishandles leap
+    seconds on the rare platforms where time_t counts leap seconds,
+    fixing a bug introduced in 2014g.
+
+    zdump -v now outputs timestamps at boundaries of what localtime
+    and gmtime can represent, instead of the less useful timestamps
+    one day after the minimum and one day before the maximum.
+    (Thanks to Arthur David Olson for prototype code, and to Manuela
+    Friedrich for debugging help.)
+
+    zdump's -c and -t options are now consistently inclusive for the
+    lower time bound and exclusive for the upper.  Formerly they were
+    inconsistent.  (Confusion noted by Martin Burnicki.)
+
+  Changes to build procedure
+
+    You can now compile with -DHAVE_MALLOC_ERRNO=0 to port to
+    non-POSIX hosts where malloc doesn't set errno.
+    (Problem reported by Jan Engelhardt.)
+
+  Changes to documentation
+
+    tzfile.5 better matches a draft successor to RFC 8536
+    <https://datatracker.ietf.org/doc/draft-murchison-rfc8536bis/01/>.
+
+
+Release 2021a - 2021-01-24 10:54:57 -0800
+
+  Changes to future timestamps
+
+    South Sudan changes from +03 to +02 on 2021-02-01 at 00:00.
+    (Thanks to Steffen Thorsen.)
+
+
+Release 2020f - 2020-12-29 00:17:46 -0800
+
+  Change to build procedure
+
+    'make rearguard_tarballs' no longer generates a bad rearguard.zi,
+    fixing a 2020e bug.  (Problem reported by Deborah Goldsmith.)
+
+
+Release 2020e - 2020-12-22 15:14:34 -0800
+
+  Briefly:
+    Volgograd switches to Moscow time on 2020-12-27 at 02:00.
+
+  Changes to future timestamps
+
+    Volgograd changes time zone from +04 to +03 on 2020-12-27 at 02:00.
+    (Thanks to Alexander Krivenyshev and Stepan Golosunov.)
+
+  Changes to past timestamps
+
+    Correct many pre-1986 transitions, fixing entries originally
+    derived from Shanks.  The fixes include:
+      - Australia: several 1917 through 1971 transitions
+      - The Bahamas: several 1941 through 1945 transitions
+      - Bermuda: several 1917 through 1956 transitions
+      - Belize: several 1942 through 1968 transitions
+      - Ghana: several 1915 through 1956 transitions
+      - Israel and Palestine: several 1940 through 1985 transitions
+      - Kenya and adjacent: several 1908 through 1960 transitions
+      - Nigeria and adjacent: correcting LMT in Lagos, and several 1905
+        through 1919 transitions
+      - Seychelles: the introduction of standard time in 1907, not 1906
+      - Vanuatu: DST in 1973-1974, and a corrected 1984 transition
+    (Thanks to P Chan.)
+
+    Because of the Australia change, Australia/Currie (King Island) is
+    no longer needed, as it is identical to Australia/Hobart for all
+    timestamps since 1970 and was therefore created by mistake.
+    Australia/Currie has been moved to the 'backward' file and its
+    corrected data moved to the 'backzone' file.
+
+  Changes to past time zone abbreviations and DST flags
+
+    To better match legislation in Turks and Caicos, the 2015 shift to
+    year-round observance of -04 is now modeled as AST throughout before
+    returning to Eastern Time with US DST in 2018, rather than as
+    maintaining EDT until 2015-11-01.  (Thanks to P Chan.)
+
+  Changes to documentation
+
+    The zic man page now documents zic's coalescing of transitions
+    when a zone falls back just before DST springs forward.
+
+
+Release 2020d - 2020-10-21 11:24:13 -0700
+
+  Briefly:
+    Palestine ends DST earlier than predicted, on 2020-10-24.
+
+  Changes to past and future timestamps
+
+    Palestine ends DST on 2020-10-24 at 01:00, instead of 2020-10-31
+    as previously predicted (thanks to Sharef Mustafa.)  Its
+    2019-10-26 fall-back was at 00:00, not 01:00 (thanks to Steffen
+    Thorsen.)  Its 2015-10-23 transition was at 01:00 not 00:00, and
+    its spring 2020 transition was on March 28 at 00:00, not March 27
+    (thanks to Pierre Cashon.)  This affects Asia/Gaza and
+    Asia/Hebron.  Assume future spring and fall transitions will be on
+    the Saturday preceding the last Sunday of March and October,
+    respectively.
+
+
+Release 2020c - 2020-10-16 11:15:53 -0700
+
+  Briefly:
+    Fiji starts DST later than usual, on 2020-12-20.
+
+  Changes to future timestamps
+
+    Fiji will start DST on 2020-12-20, instead of 2020-11-08 as
+    previously predicted.  DST will still end on 2021-01-17.
+    (Thanks to Raymond Kumar and Alan Mintz.)  Assume for now that
+    the later-than-usual start date is a one-time departure from the
+    recent pattern.
+
+  Changes to build procedure
+
+    Rearguard tarballs now contain an empty file pacificnew.
+    Some older downstream software expects this file to exist.
+    (Problem reported by Mike Cullinan.)
+
+
+Release 2020b - 2020-10-06 18:35:04 -0700
+
+  Briefly:
+    Revised predictions for Morocco's changes starting in 2023.
+    Canada's Yukon changes to -07 on 2020-11-01, not 2020-03-08.
+    Macquarie Island has stayed in sync with Tasmania since 2011.
+    Casey, Antarctica is at +08 in winter and +11 in summer.
+    zic no longer supports -y, nor the TYPE field of Rules.
+
+  Changes to future timestamps
+
+    Morocco's spring-forward after Ramadan is now predicted to occur
+    no sooner than two days after Ramadan, instead of one day.
+    (Thanks to Milamber.)  The first altered prediction is for 2023,
+    now predicted to spring-forward on April 30 instead of April 23.
+
+  Changes to past and future timestamps
+
+   Casey Station, Antarctica has been using +08 in winter and +11 in
+   summer since 2018.  The most recent transition from +08 to +11 was
+   2020-10-04 00:01.  Also, Macquarie Island has been staying in
+   sync with Tasmania since 2011.  (Thanks to Steffen Thorsen.)
+
+  Changes to past and future time zone abbreviations and DST flags
+
+    Canada's Yukon, represented by America/Whitehorse and
+    America/Dawson, changes its time zone rules from -08/-07 to
+    permanent -07 on 2020-11-01, not on 2020-03-08 as 2020a had it.
+    This change affects only the time zone abbreviation (MST vs PDT)
+    and daylight saving flag for the period between the two dates.
+    (Thanks to Andrew G. Smith.)
+
+  Changes to past timestamps
+
+    Correct several transitions for Hungary for 1918/1983.
+    For example, the 1983-09-25 fall-back was at 01:00, not 03:00.
+    (Thanks to Géza Nyáry.)  Also, the 1890 transition to standard
+    time was on 11-01, not 10-01 (thanks to Michael Deckers).
+
+    The 1891 French transition was on March 16, not March 15.  The
+    1911-03-11 French transition was at midnight, not a minute later.
+    Monaco's transitions were on 1892-06-01 and 1911-03-29, not
+    1891-03-15 and 1911-03-11.  (Thanks to Michael Deckers.)
+
+  Changes to code
+
+    Support for zic's long-obsolete '-y YEARISTYPE' option has been
+    removed and, with it, so has support for the TYPE field in Rule
+    lines, which is now reserved for compatibility with earlier zic.
+    These features were previously deprecated in release 2015f.
+    (Thanks to Tim Parenti.)
+
+    zic now defaults to '-b slim' instead of to '-b fat'.
+
+    zic's new '-l -' and '-p -' options uninstall any existing
+    localtime and posixrules files, respectively.
+
+    The undocumented and ineffective tzsetwall function has been
+    removed.
+
+  Changes to build procedure
+
+    The Makefile now defaults POSIXRULES to '-', so the posixrules
+    feature (obsolete as of 2019b) is no longer installed by default.
+
+  Changes to documentation and commentary
+
+    The long-obsolete files pacificnew, systemv, and yearistype.sh have
+    been removed from the distribution.  (Thanks to Tim Parenti.)
+
+
+Release 2020a - 2020-04-23 16:03:47 -0700
+
+  Briefly:
+    Morocco springs forward on 2020-05-31, not 2020-05-24.
+    Canada's Yukon advanced to -07 year-round on 2020-03-08.
+    America/Nuuk renamed from America/Godthab.
+    zic now supports expiration dates for leap second lists.
+
+  Changes to future timestamps
+
+    Morocco's second spring-forward transition in 2020 will be May 31,
+    not May 24 as predicted earlier.  (Thanks to Semlali Naoufal.)
+    Adjust future-year predictions to use the first Sunday after the
+    day after Ramadan, not the first Sunday after Ramadan.
+
+    Canada's Yukon, represented by America/Whitehorse and
+    America/Dawson, advanced to -07 year-round, beginning with its
+    spring-forward transition on 2020-03-08, and will not fall back on
+    2020-11-01.  Although a government press release calls this
+    "permanent Pacific Daylight Saving Time", we prefer MST for
+    consistency with nearby Dawson Creek, Creston, and Fort Nelson.
+    (Thanks to Tim Parenti.)
+
+  Changes to past timestamps
+
+    Shanghai observed DST in 1919.  (Thanks to Phake Nick.)
+
+  Changes to timezone identifiers
+
+    To reflect current usage in English better, America/Godthab has
+    been renamed to America/Nuuk.  A backwards-compatibility link
+    remains for the old name.
+
+  Changes to code
+
+    localtime.c no longer mishandles timestamps after the last
+    transition in a TZif file with leap seconds and with daylight
+    saving time transitions projected into the indefinite future.
+    For example, with TZ='America/Los_Angeles' with leap seconds,
+    zdump formerly reported a DST transition on 2038-03-14
+    from 01:59:32.999... to 02:59:33 instead of the correct transition
+    from 01:59:59.999... to 03:00:00.
+
+    zic -L now supports an Expires line in the leapseconds file, and
+    truncates the TZif output accordingly.  This propagates leap
+    second expiration information into the TZif file, and avoids the
+    abovementioned localtime.c bug as well as similar bugs present in
+    many client implementations.  If no Expires line is present, zic
+    -L instead truncates the TZif output based on the #expires comment
+    present in leapseconds files distributed by tzdb 2018f and later;
+    however, this usage is obsolescent.  For now, the distributed
+    leapseconds file has an Expires line that is commented out, so
+    that the file can be fed to older versions of zic which ignore the
+    commented-out line.  Future tzdb distributions are planned to
+    contain a leapseconds file with an Expires line.
+
+    The configuration macros HAVE_TZNAME and USG_COMPAT should now be
+    set to 1 if the system library supports the feature, and 2 if not.
+    As before, these macros are nonzero if tzcode should support the
+    feature, zero otherwise.
+
+    The configuration macro ALTZONE now has the same values with the
+    same meaning as HAVE_TZNAME and USG_COMPAT.
+
+    The code's defense against CRLF in leap-seconds.list is now
+    portable to POSIX awk.  (Problem reported by Deborah Goldsmith.)
+
+    Although the undocumented tzsetwall function is not changed in
+    this release, it is now deprecated in preparation for removal in
+    future releases.  Due to POSIX requirements, tzsetwall has not
+    worked for some time.  Any code that uses it should instead use
+    tzalloc(NULL) or, if portability trumps thread-safety, should
+    unset the TZ environment variable.
+
+  Changes to commentary
+
+    The Îles-de-la-Madeleine and the Listuguj reserve are noted as
+    following America/Halifax, and comments about Yukon's "south" and
+    "north" have been corrected to say "east" and "west".  (Thanks to
+    Jeffery Nichols.)
+
+
 Release 2019c - 2019-09-11 08:59:48 -0700
 
   Briefly:
@@ -34,13 +1485,13 @@ Release 2019c - 2019-09-11 08:59:48 -0700
     probably wrong.)
 
     Fix several errors in pre-1970 transitions in Perry County, IN.
-    (Thanks to Alois Triendl for pointing out the 1967/9 errors.)
+    (Thanks to Alois Treindl for pointing out the 1967/9 errors.)
 
     Edmonton did not observe DST in 1967 or 1969.  In 1946 Vancouver
     ended DST on 09-29 not 10-13, and Vienna ended DST on 10-07 not
     10-06.  In 1945 Königsberg (now Kaliningrad) switched from +01/+02
     to +02/+03 on 04-10 not 01-01, and its +02/+03 is abbreviated
-    EET/EEST, not CET/CEST.  (Thanks to Alois Triendl.)  In 1946
+    EET/EEST, not CET/CEST.  (Thanks to Alois Treindl.)  In 1946
     Königsberg switched to +03 on 04-07 not 01-01.
 
     In 1946 Louisville switched from CST to CDT on 04-28 at 00:01, not
@@ -572,8 +2023,8 @@ Release 2018d - 2018-03-22 07:05:46 -0700
     Institute in Montevideo.
     (Thanks to Jeremie Bonjour, Tim Parenti, and Michael Deckers.)
 
-    Enderbury and Kiritimati skipped New Year's Eve 1994, not
-    New Year's Day 1995.  (Thanks to Kerry Shetline.)
+    East Kiribati skipped New Year's Eve 1994, not New Year's Day 1995.
+    (Thanks to Kerry Shetline.)
 
     Fix the 1912-01-01 transition for Portugal and its colonies.
     This transition was at 00:00 according to the new UT offset, not
@@ -716,7 +2167,7 @@ Release 2018b - 2018-01-17 23:24:48 -0800
   Changes to build procedure
 
     The distribution now contains the file 'pacificnew' again.
-    This file was inadvertantly omitted in the 2018a distribution.
+    This file was inadvertently omitted in the 2018a distribution.
     (Problem reported by Matias Fonzo.)
 
 
@@ -1346,7 +2797,7 @@ Release 2016g - 2016-09-13 08:56:38 -0700
     names internally.
 
     zdump has a new -i option to generate transitions in a
-    more-compact but still human-readable format.  This option is
+    smaller but still human-readable format.  This option is
     experimental, and the output format may change in future versions.
     (Thanks to Jon Skeet for suggesting that an option was needed,
     and thanks to Tim Parenti and Chris Rovick for further comments.)
@@ -1368,7 +2819,7 @@ Release 2016g - 2016-09-13 08:56:38 -0700
     release 2016g, the version number is now something like
     '2016g-23-g50556e3-dirty' instead of the misleading '2016g'.
     Tagged releases use the same version number format as before,
-    e.g., '2016g'.  To support the more-accurate version number, its
+    e.g., '2016g'.  To support the more accurate version number, its
     specification has moved from a line in the Makefile to a new
     source file 'version'.
 
@@ -1999,7 +3450,7 @@ Release 2014i - 2014-10-21 22:04:57 -0700
 
     Since Belarus is not changing its clocks even though Moscow is,
     the time zone abbreviation in Europe/Minsk is changing from FET
-    to its more-traditional value MSK on 2014-10-26 at 01:00.
+    to its more traditional value MSK on 2014-10-26 at 01:00.
     (Thanks to Alexander Bokovoy for the heads-up about Belarus.)
 
     The new abbreviation IDT stands for the pre-1976 use of UT +08 in
@@ -2091,7 +3542,7 @@ Release 2014h - 2014-09-25 18:59:03 -0700
 
   Changes affecting build procedure
 
-    'make check' now checks better for properly-sorted data.
+    'make check' now checks better for properly sorted data.
 
   Changes affecting documentation and commentary
 
@@ -2592,7 +4043,7 @@ Release 2014a - 2014-03-07 23:30:29 -0800
 
   Changes affecting past timestamps
 
-    Fiji ended DST on 2014-01-19 at 02:00, not the previously-scheduled 03:00.
+    Fiji ended DST on 2014-01-19 at 02:00, not the previously scheduled 03:00.
     (Thanks to Steffen Thorsen.)
 
     Ukraine switched from Moscow to Eastern European time on 1990-07-01
@@ -2846,7 +4297,7 @@ Release 2013e - 2013-09-19 23:50:04 -0700
     Allow POSIX-like TZ strings where the transition time's hour can
     range from -167 through 167, instead of the POSIX-required 0
     through 24.  E.g., TZ='FJT-12FJST,M10.3.1/146,M1.3.4/75' for the
-    new Fiji rules.  This is a more-compact way to represent
+    new Fiji rules.  This is a more compact way to represent
     far-future timestamps for America/Godthab, America/Santiago,
     Antarctica/Palmer, Asia/Gaza, Asia/Hebron, Asia/Jerusalem,
     Pacific/Easter, and Pacific/Fiji.  Other zones are unaffected by
@@ -2854,7 +4305,7 @@ Release 2013e - 2013-09-19 23:50:04 -0700
 
     Allow POSIX-like TZ strings where daylight saving time is in
     effect all year.  E.g., TZ='WART4WARST,J1/0,J365/25' for Western
-    Argentina Summer Time all year.  This supports a more-compact way
+    Argentina Summer Time all year.  This supports a more compact way
     to represent the 2013d data for America/Argentina/San_Luis.
     Because of the change for San Luis noted above this change does not
     affect the current data.  (Thanks to Andrew Main (Zefram) for
@@ -2943,13 +4394,13 @@ Release 2013e - 2013-09-19 23:50:04 -0700
 
     zdump now outputs "UT" when referring to Universal Time, not "UTC".
     "UTC" does not make sense for timestamps that predate the introduction
-    of UTC, whereas "UT", a more-generic term, does.  (Thanks to Steve Allen
+    of UTC, whereas "UT", a more generic term, does.  (Thanks to Steve Allen
     for clarifying UT vs UTC.)
 
   Data changes affecting behavior of tzselect and similar programs
 
-    Country code BQ is now called the more-common name "Caribbean Netherlands"
-    rather than the more-official "Bonaire, St Eustatius & Saba".
+    Country code BQ is now called the more common name "Caribbean Netherlands"
+    rather than the more official "Bonaire, St Eustatius & Saba".
 
     Remove from zone.tab the names America/Montreal, America/Shiprock,
     and Antarctica/South_Pole, as they are equivalent to existing
@@ -3133,7 +4584,7 @@ Release 2013c - 2013-04-19 16:17:40 -0700
     Macquarie Island is politically part of Australia, not Antarctica.
     (Thanks to Tobias Conradi.)
 
-    Sort Macquarie more-consistently with other parts of Australia.
+    Sort Macquarie more consistently with other parts of Australia.
     (Thanks to Tim Parenti.)
 
 
@@ -3226,7 +4677,7 @@ Release 2012j - 2012-11-12 18:34:49 -0800
   now uses tz@iana.org rather than the old elsie address.
 
   zic -v now complains about abbreviations that are less than 3
-  or more than 6 characters, as per Posix.  Formerly, it checked
+  or more than 6 characters, as per POSIX.  Formerly, it checked
   for abbreviations that were more than 3.
 
   'make public' no longer puts its temporary directory under /tmp,
@@ -3391,8 +4842,8 @@ Release data2011m - 2011-10-24 21:42:16 +0700
   In particular, the typos in comments in the data (2011-11-17 should have
   been 2011-10-17 as Alan Barrett noted, and spelling of Tiraspol that
   Tim Parenti noted) have been fixed, and the change for Ukraine has been
-  made in all 4 Ukrainian zones, rather than just Kiev (again, thanks to
-  Tim Parenti, and also Denys Gavrysh)
+  made in all 4 Ukrainian zones, rather than just Europe/Kiev
+  (again, thanks to Tim Parenti, and also Denys Gavrysh).
 
   In addition, I added Europe/Tiraspol to zone.tab.
 
@@ -3788,7 +5239,7 @@ Release 2007a - 2007-01-08 12:28:29 -0500
 
   changes by Paul Eggert
 
-  Derick Rethan's Asmara change
+  Derick Rethans's Asmara change
 
   Oscar van Vlijmen's Easter Island local mean time change
 
@@ -4357,7 +5808,7 @@ Release data1998g - 1998-08-11 03:28:35 -0000
 Release data1998f - 1998-07-20 13:50:00 -0000
   [tzdata1998f.tar.gz is missing!]
 
-  Update the "leapseconds" file to include the newly-announced
+  Update the "leapseconds" file to include the newly announced
   insertion at the end of 1998.
 
 

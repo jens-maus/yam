@@ -31,18 +31,6 @@
 #include <locale.h>
 #include <stdio.h>
 
-/*
-** The two things date knows about time are. . .
-*/
-
-#ifndef TM_YEAR_BASE
-#define TM_YEAR_BASE	1900
-#endif /* !defined TM_YEAR_BASE */
-
-#ifndef SECSPERMIN
-#define SECSPERMIN	60
-#endif /* !defined SECSPERMIN */
-
 #if !HAVE_POSIX_DECLS
 extern char *		optarg;
 extern int		optind;
@@ -54,13 +42,12 @@ static void		display(const char *, time_t);
 static void		dogmt(void);
 static void		errensure(void);
 static void		timeout(FILE *, const char *, const struct tm *);
-static _Noreturn void	usage(void);
+ATTRIBUTE_NORETURN static void usage(void);
 
 int
 main(const int argc, char *argv[])
 {
-	register const char *	format;
-	register const char *	cp;
+	register const char *	format = "+%+";
 	register int		ch;
 	register bool		rflag = false;
 	time_t			t;
@@ -71,13 +58,12 @@ main(const int argc, char *argv[])
 	setlocale(LC_ALL, "");
 #endif /* defined(LC_ALL) */
 #if HAVE_GETTEXT
-#ifdef TZ_DOMAINDIR
+# ifdef TZ_DOMAINDIR
 	bindtextdomain(TZ_DOMAIN, TZ_DOMAINDIR);
-#endif /* defined(TEXTDOMAINDIR) */
+# endif /* defined(TEXTDOMAINDIR) */
 	textdomain(TZ_DOMAIN);
 #endif /* HAVE_GETTEXT */
 	t = time(NULL);
-	format = NULL;
 	while ((ch = getopt(argc, argv, "ucr:")) != EOF && ch != -1) {
 		switch (ch) {
 		default:
@@ -94,13 +80,15 @@ main(const int argc, char *argv[])
 			}
 			rflag = true;
 			errno = 0;
-			secs = strtoimax (optarg, &endarg, 0);
+			secs = strtoimax(optarg, &endarg, 0);
 			if (*endarg || optarg == endarg)
 				errno = EINVAL;
 			else if (! (TIME_T_MIN <= secs && secs <= TIME_T_MAX))
 				errno = ERANGE;
 			if (errno) {
-				perror(optarg);
+				char const *e = strerror(errno);
+				fprintf(stderr, _("date: %s: %s\n"),
+					optarg, e);
 				errensure();
 				exit(retval);
 			}
@@ -108,20 +96,17 @@ main(const int argc, char *argv[])
 			break;
 		}
 	}
-	while (optind < argc) {
-		cp = argv[optind++];
-		if (*cp == '+')
-			if (format == NULL)
-				format = cp + 1;
-			else {
-				fprintf(stderr,
-_("date: error: multiple formats in command line\n"));
-				usage();
-			}
-		else {
-		  fprintf(stderr, _("date: unknown operand: %s\n"), cp);
-		  usage();
-		}
+	if (optind < argc) {
+	  if (argc - optind != 1) {
+	    fprintf(stderr,
+		    _("date: error: multiple operands in command line\n"));
+	    usage();
+	  }
+	  format = argv[optind];
+	  if (*format != '+') {
+	    fprintf(stderr, _("date: unknown operand: %s\n"), format);
+	    usage();
+	  }
 	}
 
 	display(format, t);
@@ -134,21 +119,26 @@ dogmt(void)
 	static char **	fakeenv;
 
 	if (fakeenv == NULL) {
-		register int	from;
-		register int	to;
-		register int	n;
-		static char	tzegmt0[] = "TZ=GMT0";
+		static char	tzeutc0[] = "TZ=UTC0";
+		ptrdiff_t from, to, n;
 
 		for (n = 0;  environ[n] != NULL;  ++n)
 			continue;
-		fakeenv = malloc((n + 2) * sizeof *fakeenv);
+#if defined ckd_add && defined ckd_mul
+		if (!ckd_add(&n, n, 2) && !ckd_mul(&n, n, sizeof *fakeenv)
+		    && n <= INDEX_MAX)
+		  fakeenv = malloc(n);
+#else
+		if (n <= INDEX_MAX / sizeof *fakeenv - 2)
+		  fakeenv = malloc((n + 2) * sizeof *fakeenv);
+#endif
 		if (fakeenv == NULL) {
-			perror(_("Memory exhausted"));
+			fprintf(stderr, _("date: Memory exhausted\n"));
 			errensure();
 			exit(retval);
 		}
 		to = 0;
-		fakeenv[to++] = tzegmt0;
+		fakeenv[to++] = tzeutc0;
 		for (from = 1; environ[from] != NULL; ++from)
 			if (strncmp(environ[from], "TZ=", 3) != 0)
 				fakeenv[to++] = environ[from];
@@ -186,7 +176,7 @@ display(char const *format, time_t now)
 		errensure();
 		return;
 	}
-	timeout(stdout, format ? format : "%+", tmp);
+	timeout(stdout, format, tmp);
 	putchar('\n');
 	fflush(stdout);
 	fflush(stderr);
@@ -197,41 +187,31 @@ display(char const *format, time_t now)
 	}
 }
 
-#define INCR	1024
-
 static void
 timeout(FILE *fp, char const *format, struct tm const *tmp)
 {
-	char *	cp;
-	size_t	result;
-	size_t	size;
-	struct tm tm;
+	char *cp = NULL;
+	ptrdiff_t result;
+	ptrdiff_t size = 1024 / 2;
 
-	if (*format == '\0')
-		return;
-	if (!tmp) {
-		fprintf(stderr, _("date: error: time out of range\n"));
-		errensure();
-		return;
-	}
-	tm = *tmp;
-	tmp = &tm;
-	size = INCR;
-	cp = malloc(size);
 	for ( ; ; ) {
-		if (cp == NULL) {
+#ifdef ckd_mul
+		bool bigger = !ckd_mul(&size, size, 2) && size <= INDEX_MAX;
+#else
+		bool bigger = size <= INDEX_MAX / 2 && (size *= 2, true);
+#endif
+		char *newcp = bigger ? realloc(cp, size) : NULL;
+		if (!newcp) {
 			fprintf(stderr,
 				_("date: error: can't get memory\n"));
 			errensure();
 			exit(retval);
 		}
-		cp[0] = '\1';
+		cp = newcp;
 		result = strftime(cp, size, format, tmp);
-		if (result != 0 || cp[0] == '\0')
+		if (result != 0)
 			break;
-		size += INCR;
-		cp = realloc(cp, size);
 	}
-	fwrite(cp, 1, result, fp);
+	fwrite(cp + 1, 1, result - 1, fp);
 	free(cp);
 }

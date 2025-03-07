@@ -39,8 +39,63 @@
 #include <locale.h>
 #include <stdio.h>
 
+/* If true, the value returned by an idealized unlimited-range mktime
+   always fits into an integer type with bounds MIN and MAX.
+   If false, the value might not fit.
+   This macro is usable in #if if its arguments are.
+   Add or subtract 2**31 - 1 for the maximum UT offset allowed in a TZif file,
+   divide by the maximum number of non-leap seconds in a year,
+   divide again by two just to be safe,
+   and account for the tm_year origin (1900) and time_t origin (1970).  */
+#define MKTIME_FITS_IN(min, max) \
+  ((min) < 0 \
+   && ((min) + 0x7fffffff) / 366 / 24 / 60 / 60 / 2 + 1970 - 1900 < INT_MIN \
+   && INT_MAX < ((max) - 0x7fffffff) / 366 / 24 / 60 / 60 / 2 + 1970 - 1900)
+
+/* MKTIME_MIGHT_OVERFLOW is true if mktime can fail due to time_t overflow
+   or if it is not known whether mktime can fail,
+   and is false if mktime definitely cannot fail.
+   This macro is usable in #if, and so does not use TIME_T_MAX or sizeof.
+   If the builder has not configured this macro, guess based on what
+   known platforms do.  When in doubt, guess true.  */
+#ifndef MKTIME_MIGHT_OVERFLOW
+# if defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__
+#  include <sys/param.h>
+# endif
+# if ((/* The following heuristics assume native time_t.  */ \
+       defined_time_tz) \
+      || ((/* Traditional time_t is 'long', so if 'long' is not wide enough \
+	      assume overflow unless we're on a known-safe host.  */ \
+	   !MKTIME_FITS_IN(LONG_MIN, LONG_MAX)) \
+	  && (/* GNU C Library 2.29 (2019-02-01) and later has 64-bit time_t \
+		 if __TIMESIZE is 64.  */ \
+	      !defined __TIMESIZE || __TIMESIZE < 64) \
+	  && (/* FreeBSD 12 r320347 (__FreeBSD_version 1200036; 2017-06-26), \
+		 and later has 64-bit time_t on all platforms but i386 which \
+		 is currently scheduled for end-of-life on 2028-11-30.  */ \
+	      !defined __FreeBSD_version || __FreeBSD_version < 1200036 \
+	      || defined __i386) \
+	  && (/* NetBSD 6.0 (2012-10-17) and later has 64-bit time_t.  */ \
+	      !defined __NetBSD_Version__ || __NetBSD_Version__ < 600000000) \
+	  && (/* OpenBSD 5.5 (2014-05-01) and later has 64-bit time_t.  */ \
+	      !defined OpenBSD || OpenBSD < 201405)))
+#  define MKTIME_MIGHT_OVERFLOW 1
+# else
+#  define MKTIME_MIGHT_OVERFLOW 0
+# endif
+#endif
+/* Check that MKTIME_MIGHT_OVERFLOW is consistent with time_t's range.  */
+static_assert(MKTIME_MIGHT_OVERFLOW
+	      || MKTIME_FITS_IN(TIME_T_MIN, TIME_T_MAX));
+
+#if MKTIME_MIGHT_OVERFLOW
+/* Do this after system includes as it redefines time_t, mktime, timeoff.  */
+# define USE_TIMEX_T true
+# include "localtime.c"
+#endif
+
 #ifndef DEPRECATE_TWO_DIGIT_YEARS
-# define DEPRECATE_TWO_DIGIT_YEARS false
+# define DEPRECATE_TWO_DIGIT_YEARS 0
 #endif
 
 struct lc_time_T {
@@ -55,8 +110,6 @@ struct lc_time_T {
 	const char *	pm;
 	const char *	date_fmt;
 };
-
-#define Locale	(&C_time_locale)
 
 static const struct lc_time_T	C_time_locale = {
 	{
@@ -113,13 +166,14 @@ static char *	_fmt(const char *, const struct tm *, char *, const char *,
 static char *	_yconv(int, int, bool, bool, char *, char const *);
 
 #ifndef YEAR_2000_NAME
-#define YEAR_2000_NAME	"CHECK_STRFTIME_FORMATS_FOR_TWO_DIGIT_YEARS"
+# define YEAR_2000_NAME "CHECK_STRFTIME_FORMATS_FOR_TWO_DIGIT_YEARS"
 #endif /* !defined YEAR_2000_NAME */
 
 #if HAVE_STRFTIME_L
 size_t
-strftime_l(char *s, size_t maxsize, char const *format, struct tm const *t,
-	   locale_t locale)
+strftime_l(char *restrict s, size_t maxsize, char const *restrict format,
+	   struct tm const *restrict t,
+	   ATTRIBUTE_MAYBE_UNUSED locale_t locale)
 {
   /* Just call strftime, as only the C locale is supported.  */
   return strftime(s, maxsize, format, t);
@@ -127,9 +181,11 @@ strftime_l(char *s, size_t maxsize, char const *format, struct tm const *t,
 #endif
 
 size_t
-strftime(char *s, size_t maxsize, const char *format, const struct tm *t)
+strftime(char *restrict s, size_t maxsize, char const *restrict format,
+	 struct tm const *restrict t)
 {
 	char *	p;
+	int saved_errno = errno;
 	enum warn warn = IN_NONE;
 
 #ifndef TZSET_ARG
@@ -148,9 +204,12 @@ strftime(char *s, size_t maxsize, const char *format, const struct tm *t)
 		else	fprintf(stderr, "all locales");
 		fprintf(stderr, "\n");
 	}
-	if (p == s + maxsize)
+	if (p == s + maxsize) {
+		errno = ERANGE;
 		return 0;
+	}
 	*p = '\0';
+	errno = saved_errno;
 	return p - s;
 }
 
@@ -158,11 +217,18 @@ static char *
 _fmt(const char *format, const struct tm *t, char *pt,
      const char *ptlim, enum warn *warnp)
 {
+	struct lc_time_T const *Locale = &C_time_locale;
+
 	for ( ; *format; ++format) {
 		if (*format == '%') {
 label:
 			switch (*++format) {
-			case '\0':
+			default:
+				/* Output unknown conversion specifiers as-is,
+				   to aid debugging.  This includes '%' at
+				   format end.  This conforms to C23 section
+				   7.29.3.5 paragraph 6, which says behavior
+				   is undefined here.  */
 				--format;
 				break;
 			case 'A':
@@ -313,13 +379,30 @@ label:
 								time_t) + 1];
 					time_t		mkt;
 
-					tm = *t;
+					tm.tm_sec = t->tm_sec;
+					tm.tm_min = t->tm_min;
+					tm.tm_hour = t->tm_hour;
+					tm.tm_mday = t->tm_mday;
+					tm.tm_mon = t->tm_mon;
+					tm.tm_year = t->tm_year;
+
+					/* Get the time_t value for TM.
+					   Native time_t, or its redefinition
+					   by localtime.c above, is wide enough
+					   so that this cannot overflow.  */
+#ifdef TM_GMTOFF
+					mkt = timeoff(&tm, t->TM_GMTOFF);
+#else
+					tm.tm_isdst = t->tm_isdst;
 					mkt = mktime(&tm);
-					if (TYPE_SIGNED(time_t))
-						sprintf(buf, "%"PRIdMAX,
-							(intmax_t) mkt);
-					else	sprintf(buf, "%"PRIuMAX,
-							(uintmax_t) mkt);
+#endif
+					if (TYPE_SIGNED(time_t)) {
+					  intmax_t n = mkt;
+					  sprintf(buf, "%"PRIdMAX, n);
+					} else {
+					  uintmax_t n = mkt;
+					  sprintf(buf, "%"PRIuMAX, n);
+					}
 					pt = _add(buf, pt, ptlim);
 				}
 				continue;
@@ -494,7 +577,7 @@ label:
 				*/
 				continue;
 			case 'z':
-#if defined TM_GMTOFF || USG_COMPAT || defined ALTZONE
+#if defined TM_GMTOFF || USG_COMPAT || ALTZONE
 				{
 				long		diff;
 				char const *	sign;
@@ -531,7 +614,7 @@ label:
 					continue;
 #  endif
 				else
-#  ifdef ALTZONE
+#  if ALTZONE
 					diff = -altzone;
 #  else
 					continue;
@@ -539,15 +622,15 @@ label:
 # endif
 				negative = diff < 0;
 				if (diff == 0) {
-#ifdef TM_ZONE
+# ifdef TM_ZONE
 				  negative = t->TM_ZONE[0] == '-';
-#else
+# else
 				  negative = t->tm_isdst < 0;
-# if HAVE_TZNAME
+#  if HAVE_TZNAME
 				  if (tzname[t->tm_isdst != 0][0] == '-')
 				    negative = true;
+#  endif
 # endif
-#endif
 				}
 				if (negative) {
 					sign = "-";
@@ -566,12 +649,6 @@ label:
 					warnp);
 				continue;
 			case '%':
-			/*
-			** X311J/88-090 (4.12.3.5): if conversion char is
-			** undefined, behavior is undefined. Print out the
-			** character itself as printf(3) also does.
-			*/
-			default:
 				break;
 			}
 		}
@@ -614,7 +691,7 @@ _yconv(int a, int b, bool convert_top, bool convert_yy,
 	register int	lead;
 	register int	trail;
 
-#define DIVISOR	100
+	int DIVISOR = 100;
 	trail = a % DIVISOR + b % DIVISOR;
 	lead = a / DIVISOR + b / DIVISOR + trail / DIVISOR;
 	trail %= DIVISOR;
