@@ -2207,9 +2207,6 @@ void CheckABookBirthdays(const struct ABook *abook, BOOL check)
     DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
   }
 
-  // calculate the remaining time until the next check
-  SubTime(TIMEVAL(&nextTV), TIMEVAL(&nowTV));
-
   #if defined(DEBUG)
   {
   char dateString[64];
