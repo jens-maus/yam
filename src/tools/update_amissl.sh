@@ -15,6 +15,7 @@ cp -a $1/include/inline/amissl*.h include/inline/
 cp -a $1/include/inline4/amissl*.h include/inline4/
 cp -a $1/include/interfaces/amissl*.h include/interfaces/
 cp -a $1/include/defines/amissl*.h include/defines/
+cp -a $1/include/libraries/amissl*.h include/libraries/
 rm -f include/openssl/*.h
 cp -a $1/include/openssl/*.h include/openssl/
 cp -a $1/include/ppcinline/amissl*.h include/ppcinline/

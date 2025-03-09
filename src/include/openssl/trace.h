@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- * Copyright (c) 2014-2022 AmiSSL Open Source Team.
+ * Copyright (c) 2014-2025 AmiSSL Open Source Team.
  * All Rights Reserved.
  *
  * This file has been modified for use with AmiSSL for AmigaOS-based systems.
  *
- * Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -55,10 +55,8 @@ extern "C" {
 # define OSSL_TRACE_CATEGORY_TLS                 3
 # define OSSL_TRACE_CATEGORY_TLS_CIPHER          4
 # define OSSL_TRACE_CATEGORY_CONF                5
-# ifndef OPENSSL_NO_ENGINE
-#  define OSSL_TRACE_CATEGORY_ENGINE_TABLE       6
-#  define OSSL_TRACE_CATEGORY_ENGINE_REF_COUNT   7
-# endif
+# define OSSL_TRACE_CATEGORY_ENGINE_TABLE        6
+# define OSSL_TRACE_CATEGORY_ENGINE_REF_COUNT    7
 # define OSSL_TRACE_CATEGORY_PKCS5V2             8
 # define OSSL_TRACE_CATEGORY_PKCS12_KEYGEN       9
 # define OSSL_TRACE_CATEGORY_PKCS12_DECRYPT     10
@@ -69,8 +67,10 @@ extern "C" {
 # define OSSL_TRACE_CATEGORY_DECODER            15
 # define OSSL_TRACE_CATEGORY_ENCODER            16
 # define OSSL_TRACE_CATEGORY_REF_COUNT          17
+# define OSSL_TRACE_CATEGORY_HTTP               18
 /* Count of available categories. */
-# define OSSL_TRACE_CATEGORY_NUM                18
+# define OSSL_TRACE_CATEGORY_NUM                19
+/* KEEP THIS LIST IN SYNC with trace_categories[] in crypto/trace.c */
 
 /* Returns the trace category number for the given |name| */
 int OSSL_trace_get_category_num(const char *name);
@@ -316,6 +316,14 @@ void OSSL_trace_end(int category, BIO *channel);
     OSSL_TRACEV(category, (trc_out, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8))
 # define OSSL_TRACE9(category, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) \
     OSSL_TRACEV(category, (trc_out, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
+
+#define OSSL_TRACE_STRING_MAX 80
+int OSSL_trace_string(BIO *out, int text, int full,
+                      const unsigned char *data, size_t size);
+#define OSSL_TRACE_STRING(category, text, full, data, len) \
+    OSSL_TRACE_BEGIN(category) { \
+        OSSL_trace_string(trc_out, text, full, data, len);  \
+    } OSSL_TRACE_END(category)
 
 # ifdef  __cplusplus
 }

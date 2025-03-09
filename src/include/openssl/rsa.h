@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- * Copyright (c) 2014-2022 AmiSSL Open Source Team.
+ * Copyright (c) 2014-2025 AmiSSL Open Source Team.
  * All Rights Reserved.
  *
  * This file has been modified for use with AmiSSL for AmigaOS-based systems.
@@ -39,6 +39,9 @@
 # endif
 # include <openssl/rsaerr.h>
 # include <openssl/safestack.h>
+# ifndef OPENSSL_NO_STDIO
+#  include <stdio.h>
+# endif
 
 # ifdef  __cplusplus
 extern "C" {
@@ -149,6 +152,9 @@ int EVP_PKEY_CTX_set_rsa_keygen_pubexp(EVP_PKEY_CTX *ctx, BIGNUM *pubexp);
 # define RSA_PSS_SALTLEN_AUTO   -2
 /* Set salt length to maximum possible */
 # define RSA_PSS_SALTLEN_MAX    -3
+/* Auto-detect on verify, set salt length to min(maximum possible, digest
+ * length) on sign */
+# define RSA_PSS_SALTLEN_AUTO_DIGEST_MAX  -4
 /* Old compatible max salt length for sign only */
 # define RSA_PSS_SALTLEN_MAX_SIGN    -2
 
@@ -195,6 +201,8 @@ int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx, unsigned char **label);
 
 # define EVP_PKEY_CTRL_RSA_KEYGEN_PRIMES  (EVP_PKEY_ALG_CTRL + 13)
 
+# define EVP_PKEY_CTRL_RSA_IMPLICIT_REJECTION (EVP_PKEY_ALG_CTRL + 14)
+
 # define RSA_PKCS1_PADDING          1
 # define RSA_NO_PADDING             3
 # define RSA_PKCS1_OAEP_PADDING     4
@@ -203,6 +211,9 @@ int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx, unsigned char **label);
 /* EVP_PKEY_ only */
 # define RSA_PKCS1_PSS_PADDING      6
 # define RSA_PKCS1_WITH_TLS_PADDING 7
+
+/* internal RSA_ only */
+# define RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING 8
 
 # define RSA_PKCS1_PADDING_SIZE    11
 
@@ -289,9 +300,15 @@ void *RSA_X931_derive_ex_amiga_2(const BIGNUM *Xp2, const BIGNUM *Xp,
 # endif
 
 # if defined(OPENSSL_SYS_AMIGA) && !defined(AMISSL_COMPILE)
+#  if defined(__amigaos4__) && !defined(__USE_INLINE__)
+#   define RSA_X931_derive_ex(rsa,p1,p2,q1,q2,Xp1,Xp2,Xp,Xq1,Xq2,Xq,e,cb) \
+     IAmiSSL->RSA_X931_derive_ex_amiga_1(rsa,p1,p2,q1,q2,Xp1,             \
+     IAmiSSL->RSA_X931_derive_ex_amiga_2(Xp2,Xp,Xq1,Xq2,Xq,e,cb))
+#  else
 #   define RSA_X931_derive_ex(rsa,p1,p2,q1,q2,Xp1,Xp2,Xp,Xq1,Xq2,Xq,e,cb) \
      RSA_X931_derive_ex_amiga_1(rsa,p1,p2,q1,q2,Xp1,                      \
      RSA_X931_derive_ex_amiga_2(Xp2,Xp,Xq1,Xq2,Xq,e,cb))
+#  endif
 # else
 OSSL_DEPRECATEDIN_3_0
 int RSA_X931_derive_ex(RSA *rsa, BIGNUM *p1, BIGNUM *p2,

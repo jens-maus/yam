@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- * Copyright (c) 2014-2022 AmiSSL Open Source Team.
+ * Copyright (c) 2014-2025 AmiSSL Open Source Team.
  * All Rights Reserved.
  *
  * This file has been modified for use with AmiSSL for AmigaOS-based systems.
  *
- * Copyright 1995-2021 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2024 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -34,6 +34,9 @@
 # include <openssl/evp.h>
 # include <openssl/x509.h>
 # include <openssl/pemerr.h>
+# ifndef OPENSSL_NO_STDIO
+#  include <stdio.h>
+# endif
 
 #ifdef  __cplusplus
 extern "C" {
@@ -66,6 +69,8 @@ extern "C" {
 # define PEM_STRING_ECPRIVATEKEY "EC PRIVATE KEY"
 # define PEM_STRING_PARAMETERS   "PARAMETERS"
 # define PEM_STRING_CMS          "CMS"
+# define PEM_STRING_SM2PARAMETERS "SM2 PARAMETERS"
+# define PEM_STRING_ACERT        "ATTRIBUTE CERTIFICATE"
 
 # define PEM_TYPE_ENCRYPTED      10
 # define PEM_TYPE_MIC_ONLY       20

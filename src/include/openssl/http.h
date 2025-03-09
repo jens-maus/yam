@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- * Copyright (c) 2014-2022 AmiSSL Open Source Team.
+ * Copyright (c) 2014-2025 AmiSSL Open Source Team.
  * All Rights Reserved.
  *
  * This file has been modified for use with AmiSSL for AmigaOS-based systems.
  *
- * Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.
  * Copyright Siemens AG 2018-2020
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
@@ -45,8 +45,13 @@ extern "C" {
 # define OPENSSL_HTTP_PROXY "HTTP_PROXY"
 # define OPENSSL_HTTPS_PROXY "HTTPS_PROXY"
 
-#define OSSL_HTTP_DEFAULT_MAX_LINE_LEN (4 * 1024)
-#define OSSL_HTTP_DEFAULT_MAX_RESP_LEN (100 * 1024)
+# ifndef OPENSSL_NO_HTTP
+
+#  define OSSL_HTTP_DEFAULT_MAX_LINE_LEN (4 * 1024)
+#  define OSSL_HTTP_DEFAULT_MAX_RESP_LEN (100 * 1024)
+#  define OSSL_HTTP_DEFAULT_MAX_CRL_LEN (32 * 1024 * 1024)
+#  define OSSL_HTTP_DEFAULT_MAX_RESP_HDR_LINES 256
+
 
 /* Low-level HTTP API */
 OSSL_HTTP_REQ_CTX *OSSL_HTTP_REQ_CTX_new(BIO *wbio, BIO *rbio, int buf_size);
@@ -111,16 +116,29 @@ void * OSSL_HTTP_transfer_amiga_2(void * arg, int buf_size,
 # endif
 
 # if defined(OPENSSL_SYS_AMIGA) && !defined(AMISSL_COMPILE)
-#  define OSSL_HTTP_get(url,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,expected_content_type,expect_asn1,max_resp_len,timeout) \
+#  if defined(__amigaos4__) && !defined(__USE_INLINE__)
+#   define OSSL_HTTP_get(url,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,expected_content_type,expect_asn1,max_resp_len,timeout) \
+     IAmiSSL->OSSL_HTTP_get_amiga_1(url,proxy,no_proxy,bio,rbio,bio_update_fn,  \
+     IAmiSSL->OSSL_HTTP_get_amiga_2(arg,buf_size,headers,expected_content_type, \
+                                    expect_asn1,max_resp_len,timeout))
+#   define OSSL_HTTP_transfer(prctx,server,port,path,use_ssl,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,content_type,req,expected_content_type,expect_asn1,max_resp_len,timeout,keep_alive) \
+     IAmiSSL->OSSL_HTTP_transfer_amiga_1(prctx,server,port,path,use_ssl,proxy,  \
+                                         no_proxy,bio,rbio,bio_update_fn,       \
+     IAmiSSL->OSSL_HTTP_transfer_amiga_2(arg,buf_size,headers,content_type,req, \
+                                         expected_content_type,expect_asn1,     \
+                                         max_resp_len,timeout,keep_alive))
+#  else
+#   define OSSL_HTTP_get(url,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,expected_content_type,expect_asn1,max_resp_len,timeout) \
      OSSL_HTTP_get_amiga_1(url,proxy,no_proxy,bio,rbio,bio_update_fn,  \
      OSSL_HTTP_get_amiga_2(arg,buf_size,headers,expected_content_type, \
                            expect_asn1,max_resp_len,timeout))
-#  define OSSL_HTTP_transfer(prctx,server,port,path,use_ssl,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,content_type,req,expected_content_type,expect_asn1,max_resp_len,timeout,keep_alive) \
+#   define OSSL_HTTP_transfer(prctx,server,port,path,use_ssl,proxy,no_proxy,bio,rbio,bio_update_fn,arg,buf_size,headers,content_type,req,expected_content_type,expect_asn1,max_resp_len,timeout,keep_alive) \
      OSSL_HTTP_transfer_amiga_1(prctx,server,port,path,use_ssl,proxy,  \
                                 no_proxy,bio,rbio,bio_update_fn,       \
      OSSL_HTTP_transfer_amiga_2(arg,buf_size,headers,content_type,req, \
                                 expected_content_type,expect_asn1,     \
                                 max_resp_len,timeout,keep_alive))
+#  endif
 # else
 BIO *OSSL_HTTP_get(const char *url, const char *proxy, const char *no_proxy,
                    BIO *bio, BIO *rbio,
@@ -151,6 +169,10 @@ int OSSL_HTTP_parse_url(const char *url, int *pssl, char **puser, char **phost,
 const char *OSSL_HTTP_adapt_proxy(const char *proxy, const char *no_proxy,
                                   const char *server, int use_ssl);
 
+void OSSL_HTTP_REQ_CTX_set_max_response_hdr_lines(OSSL_HTTP_REQ_CTX *rctx,
+                                                  size_t count);
+
+# endif /* !defined(OPENSSL_NO_HTTP) */
 # ifdef  __cplusplus
 }
 # endif
