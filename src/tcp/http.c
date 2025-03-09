@@ -34,6 +34,7 @@
 #include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 #include "tcp/http.h"
+#include "tcp/ssl.h"
 
 #include "Config.h"
 #include "Locale.h"
@@ -209,14 +210,21 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       BOOL noproxy = IsStrEmpty(C->ProxyServer);
       char *path;
       char *bufptr;
+      BOOL secure;
 
 redirected:
+      secure = FALSE;
+
       // extract the server address and strip the http:// part
       // of the URI
       if(strnicmp(server, "http://", 7) == 0)
         strlcpy(tc->url, &server[7], sizeof(tc->url));
       else if(strnicmp(server, "https://", 8) == 0)
+      {
         strlcpy(tc->url, &server[8], sizeof(tc->url));
+        secure = TRUE;
+        noproxy = TRUE;
+      }
       else
         strlcpy(tc->url, server, sizeof(tc->url));
 
@@ -249,7 +257,7 @@ redirected:
         tc->server.port = atoi(bufptr);
       }
       else
-        tc->server.port = noproxy ? 80 : 8080;
+        tc->server.port = noproxy ? (secure ? 443 : 80) : 8080;
 
       snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->server.hostname);
 
@@ -274,7 +282,8 @@ redirected:
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
 
         // open the TCP/IP connection to 'host' under the port 'hport'
-        if(ConnectToHost(tc->connection, &tc->server) == CONNECTERR_SUCCESS)
+        if((ConnectToHost(tc->connection, &tc->server) == CONNECTERR_SUCCESS) &&
+           (!secure || (MakeSecureConnection(tc->connection) == TRUE)))
         {
           char *serverHost;
           char *port;
