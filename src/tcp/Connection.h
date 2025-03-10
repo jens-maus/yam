@@ -95,6 +95,7 @@ struct Connection
   BOOL connectedFromMainThread;     // who created this connection?
   BOOL isConnected;                 // has ConnectToHost() been called before?
   BOOL abort;                       // should the connection be aborted?
+  BOOL amisslInitialized;           // was InitAmiSSL() successful?
 };
 
 // Socket Options a user can set in .config

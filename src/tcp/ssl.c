@@ -754,11 +754,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
       }
       else
       {
-        // 2) check if we have enough entropy
-        if((rc = RAND_status()) == 0) // rc=0 is error
-          E(DBF_NET, "not enough entropy in the SSL pool");
-        // 3) check if we are ready for creating the ssl connection
-        else if((conn->ssl = SSL_new(G->sslCtx)) == NULL)
+        conn->amisslInitialized = TRUE;
+
+        // 2) check if we are ready for creating the ssl connection
+        if((conn->ssl = SSL_new(G->sslCtx)) == NULL)
           E(DBF_NET, "can't create a new SSL structure for a connection");
         else if(SSL_set_ex_data(conn->ssl, G->sslDataIndex, conn) == 0)
           E(DBF_NET, "couldn't assign connection pointer");
@@ -783,7 +782,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
           }
           #endif
 
-          // 4) set the socket descriptor to the ssl context
+          // 3) set the socket descriptor to the ssl context
           D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
           if(SSL_set_fd(conn->ssl, (int)conn->socket) != 1)
             E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
@@ -794,7 +793,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
             SSL_set_tlsext_host_name(conn->ssl, conn->server->hostname);
 
-            // 5) establish the ssl connection and take care of non-blocking IO
+            // 4) establish the ssl connection and take care of non-blocking IO
             D(DBF_NET, "connect SSL context %08lx", conn->ssl);
             STARTCLOCK(DBF_NET);
             while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
@@ -808,8 +807,8 @@ BOOL MakeSecureConnection(struct Connection *conn)
               #if defined(DEBUG)
               STOPCLOCK(DBF_NET, "SSL_connect()");
               sslSession = SSL_get_session(conn->ssl);
-              D(DBF_NET, "SSL session timeout: %ld s", SSL_get_timeout(sslSession));
-              D(DBF_NET, "SSL session times: %ld (%ld)", SSL_get_time(sslSession), time(NULL));
+              D(DBF_NET, "SSL session timeout: %ld s", SSL_SESSION_get_timeout(sslSession));
+              D(DBF_NET, "SSL session times: %ld (%ld)", SSL_SESSION_get_time_ex(sslSession), time(NULL));
               #endif
 
               // get the reason why SSL_connect() returned an error
@@ -928,7 +927,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
             {
               STACK_OF(X509) *chain;
 
-              // 6) now we get the peer certificate chain
+              // 5) now we get the peer certificate chain
               D(DBF_NET, "get peer certificate chain");
               chain = SSL_get_peer_cert_chain(conn->ssl);
               if(chain == NULL || sk_X509_num(chain) == 0)
@@ -937,11 +936,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
               {
                 struct Certificate *cert;
 
-                // 7) make a local copy of the certificate chain so that
+                // 6) make a local copy of the certificate chain so that
                 //     we can bug the user with information on accepting/rejecting the certificate
                 cert = MakeCertificateChain(chain);
 
-                // 8) now check the certificate chain for any errors and ask the user
+                // 7) now check the certificate chain for any errors and ask the user
                 //     how to proceed in case there were an certificate error found
                 if(CheckCertificate(conn, cert) != 0)
                   E(DBF_NET, "SSL certificate checks failed");
@@ -1005,19 +1004,16 @@ BOOL MakeSecureConnection(struct Connection *conn)
       }
     }
     else
-      W(DBF_NET, "AmiSSLBase == NULL");
-
-    // if we weren't ale to initialize the TLS/SSL stuff we have to clear it
-    // before leaving
-    if(secure == FALSE)
     {
-      conn->ssl = NULL;
-      conn->error = CONNECTERR_SSLFAILED;
+      W(DBF_NET, "AmiSSLBase == NULL");
 
       // tell the user if secure connection are impossible due to AmiSSL being unavailable
       if(AmiSSLBase == NULL)
         ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
     }
+
+    if(secure == FALSE)
+      conn->error = CONNECTERR_SSLFAILED;
   }
 
   RETURN(secure);
@@ -1033,7 +1029,7 @@ BOOL InitSSLConnections(void)
 
   // try to open amisslmaster.library first
   if((AmiSSLMasterBase = OpenLibrary("amisslmaster.library", AMISSLMASTER_VERSION)) != NULL &&
-     /* LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) && */
+     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) &&
      GETINTERFACE("main", 1, IAmiSSLMaster, AmiSSLMasterBase))
   {
     if(OpenAmiSSLTags(AMISSL_VERSION,
@@ -1046,8 +1042,6 @@ BOOL InitSSLConnections(void)
                       #endif
                       TAG_DONE) == 0) // 0 signals NO error
     {
-      char tmp[24+1];
-
       D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
 
       // initialize AmiSSL/OpenSSL related stuff that
@@ -1055,17 +1049,12 @@ BOOL InitSSLConnections(void)
       // own initializations
       OPENSSL_init_ssl(OPENSSL_INIT_SSL_DEFAULT, NULL); // Initialize OpenSSL's SSL libraries
 
-      // seed the random number generator with some valuable entropy
-      D(DBF_NET, "AmiSSL: seeding random number generator");
-      snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
-      RAND_seed(tmp, strlen(tmp));
-
       // 1) now we create a common SSL_CTX object which all our SSL connections will share
       if((G->sslCtx = SSL_CTX_new(TLS_client_method())) == NULL)
         E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
-      // 2) set minimum allowed protocol version to SSL3 (SSLv2 is deprecated/insecure)
-      else if(SSL_CTX_set_min_proto_version(G->sslCtx, SSL3_VERSION) == 0)
-        E(DBF_NET, "AmiSSL: couldn't set minimum protocol version to SSL3. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+      // 2) set minimum allowed protocol version to TLSv1.0 (SSLv2/SSLv3 is deprecated/insecure)
+      else if(SSL_CTX_set_min_proto_version(G->sslCtx, TLS1_VERSION) == 0)
+        E(DBF_NET, "AmiSSL: couldn't set minimum protocol version to TLS1. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
       else
       {
         int rc = 0; // make sure set_default_verify_paths() is called

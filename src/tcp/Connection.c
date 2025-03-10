@@ -1278,7 +1278,7 @@ void DisconnectFromHost(struct Connection *conn)
   {
     GET_SOCKETBASE(conn);
 
-    D(DBF_NET, "disconnecting TCP/IP session %08lx", conn);
+    D(DBF_NET, "disconnecting TCP/IP session %08lx (ssl %08lx)", conn, conn->ssl);
 
     // shut down the SSL stuff
     if(conn->ssl != NULL)
@@ -1290,25 +1290,26 @@ void DisconnectFromHost(struct Connection *conn)
 
       // call SSL_shutdown() to shutdown the SSL connection
       // but take care of the return values
+      // however, it is possible the server may have already terminated
+      // connection in which case any errors below are can be ignored
       if((ret = SSL_shutdown(conn->ssl)) < 0)
         E(DBF_NET, "SSL_shutdown (1st time) returned fatal error: %d %d", ret, SSL_get_error(conn->ssl, ret));
       else if(ret == 0)
       {
         D(DBF_NET, "SSL_shutdown (1st time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
 
-        // we wait "10 ticks" before issuing the second attempt to shutdown the SSL
-        // channel. NOTE: This is required due to a problem/bug in OpenSSL versions < 0.9.8m which
-        // AmiSSLv3 is based on as the second SSL_shutdown() call should return -1 and signal
-        // that we either have to perform a SSL_read() or SSL_write() again, which it doesn't.
-        Delay(10);
-
-        // According to docs at the OpenSSL website, this means that the shutdown
-        // has not yet finished, and we must call SSL_shutdown again..
+        // This means that the shutdown was initiated, but not completed. We
+        // could simply do nothing here, to implement a fast shutdown, as we are
+        // going to close the socket next anyway. However, we at least try a full
+        // shutdown by calling SSL_shutdown() again. Again, the server may have
+        // already closed the connection, so this might not ever succeed
         if((ret = SSL_shutdown(conn->ssl)) <= 0)
           W(DBF_NET, "SSL_shutdown (2nd time) failed: %d %d", ret, SSL_get_error(conn->ssl, ret));
         else
           D(DBF_NET, "SSL_shutdown (2nd time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
       }
+      else
+        D(DBF_NET, "SSL_shutdown successfully completed");
 
       SSL_free(conn->ssl);
       conn->ssl = NULL;
@@ -1322,8 +1323,12 @@ void DisconnectFromHost(struct Connection *conn)
       conn->socket = INVALID_SOCKET;
     }
 
-    if(AmiSSLBase != NULL)
+    if(conn->amisslInitialized == TRUE)
+    {
+      // cleanup task specific AmiSSL data
       CleanupAmiSSLA(NULL);
+      conn->amisslInitialized = FALSE;
+    }
 
     if(conn->isConnected == TRUE)
     {
