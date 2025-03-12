@@ -98,7 +98,7 @@ find ${distdir} -nowarn -name ".git" -or -name ".DS_Store" -exec rm -rf {} \; 2>
 echo "  MK YAM${yamarcver}-${yamarchive}-debug.lha"
 rm -f YAM${yamarcver}-${yamarchive}-debug.lha
 curdir=$(pwd)
-(cd ${distdir}; lha -ao5q "${curdir}/YAM${yamarcver}-${yamarchive}-debug.lha" *)
+(cd ${distdir}; lha a -o5q21 "${curdir}/YAM${yamarcver}-${yamarchive}-debug.lha" *)
 md5sum "YAM${yamarcver}-${yamarchive}-debug.lha" >"YAM${yamarcver}-${yamarchive}-debug.lha.md5"
 
 # remove the debug binaries again
@@ -161,7 +161,7 @@ rm -r "${distdir}/${yamdir}/Resources/Certificates"*
 echo "  MK YAM${yamarcver}-${yamarchive}.lha"
 rm -f YAM${yamarcver}-${yamarchive}.lha
 curdir=$(pwd)
-(cd ${distdir}; lha -ao5q "${curdir}/YAM${yamarcver}-${yamarchive}.lha" *)
+(cd ${distdir}; lha a -o5q21 "${curdir}/YAM${yamarcver}-${yamarchive}.lha" *)
 md5sum "YAM${yamarcver}-${yamarchive}.lha" >"YAM${yamarcver}-${yamarchive}.lha.md5"
 
 # remove the temporary dist directory
