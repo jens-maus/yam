@@ -55,11 +55,11 @@ yamver=$(grep "#define __YAM_VERSION" src/YAM_global.c | cut -d "\"" -f2)
 if [[ ${archtype} == "nightly" ]]; then
   # nightly build
   yamarcver="$(echo ${yamver} | tr -d ".")dev-$(date +%Y%m%d)"
-  yamdir="YAM${yamver}dev-$(date +%Y%m%d)"
+  yamdir="YAM ${yamver}dev-$(date +%Y%m%d)"
 else
   # release build
   yamarcver=$(echo ${yamver} | tr -d ".")
-  yamdir="YAM"
+  yamdir="YAM ${yamver}"
 fi
 
 # create a fresh archive directory
@@ -125,12 +125,10 @@ cp -a dist/${yamsys}/* "${distdir}/"
 echo "  MK catalogs"
 make catalogs
 
-# in case this is a nightly build we have to rename the top-level dir and info icon
-if [[ ${archtype} == "nightly" ]]; then
-  rsync -a "${distdir}/YAM/" "${distdir}/${yamdir}/"
-  rm -rf "${distdir}/YAM"
-  mv "${distdir}/YAM.info" "${distdir}/${yamdir}.info"
-fi
+# Rename the top-level dir and info icon
+rsync -a "${distdir}/YAM/" "${distdir}/${yamdir}/"
+rm -rf "${distdir}/YAM"
+mv "${distdir}/YAM.info" "${distdir}/${yamdir}.info"
 
 # move the ChangeLog from the top-level dir to the Docs subdir.
 mv "${distdir}/${yamdir}/ChangeLog" "${distdir}/${yamdir}/Docs/"

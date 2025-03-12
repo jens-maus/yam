@@ -207,7 +207,7 @@ ifeq ($(OS), os4)
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS4)
     CC      = ppc-amigaos-gcc
-    STRIP   = ppc-amigaos-strip
+    STRIP   = ppc-amigaos-strip --strip-unneeded-rel-relocs
     OBJDUMP = ppc-amigaos-objdump
   endif
 
@@ -798,7 +798,7 @@ $(TARGET): $(addprefix $(OBJDIR)/,$(OBJS)) $(LIB)/libtz.a
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
-	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -o $@ $@.debug
 	@$(CHMOD) $@
 
 # for creating a .dump file
