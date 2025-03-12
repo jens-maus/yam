@@ -1061,6 +1061,7 @@ BOOL InitSSLConnections(void)
 
         D(DBF_NET, "AmiSSL: SSL ctx timeout: %ld s", SSL_CTX_get_timeout(G->sslCtx));
 
+        #if 0 // use AmiSSL's built-in certificate bundle - no need to feed it our own
         if(FileExists(DEFAULT_CAPATH) == TRUE)
         {
           D(DBF_NET, "AmiSSL: CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
@@ -1083,6 +1084,7 @@ BOOL InitSSLConnections(void)
         }
         else
           ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
+        #endif
 
         // 4) if no CA file or path is given we set the default pathes
         if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(G->sslCtx)) == 0)

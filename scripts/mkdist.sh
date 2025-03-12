@@ -154,6 +154,9 @@ cp -a src/YAM.${yamsys} "${distdir}/${yamdir}/YAM"
 # cleanup the archive directory from unwanted files
 find ${distdir} -nowarn -name ".git" -or -name ".DS_Store" -exec rm -rf {} \; 2>/dev/null
 
+# delete the certificate bundle, as we currently prefer to rely on AmiSSL's
+rm -r "${distdir}/${yamdir}/Resources/Certificates"*
+
 # lets generate the final lha archive
 echo "  MK YAM${yamarcver}-${yamarchive}.lha"
 rm -f YAM${yamarcver}-${yamarchive}.lha

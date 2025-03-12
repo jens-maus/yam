@@ -1,4 +1,4 @@
-; $VER: Install-YAM 1.40 (03.05.2017)
+; $VER: Install-YAM 1.41 (10.3.2025)
 ; Copyright (C) 2000-2025 YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
@@ -1010,15 +1010,19 @@
 
 (complete 60)
 
-(set #Certificates_dir (tackon #Resources_dir "Certificates"))
-(if (not (exists #Certificates_dir))
-    (makedir #Certificates_dir)
-)
-(copyfiles
-    (source "/Resources/Certificates/")
-    (dest #Certificates_dir)
-    (all)
-    (help @copyfiles-help)
+(if (exists "/Resources/Certificates")
+    (
+        (set #Certificates_dir (tackon #Resources_dir "Certificates"))
+        (if (not (exists #Certificates_dir))
+            (makedir #Certificates_dir)
+        )
+        (copyfiles
+            (source "/Resources/Certificates/")
+            (dest #Certificates_dir)
+            (all)
+            (help @copyfiles-help)
+        )
+    )
 )
 
 (complete 65)
