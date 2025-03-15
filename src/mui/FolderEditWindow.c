@@ -430,9 +430,11 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
       // check if the combined full path already exists
       if(FileExists(folder.Fullpath) == TRUE)
       {
-        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
-        set(obj, MUIA_Window_ActiveObject, data->ST_FPATH);
-        break;
+        if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath) == 0)
+        {
+          set(obj, MUIA_Window_ActiveObject, data->ST_FPATH);
+          break;
+        }
       }
 
       if(folder.MLSupport == TRUE)
