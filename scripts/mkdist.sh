@@ -30,7 +30,7 @@
 
 # check the first option
 case $1 in
-  release)     archtype="release"; compileflags="DEVFLAGS=";;
+  release)     archtype="release"; compileflags="DEVFLAGS=-D__YAM_DEVEL=";;
   nightly)     archtype="nightly"; compileflags="BUILDID=$(date +%Y%m%d)";;
   *)           echo "ERROR: '$1' option (archive type) unknown."; exit 2;;
 esac
