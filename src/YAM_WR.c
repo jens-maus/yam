@@ -2958,7 +2958,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                       rcc = AppendRcpt(rcc, &email->SFrom[k], email->identity, FALSE);
                     }
                   }
-                  // continue
+                  // fall through
 
                   // Reply-To:/Mail-Reply-To: addresses
                   case 2:

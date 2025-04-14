@@ -6689,7 +6689,7 @@ static BOOL ParseDateString(const char *string, const char *fmt, struct TM *res)
           {
             setFlag(flags, FLG_4DIGIT_YEAR);
           }
-          // we fall through here
+          // fall through
 
           case 'y': // %y  - year using two digits with leading zeros (00-99)
           {

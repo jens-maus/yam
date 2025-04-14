@@ -360,7 +360,7 @@ static char *BuildCommandString(const char *format, const char *file)
           // remember that the user put some quotes in the command string himself
           hasQuotes = !hasQuotes;
         }
-        // continue
+        // fall through
 
         default:
         {
@@ -3761,7 +3761,7 @@ struct ABookNode *RE_AddToAddrbook(Object *win, struct ABookNode *templ)
       if(templ->type == ABNT_USER)
         break;
     }
-    // continue
+    // fall through
 
     case 2:
     {
@@ -3778,7 +3778,7 @@ struct ABookNode *RE_AddToAddrbook(Object *win, struct ABookNode *templ)
       if(templ->type == ABNT_USER)
         break;
     }
-    // continue
+    // fall through
 
     case 4:
     {

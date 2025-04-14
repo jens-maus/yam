@@ -4195,11 +4195,11 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
               break;
             }
           }
-          // continue
+          // fall through
 
           case NMM_EDITASNEW:
             newmode = NMM_NEW;
-          // continue
+          // fall through
 
           default:
           {
