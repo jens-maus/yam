@@ -32,9 +32,9 @@
 // forward declarations
 struct Connection;
 
-// make sure to open at least 5.19 of amisslmaster.library
+// make sure to open at least 5.20 of amisslmaster.library
 #define AMISSLMASTER_VERSION  5
-#define AMISSLMASTER_REVISION 19
+#define AMISSLMASTER_REVISION 20
 
 // AmiSSL/OpenSSL minimum version to use
 #define AMISSL_VERSION AMISSL_CURRENT_VERSION
