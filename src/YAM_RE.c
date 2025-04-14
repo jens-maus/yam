@@ -3423,7 +3423,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     // unfortunatly we have to find our ending "end" line now
                     // with an expensive string function. But this shouldn't be
                     // a problem as inline uuencoded parts are very rare today.
-                    while((endptr = strstr(endptr, "\nend")) != '\0')
+                    while((endptr = strstr(endptr, "\nend")) != NULL)
                     {
                       endptr += 4; // point to the char after end
 

@@ -2351,7 +2351,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
         // we create a generic subject line for the forward
         // action so that a forwarded mail will have a "Fwd: XXX" kinda
         // subject line instead of the original.
-        if(mail->Subject != '\0')
+        if(mail->Subject[0] != '\0')
         {
           char buffer[SIZE_LARGE];
 

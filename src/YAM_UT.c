@@ -1167,7 +1167,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
         }
 
         // lets check the indention of the next line
-        if((indent = strchr(src, '\n')) && ++indent != '\0')
+        if((indent = strchr(src, '\n')) && *(++indent) != '\0')
         {
           int pre_spaces;
 
