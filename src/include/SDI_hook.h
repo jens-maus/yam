@@ -158,6 +158,13 @@
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ >= 8)
+  /* Silence -Wcast-function-type */
+  typedef APTR SDI_HOOKFUNC;
+#else
+  typedef HOOKFUNC SDI_HOOKFUNC;
+#endif
+
 #ifdef __MORPHOS__
 
   #ifndef SDI_TRAP_LIB /* avoid defining this twice */
@@ -175,11 +182,11 @@
   #endif
 
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
-    (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+    (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, NULL}
   #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
-    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
+    {{NULL, NULL}, (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
-    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+    {{NULL, NULL}, (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, NULL}
   #define DISPATCHERPROTO(name) ULONG name(struct IClass * cl, Object * obj, \
     Msg msg);                                                                \
     extern const struct SDI_EmulLibEntry Gate_##name
@@ -251,11 +258,11 @@
   #include <proto/alib.h>
 
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
-    (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+    (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, NULL}
   #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
-    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
+    {{NULL, NULL}, (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
-    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+    {{NULL, NULL}, (SDI_HOOKFUNC)HookEntry, (SDI_HOOKFUNC)funcname, NULL}
   #define DISPATCHERPROTO(name)  \
     IPTR name(struct IClass * cl, Object * obj, Msg msg); \
     AROS_UFP3(IPTR, Gate_##name, \
@@ -288,11 +295,11 @@
 #else /* !__MORPHOS__ && !__AROS__*/
 
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
-    (HOOKFUNC)funcname, NULL, NULL}
+    (SDI_HOOKFUNC)funcname, NULL, NULL}
   #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
-    {{NULL, NULL}, (HOOKFUNC)funcname, NULL, (APTR)data}
+    {{NULL, NULL}, (SDI_HOOKFUNC)funcname, NULL, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
-    {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
+    {{NULL, NULL}, (SDI_HOOKFUNC)funcname, NULL, NULL}
   #define DISPATCHERPROTO(name) SAVEDS ASM IPTR name(REG(a0,                 \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #define DISPATCHER(name) DISPATCHERPROTO(name)
