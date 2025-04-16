@@ -26,6 +26,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include "SignatureList_cl.h"
 
 #include <mui/NList_mcc.h>
@@ -75,8 +77,9 @@ OVERLOAD(MUIM_NList_Display)
   {
     GETDATA;
 
-    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%s%s" MUIX_N, sn->active == FALSE ? MUIX_I : "",
-                                                                              sn->description);
+    strlcpy(data->displayBuffer, sn->active == FALSE ? MUIX_I : "", sizeof(data->displayBuffer));
+    strlcat(data->displayBuffer, sn->description, sizeof(data->displayBuffer) - strlen(MUIX_N));
+    strlcat(data->displayBuffer, MUIX_N, sizeof(data->displayBuffer));
 
     ndm->strings[0] = data->displayBuffer;
   }

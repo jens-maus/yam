@@ -4103,7 +4103,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *passwd)
 {
   char *pmeth = NULL;
-  char srcbuf[SIZE_PATHFILE];
+  char srcbuf[SIZE_PATHFILE - 4];
   char dstbuf[SIZE_PATHFILE];
   struct Folder *folder;
   int peff = 0;
@@ -4632,7 +4632,7 @@ void SaveLayout(BOOL permanent)
     (int)G->Weights[10],
     (int)G->Weights[11],
     G->preselectionListLayout,
-    G->quickSearchViewOptions) != -1)
+    (int)G->quickSearchViewOptions) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
 

@@ -1734,7 +1734,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
           }
           else
           {
-            char tmp[SIZE_DEFAULT];
+            char tmp[SIZE_DEFAULT-1];
 
             strlcpy(tmp, xmlUserData->abn.City, sizeof(tmp));
             snprintf(xmlUserData->abn.City, sizeof(xmlUserData->abn.City), "%s %s", isoStr, tmp);

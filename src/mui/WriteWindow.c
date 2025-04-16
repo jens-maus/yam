@@ -2561,19 +2561,20 @@ DECLARE(AddArchive)
         APTR oldwin;
         LONG size;
         char filename[SIZE_PATHFILE];
+        int extpos;
 
         // don't let DOS bother us with requesters while we check some files
         oldwin = SetProcWindow((APTR)-1);
 
-        strlcpy(filename, arcpath, sizeof(filename));
+        extpos = strlcpy(filename, arcpath, sizeof(filename));
         if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
         {
-          snprintf(filename, sizeof(filename), "%s.lha", arcpath);
+          strlcpy(filename + extpos, ".lha", sizeof(filename) - extpos);
           if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
           {
-            snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
+            strlcpy(filename + extpos, ".lzx", sizeof(filename) - extpos);
             if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
-              snprintf(filename, sizeof(filename), "%s.zip", arcpath);
+              strlcpy(filename + extpos, ".zip", sizeof(filename) - extpos);
           }
         }
 
@@ -3328,7 +3329,8 @@ DECLARE(AddMailAttachment) // struct Mail *mail
     GetMailFile(filename, sizeof(filename), NULL, msg->mail);
     if(StartUnpack(filename, attach.FilePath, msg->mail->Folder) != NULL)
     {
-      snprintf(attach.Name, sizeof(attach.Name), "%s.eml", msg->mail->Subject);
+      strlcpy(attach.Name, msg->mail->Subject, sizeof(attach.Name) - 4);
+      strlcat(attach.Name, ".eml", sizeof(attach.Name));
       strlcpy(attach.Description, msg->mail->Subject, sizeof(attach.Description));
       strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
       attach.Size = msg->mail->Size;

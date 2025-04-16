@@ -1110,6 +1110,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
   FILE *fh = NULL;
   char *buf = NULL;
   size_t buflen = SIZE_LINE;
+  int len;
 
   ENTER();
 
@@ -1126,17 +1127,17 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
     // now we put together our parameters for our MAIL command
     // which in fact may contain serveral parameters as well according
     // to ESMTP extensions.
-    snprintf(buf, buflen, "FROM:<%s>", tc->uin->address);
+    len = snprintf(buf, buflen, "FROM:<%s>", tc->uin->address);
 
     // in case the server supports the ESMTP SIZE extension lets add the
     // size
     if(hasSIZE(tc->msn->smtpFlags) && mail->Size > 0)
-      snprintf(buf, buflen, "%s SIZE=%ld", buf, mail->Size);
+      len += snprintf(buf + len, buflen - len, " SIZE=%ld", mail->Size);
 
     // in case the server supports the ESMTP 8BITMIME extension we can
     // add information about the encoding mode
     if(has8BITMIME(tc->msn->smtpFlags))
-      snprintf(buf, buflen, "%s BODY=%s", buf, hasServer8bit(tc->msn) ? "8BITMIME" : "7BIT");
+      len += snprintf(buf + len, buflen + len, " BODY=%s", hasServer8bit(tc->msn) ? "8BITMIME" : "7BIT");
 
     // send the MAIL command with the FROM: message
     if(SendSMTPCommand(tc, SMTP_MAIL, buf, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)

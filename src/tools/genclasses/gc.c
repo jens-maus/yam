@@ -333,8 +333,8 @@ int myaddpart( char *path, char *name, size_t len )
      work on both UNIX and Amiga systems. */
   char c;
   c = path[strlen(path) - 1];
-  if (c != ':' && c != '/') strncat(path, "/", len);
-  strncat(path, name, len);
+  if (c != ':' && c != '/') strlcat(path, "/", len);
+  strlcat(path, name, len);
   return 1;
 }
 
@@ -808,7 +808,7 @@ int scanclasses( char *dirname, struct list *classlist )
   char *n, dirbuf[256];
   int len, srccnt = 0;
   struct classdef *cd;
-  strncpy(dirbuf, dirname, 255);
+  strlcpy(dirbuf, dirname, 255);
 
   if(arg_v)
     fprintf(stdout, "scanning classes dir '%s'\n", dirbuf);
@@ -1501,7 +1501,7 @@ int gen_classheaders( struct list *classlist )
 
         continue;
       }
-      strncpy(buf, cn, 127);
+      strlcpy(buf, cn, 127);
       for (p = buf; *p; p++)
         *p = toupper(*p);
 
@@ -1588,7 +1588,7 @@ int gen_classheaders( struct list *classlist )
 
         continue;
       }
-      strncpy(buf, cn, 127);
+      strlcpy(buf, cn, 127);
       for (p = buf; *p; p++)
         *p = toupper(*p);
 
@@ -1787,7 +1787,7 @@ int getstrarg( char *argid, char *argline, char *dest, size_t destlen )
   size_t arglen = strlen(argid);
   if (strncmp(argid, argline, arglen) != 0) return 0;
   p = &argline[arglen];
-  strncpy(dest, p, destlen);
+  strlcpy(dest, p, destlen);
   return 1;
 }
 
@@ -1841,7 +1841,7 @@ int doargs( unsigned int argc, char *argv[] )
   }
 
   success = 1;
-  strncpy(arg_classdir, argv[1], 255);
+  strlcpy(arg_classdir, argv[1], 255);
   if (arg_classdir[0] == 0 || arg_classdir[0] == '-')
   {
     fprintf(stderr, "No class dir specified, using current directory.\n");
@@ -1870,7 +1870,7 @@ int doargs( unsigned int argc, char *argv[] )
     if (!arg_mkfile_cc)     arg_mkfile_cc     = "cc";
     if (!arg_mkfile_outarg) arg_mkfile_outarg = "-o";
     if (!arg_mkfile_ccopts) arg_mkfile_ccopts = "";
-    strncpy(arg_mkfile_dest,   arg_classdir, 255);
+    strlcpy(arg_mkfile_dest,   arg_classdir, 255);
     myaddpart(arg_mkfile_dest, arg_mkfile,   255);
   }
 

@@ -1211,7 +1211,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   struct TempFile *tf=NULL;
   FILE *fh = comp->FH;
   struct WritePart *firstpart = comp->FirstPart;
-  char buf[SIZE_DEFAULT];
+  char buf[SIZE_DEFAULT*2];
   char msgID[SIZE_MSGID];
   char address[SIZE_LARGE];
 
@@ -3556,7 +3556,8 @@ static void AddTagline(FILE *fh_mail)
     BOOL createHashFile;
     FILE *fh_tag;
 
-    snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
+    strlcpy(hashfile, C->TagsFile, sizeof(hashfile)-4);
+    strlcat(hashfile, ".hsh", sizeof(hashfile));
 
     if(FileExists(hashfile) == FALSE)
     {

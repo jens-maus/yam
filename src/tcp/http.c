@@ -57,7 +57,7 @@ struct TransferContext
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   char url[SIZE_URL];
   char serverPath[SIZE_LINE];
-  char requestResponse[SIZE_LINE];
+  char requestResponse[SIZE_LINE*2];
   char redirectedURL[SIZE_URL];
 };
 

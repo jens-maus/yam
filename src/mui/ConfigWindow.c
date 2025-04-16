@@ -92,10 +92,12 @@ struct Data
 // sets the name of the configuration file
 static void NewPrefsFile(struct IClass *cl, Object *obj, char *fname)
 {
+  int len;
   GETDATA;
 
   strlcpy(G->CO_PrefsFile, fname, sizeof(G->CO_PrefsFile));
-  snprintf(data->windowTitle, sizeof(data->windowTitle), "%s (%s)", tr(MSG_MA_MConfig), fname);
+  len = strlcpy(data->windowTitle, tr(MSG_MA_MConfig), sizeof(data->windowTitle));
+  snprintf(data->windowTitle + len, sizeof(data->windowTitle) - len, " (%s)", fname);
 
   xset(obj, MUIA_Window_Title, data->windowTitle,
             MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));

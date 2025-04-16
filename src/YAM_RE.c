@@ -127,16 +127,13 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
     if(IsStrEmpty(name) == FALSE)
     {
-      char suggestedName[SIZE_FILE];
-
-      strlcpy(suggestedName, name, sizeof(suggestedName));
-      ReplaceInvalidChars(suggestedName);
-      strlcpy(filename, suggestedName, sizeof(filename));
+      strlcpy(filename, name, sizeof(filename));
+      ReplaceInvalidChars(filename);
     }
     else if(nr != 0)
     {
       char ext[SIZE_DEFAULT];
-      char suggestedName[SIZE_FILE];
+      char suggestedName[SIZE_FILE - 5];
       int extlen;
 
       // we have to get the file extension of our source file and use it
@@ -146,21 +143,17 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
       if(IsStrEmpty(ext) == FALSE)
         extlen = strlen(ext);
       else
-        extlen = 3;
+        extlen = strlcpy(ext, "tmp", sizeof(ext));
 
-      strlcpy(suggestedName, mail->Subject, sizeof(suggestedName)-extlen-3);
+      strlcpy(suggestedName, mail->Subject[0] != '\0' ? mail->Subject : mail->MailFile, sizeof(suggestedName)-extlen);
       ReplaceInvalidChars(suggestedName);
-      snprintf(filename, sizeof(filename), "%s-%d.%s", suggestedName[0] != '\0' ? suggestedName : mail->MailFile,
-                                                       nr,
-                                                       ext[0] != '\0' ? ext : "tmp");
+      snprintf(filename, sizeof(filename), "%s-%d.%s", suggestedName, nr, ext);
     }
     else
     {
-      char suggestedName[SIZE_FILE];
-
-      strlcpy(suggestedName, mail->Subject, sizeof(suggestedName)-4);
-      ReplaceInvalidChars(suggestedName);
-      snprintf(filename, sizeof(filename), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
+      strlcpy(filename, mail->Subject[0] != '\0' ? mail->Subject : mail->MailFile, sizeof(filename) - 4);
+      ReplaceInvalidChars(filename);
+      strlcat(filename, ".msg", sizeof(filename));
     }
 
     if(force == TRUE)
@@ -622,11 +615,8 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
     if(dstfile != NULL)
     {
       char suggestedName[SIZE_FILE];
-      char basename[SIZE_FILE];
+      const char *basename = dstfile;
       int i=0;
-
-      // preserve the base name of the file
-      strlcpy(basename, dstfile, sizeof(basename));
 
       // now we have to make sure we don't use a filename
       // of an already existing file
@@ -2702,9 +2692,10 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
   if(G->PGPVersion == 5)
   {
     char fname[SIZE_PATHFILE];
-    char options[SIZE_LARGE];
+    char options[SIZE_PATHFILE + SIZE_COMMAND];
 
-    snprintf(fname, sizeof(fname), "%s.asc", src);
+    strlcpy(fname, src, sizeof(fname) - 4);
+    strlcat(fname, ".asc", sizeof(fname));
     Rename(src, fname);
     snprintf(options, sizeof(options), "%s +batchmode=1 +force +language=us", fname);
     error = PGPCommand("pgpv", options, NOERRORS|KEEPLOG);
@@ -4410,25 +4401,26 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           {
             char buttons[SIZE_DEFAULT*2];
             int answer;
+            int len;
             BOOL isonline = ConnectionIsOnline(NULL);
 
             D(DBF_MAIL, "asking user for MDN confirmation");
 
             // set up the possible answers for the MDN requester
-            strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
+            len = strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
 
             // in case the user is only we can ask him to send the MDN
             // immediately if wanted.
             if(isonline == TRUE)
-              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_ACCEPT_NOW));
+              len += snprintf(buttons + len, sizeof(buttons) - len, "|%s", tr(MSG_RE_MDN_ACCEPT_NOW));
 
             // he can also ignore the MDN, if required
-            snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE));
+            len += snprintf(buttons + len, sizeof(buttons) - len, "|%s", tr(MSG_RE_MDN_IGNORE));
 
             // in case we have multiple MDNs waiting we go and provide
             // an 'ignore all' answer as well
             if(multi == TRUE)
-              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
+              len += snprintf(buttons + len, sizeof(buttons) - len, "|%s", tr(MSG_RE_MDN_IGNORE_ALL));
 
             // now ask the user
             answer = MUI_Request(G->App, win, MUIF_NONE, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));

@@ -768,7 +768,7 @@ BOOL FI_PrepareSearch(struct Search *search, const enum SearchMode mode,
         // we are told to perform AmigaDOS pattern matching
         if(isFlagSet(flags, SEARCHF_SUBSTRING) || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
         {
-          char buffer[SIZE_PATTERN+1];
+          char buffer[SIZE_PATTERN];
 
           // if substring is selected lets generate a substring from
           // the current match string, but keep the string borders in mind.
@@ -1433,7 +1433,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
   if(hasExecuteAction(filter) && *filter->executeCmd)
   {
     char mailfile[SIZE_PATHFILE];
-    char buf[SIZE_COMMAND + SIZE_PATHFILE];
+    char buf[SIZE_COMMAND + SIZE_PATHFILE + 3];
 
     GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
     snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);

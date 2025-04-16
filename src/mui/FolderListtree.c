@@ -74,6 +74,7 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen,
                              const struct Folder *folder, const struct MUI_NListtree_TreeNode *treeNode)
 {
   int imageIndex = -1;
+  int len;
 
   ENTER();
 
@@ -91,13 +92,13 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen,
     imageIndex = folder->ImageIndex >= 0 ? folder->ImageIndex : FI_FOLD;
   }
 
-  snprintf(folderStr, maxLen, "\033o[%d]", imageIndex);
+  len = snprintf(folderStr, maxLen, "\033o[%d]", imageIndex);
 
   // include the folder name/path
   if(folder->Name[0] != '\0')
     strlcat(folderStr, folder->Name, maxLen);
   else
-    snprintf(folderStr, maxLen, "%s[%s]", folderStr, folder->Path);
+    snprintf(folderStr + len, maxLen - len, "[%s]", folder->Path);
 
   // append the numbers if this is an close folder group or a folder with a valid index
   if((folder->Type == FT_GROUP && isFlagClear(treeNode->tn_Flags, TNF_OPEN)) ||
@@ -410,7 +411,10 @@ OVERLOAD(MUIM_NListtree_Display)
             ndm->Preparse[0] = (char *)MUIX_I;
 
           if(isProtectedFolder(entry))
-            snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FI_PROTECTED);
+          {
+            int len = strlen(data->folderStr);
+            snprintf(data->folderStr + len, sizeof(data->folderStr) - len, " \033o[%d]", FI_PROTECTED);
+          }
         }
       }
     }

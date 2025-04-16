@@ -585,8 +585,8 @@ OVERLOAD(OM_NEW)
 
     // now we add the compiler information as YAM can be
     // compiled with different versions and types of compilers
-    snprintf(data->compileInfo, sizeof(data->compileInfo), "%s (%s, " GIT_REVSTR ")", data->compileInfo,
-                                                                                      yamcompiler);
+    snprintf(data->compileInfo + strlen(data->compileInfo), sizeof(data->compileInfo) - strlen(data->compileInfo),
+             " (%s, " GIT_REVSTR ")", yamcompiler);
 
     data->emailCacheName = (STRPTR)EMAILCACHENAME;
     while((tag = NextTagItem((APTR)&tags)) != NULL)
@@ -1060,7 +1060,7 @@ DECLARE(StartMacro) // enum Macro num, const char *param
         // strings via the new RXFF_SCRIPT flag
         if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == TRUE && MyStrChr(scname, ' ') != NULL)
         {
-          char command[SIZE_COMMAND];
+          char command[SIZE_COMMAND + 2];
 
           snprintf(command, sizeof(command), "\"%s\"", scname);
           if(SendRexxCommand(G->RexxHost, command, 0) != NULL)

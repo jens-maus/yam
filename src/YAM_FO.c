@@ -942,15 +942,16 @@ enum LoadTreeResult FO_LoadTree(void)
                     {
                       char path[SIZE_PATH];
                       ULONG count;
+                      int len;
 
                       // create a new folder directory name by appending a unique number
                       D(DBF_FOLDER, "directory '%s' already exists, creating new unique path", fo->Fullpath);
-                      strlcpy(path, fo->Fullpath, sizeof(path));
+                      len = strlcpy(path, fo->Fullpath, sizeof(path));
                       count = 0;
                       do
                       {
                         count++;
-                        snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
+                        len += snprintf(fo->Fullpath + len, sizeof(fo->Fullpath) - len, "_%d", (int)count);
                       }
                       while(FileExists(fo->Fullpath) == TRUE);
                     }

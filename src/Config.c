@@ -1036,7 +1036,7 @@ static void String2MUIStyle(const char *string, char *muistr)
     else if(c == 'u') // MUIX_U
       strlcat(muistr, MUIX_U, SIZE_SMALL);
     else if(c == '$' && (s[1] >= '2' || s[1] <= '9')) // screen pen number (2..9)
-      snprintf(muistr, SIZE_SMALL, "%s\033%c", muistr, s[1]);
+      snprintf(muistr + strlen(muistr), SIZE_SMALL - strlen(muistr), "\033%c", s[1]);
 
     // set the next start to our last search
     if(*e)
@@ -2286,7 +2286,7 @@ static char *MUIStyle2String(const char *style)
       else if(e[1] == 'u') // MUIX_B
         strlcat(buf, "u:", sizeof(buf));
       else if(e[1] >= '2' || e[1] <= '9')
-        snprintf(buf, sizeof(buf), "%s$%c:", buf, e[1]);
+        snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "$%c:", e[1]);
 
       s = ++e;
     }

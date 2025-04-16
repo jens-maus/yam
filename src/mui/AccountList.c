@@ -26,6 +26,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include "AccountList_cl.h"
 
 #include <mui/NList_mcc.h>
@@ -75,9 +77,11 @@ OVERLOAD(MUIM_NList_Display)
   {
     GETDATA;
 
-    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%d) %s%s" MUIX_N, (int)ndm->strings[-1]+1,
-                                                                                  isServerActive(msn) == FALSE ? MUIX_I : "",
-                                                                                  msn->description);
+    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%d) ", (int)ndm->strings[-1]+1);
+    if(isServerActive(msn) == FALSE)
+      strlcat(data->displayBuffer, MUIX_I, sizeof(data->displayBuffer));
+    strlcat(data->displayBuffer, msn->description, sizeof(data->displayBuffer) - strlen(MUIX_N));
+    strlcat(data->displayBuffer, MUIX_N, sizeof(data->displayBuffer));
 
     ndm->strings[0] = data->displayBuffer;
   }

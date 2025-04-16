@@ -587,7 +587,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       {
         struct Mail *mail = mnode->mail;
         struct ComprMail cmail;
-        char buf[SIZE_LARGE];
+        char buf[SIZE_LINE];
         UTF8 *utf8buf;
 
         // create the moreBytes string we append at the end
@@ -1964,7 +1964,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   BOOL success = FALSE;
   int count = 0;
   int day = 0;
-  int mon = 0;
+  unsigned int mon = 0;
   int year = 0;
   int hour = 0;
   int min = 0;

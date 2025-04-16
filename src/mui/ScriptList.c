@@ -98,10 +98,10 @@ OVERLOAD(MUIM_NList_Display)
         // the user definable macros
         default:
         {
-          snprintf(data->title, sizeof(data->title), tr(MSG_CO_ScriptMenu), (LONG)ndm->entry);
+          int len = snprintf(data->title, sizeof(data->title), tr(MSG_CO_ScriptMenu), (LONG)ndm->entry);
 
           if(CE->RX[type].Name[0] != '\0')
-            snprintf(data->title, sizeof(data->title), "%s (%s)", data->title, CE->RX[type].Name);
+            snprintf(data->title + len, sizeof(data->title) - len, " (%s)", CE->RX[type].Name);
         }
       }
 

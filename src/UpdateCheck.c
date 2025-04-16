@@ -170,124 +170,125 @@ char *BuildUpdateRequest(void)
     Object *mccObj;
     struct Library *base;
     unsigned short cnt = 0;
+    int len = 0;
 
     // encode the yam version
     if(urlencode(buf, yamversion, sizeof(buf)) > 0)
-      snprintf(request, REQUEST_SIZE, "?ver=%s", buf);
+      len += snprintf(request, REQUEST_SIZE, "?ver=%s", buf);
 
     // encode the yam buildid if present
     if(urlencode(buf, yambuildid, sizeof(buf)) > 0)
-      snprintf(request, REQUEST_SIZE, "%s&buildid=%s", request, buf);
+      len += snprintf(request + len, REQUEST_SIZE - len, "&buildid=%s", buf);
 
     // encode the yam builddate if present
     if(urlencode(buf, yamversiondate, sizeof(buf)) > 0)
-      snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
+      len += snprintf(request + len, REQUEST_SIZE - len, "&builddate=%s", buf);
 
     // encode the language in which YAM is running
     if(G->Catalog != NULL)
     {
       if(urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
-        snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
-                                                                                G->Catalog->cat_Revision);
+        len += snprintf(request + len, REQUEST_SIZE - len, "&lang=%s%%20%d%%2E%d", buf, G->Catalog->cat_Version,
+                                                                                   G->Catalog->cat_Revision);
     }
     else
-      snprintf(request, REQUEST_SIZE, "%s&lang=english", request);
+      len = strlcat(request, "&lang=english", REQUEST_SIZE);
 
     // Now we add some third party components
     // information for our update server as well.
 
     // encode the exec version
-    snprintf(request, REQUEST_SIZE, "%s&exec=%d%%2E%d", request, ((struct Library *)SysBase)->lib_Version,
-                                                                 ((struct Library *)SysBase)->lib_Revision);
+    len += snprintf(request + len, REQUEST_SIZE - len, "&exec=%d%%2E%d", ((struct Library *)SysBase)->lib_Version,
+                                                                        ((struct Library *)SysBase)->lib_Revision);
 
     // add codesets.library information
-    snprintf(request, REQUEST_SIZE, "%s&lib%d=codesets-%d%%2E%d", request, cnt++, CodesetsBase->lib_Version,
-                                                                                  CodesetsBase->lib_Revision);
+    len += snprintf(request + len, REQUEST_SIZE - len, "&lib%d=codesets-%d%%2E%d", cnt++, CodesetsBase->lib_Version,
+                                                                                          CodesetsBase->lib_Revision);
 
     // add AmiSSL library information
     if(AmiSSLMasterBase != NULL)
-      snprintf(request, REQUEST_SIZE, "%s&lib%d=amissl-%d%%2E%d", request, cnt++, AmiSSLMasterBase->lib_Version,
-                                                                                  AmiSSLMasterBase->lib_Revision);
+      len += snprintf(request + len, REQUEST_SIZE - len, "&lib%d=amissl-%d%%2E%d", cnt++, AmiSSLMasterBase->lib_Version,
+                                                                                          AmiSSLMasterBase->lib_Revision);
 
     // add XPK library information
     if(XpkBase != NULL)
-      snprintf(request, REQUEST_SIZE, "%s&lib%d=xpk-%d%%2E%d", request, cnt++, XpkBase->lib_Version,
-                                                                               XpkBase->lib_Revision);
+      len += snprintf(request + len, REQUEST_SIZE - len, "&lib%d=xpk-%d%%2E%d", cnt++, XpkBase->lib_Version,
+                                                                                       XpkBase->lib_Revision);
 
     // add openurl.library information
     if((base = OpenLibrary("openurl.library", 0)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&lib%d=openurl-%d%%2E%d", request, cnt++, base->lib_Version,
-                                                                                   base->lib_Revision);
+      len += snprintf(request + len, REQUEST_SIZE - len, "&lib%d=openurl-%d%%2E%d", cnt++, base->lib_Version,
+                                                                                           base->lib_Revision);
       CloseLibrary(base);
     }
 
     // encode the MUI version
     cnt = 0;
-    snprintf(request, REQUEST_SIZE, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version,
-                                                                MUIMasterBase->lib_Revision);
+    len += snprintf(request + len, REQUEST_SIZE - len, "&mui=%d%%2E%d", MUIMasterBase->lib_Version,
+                                                                        MUIMasterBase->lib_Revision);
 
     // add TheBar.mcc version information
     if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=thebar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                    xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=thebar-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                            xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add TextEditor.mcc version information
     if((mccObj = MUI_NewObject(MUIC_TextEditor, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=texteditor-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                        xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=texteditor-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                                xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add BetterString.mcc version information
     if((mccObj = MUI_NewObject(MUIC_BetterString, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=betterstring-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                          xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=betterstring-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                                  xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add NList.mcc version information
     if((mccObj = MUI_NewObject(MUIC_NList, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlist-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                   xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=nlist-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                           xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add NListview.mcc version information
     if((mccObj = MUI_NewObject(MUIC_NListview, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlistview-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                       xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=nlistview-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                               xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add NFloattext.mcc version information
     if((mccObj = MUI_NewObject(MUIC_NFloattext, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nfloattext-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                        xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=nfloattext-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                                xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add NListtree.mcc version information
     if((mccObj = MUI_NewObject(MUIC_NListtree, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlisttree-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                       xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=nlisttree-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                               xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
 
     // add NBalance.mcc version information
     if((mccObj = MUI_NewObject(MUIC_NBalance, TAG_DONE)) != NULL)
     {
-      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nbalance-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                      xget(mccObj, MUIA_Revision));
+      len += snprintf(request + len, REQUEST_SIZE - len, "&mcc%d=nbalance-%ld%%2E%ld", cnt++, xget(mccObj, MUIA_Version),
+                                                                                              xget(mccObj, MUIA_Revision));
       MUI_DisposeObject(mccObj);
     }
   }
