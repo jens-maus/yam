@@ -54,7 +54,7 @@ static void BuildUIDLFilename(const struct MailServerNode *msn, char *uidlPath, 
     char *uidlName;
 
     // create a file name using the mail server's unique ID
-    if(asprintf(&uidlName, ".uidl_%08lx", (uint32)msn->id) != -1)
+    if(asprintf(&uidlName, ".uidl_%08x", msn->id) != -1)
     {
       CreateFilename(uidlName, uidlPath, uidlPathSize);
 
