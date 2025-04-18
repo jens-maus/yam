@@ -4,175 +4,187 @@ on:
   schedule:
   - cron: '0 1 * * *' # run at 1 AM UTC
 
+env:
+  ADTOOLS_DL_PATH: https://github.com/adtools/adtools/releases/download/20170213
+  UPLOAD_URL: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
+  RELEASE_ID: 35749453
+
 jobs:
-  repo-change-check:
-    name: repository change check
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - id: commit-check
-        run: 'echo ::set-output name=has-commits::$(git --no-pager log --pretty=oneline --since="24 hours ago" | wc -l)'
+  repo_change_check:
+    name: Repository change check
+    runs-on: ubuntu-latest
     outputs:
-      has-commits: ${{ steps.commit-check.outputs.has-commits }}
+      has_commits: ${{ steps.commit_check.outputs.has_commits }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check if any commits in last 24 hours
+      id: commit_check
+      run: echo "has_commits=$(git --no-pager log --pretty=oneline --since='24 hours ago' | wc -l)" >> $GITHUB_OUTPUT
 
-  build:
-    runs-on: ubuntu-24.04
-    needs: repo-change-check
+  init:
+    name: Setup environment
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.setup.outputs.DATE }}
+      sha7: ${{ steps.setup.outputs.GITHUB_SHA7 }}
+      yamver: ${{ steps.setup.outputs.YAMVER }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup variables
+      id: setup
+      run : |
+        echo "DATE=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+        echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >> $GITHUB_OUTPUT
+        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2 | tr -d ".") >> $GITHUB_OUTPUT
+    - name: Cleanup old action artifacts
+      run : .github/workflows/purge_artifacts.sh ${{ secrets.GITHUB_TOKEN }}
+
+  build_adtools:
+    if: needs.repo_change_check.outputs.has_commits > 0
+    name: Build using adtools
+    runs-on: ubuntu-latest
+    needs: [ init, repo_change_check ]
     timeout-minutes: 480
-
     strategy:
       fail-fast: false
+      matrix:
+        #platform: [ os3, os4, mos, aros-ppc, aros-i386, aros-x86_64 ]
+        platform: [ os3, mos ]
+    env:
+      DATE: ${{ needs.init.outputs.date }}
+      YAMVER: ${{ needs.init.outputs.yamver }}
+      GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: setup dependencies
+    - name: Setup dependencies
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -y -qq || true
         sudo apt-get -qq install libc6:i386
+        sudo apt-get -qq install git-restore-mtime
         sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
 
-    - name: setup env
-      run : |
-        echo "DATE=$(date +%Y%m%d)" >>$GITHUB_ENV
-        echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >>$GITHUB_ENV
-        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2 | tr -d ".") >>$GITHUB_ENV
-
-    - name: install adtools build env
+    - name: Install adtools build env
       run: |
-        DOWNLOAD_PATH=https://github.com/adtools/adtools/releases/download/20170213
-        curl -L ${DOWNLOAD_PATH}/adtools-utils.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-aros.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-i386-aros.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C /
-
-    - name: cleanup old action artifacts
-      run: .github/workflows/purge_artifacts.sh ${{ secrets.GITHUB_TOKEN }}
+        if [[ ${{ matrix.platform }} =~ os3 ]]; then COMPILER=adtools-m68k-amigaos.tar.bz2 ; SUFFIX=AmigaOS3 ; fi
+        if [[ ${{ matrix.platform }} =~ os4 ]]; then COMPILER=adtools-ppc-amigaos.tar.bz2 ; SUFFIX=AmigaOS4 ; fi
+        if [[ ${{ matrix.platform }} =~ mos ]]; then COMPILER=adtools-ppc-morphos.tar.bz2 ; SUFFIX=MorphOS ; fi
+        if [[ ${{ matrix.platform }} =~ aros-ppc ]]; then COMPILER=adtools-ppc-aros.tar.bz2 ; SUFFIX=AROS-ppc ; fi
+        if [[ ${{ matrix.platform }} =~ aros-i386 ]]; then COMPILER=adtools-i386-aros.tar.bz2 ; SUFFIX=AROS-i386 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-x86_64 ]]; then COMPILER=adtools-x86_64-aros.tar.bz2 ; SUFFIX=AROS-x86_64 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-arm ]]; then COMPILER=adtools-arm-aros.tar.bz2 ; SUFFIX=AROS-arm ; fi
+        echo "SUFFIX=${SUFFIX}" >> $GITHUB_ENV
+        curl -L ${{ env.ADTOOLS_DL_PATH }}/adtools-utils.tar.bz2 | sudo tar xj -C /
+        curl -L ${{ env.ADTOOLS_DL_PATH }}/${COMPILER} | sudo tar xj -C /
 
     #- name: remote debug tmate session
     #  uses: mxschmitt/action-tmate@v1
     #  if: matrix.platform == 'os4'
 
-    - name: build YAM nightlies
+    - name: Build YAM nightly
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
-        make -j1 nightly
+        git restore-mtime -q
+        ./scripts/mkdist.sh nightly ${{ matrix.platform }}
 
-    - name: upload AmigaOS4 nightly build archive
+    - name: Upload nightly build archive
       uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS4.lha
+        upload_url: ${{ env.UPLOAD_URL }}
+        release_id: ${{ env.RELEASE_ID }}
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-${{ env.SUFFIX }}.lha
         asset_content_type: application/x-lzh-compressed
         max_releases: 3
 
-    - name: upload AmigaOS4 nightly build archive [debug]
+    - name: Upload nightly build archive [debug]
       uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4-debug.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS4-debug.lha
+        upload_url: ${{ env.UPLOAD_URL }}
+        release_id: ${{ env.RELEASE_ID }}
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}-debug.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-${{ env.SUFFIX }}-debug.lha
         asset_content_type: application/x-lzh-compressed
         max_releases: 3
 
-    - name: upload AmigaOS3 nightly build archive
-      uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS3.lha
-        asset_content_type: application/x-lzh-compressed
-        max_releases: 3
-
-    - name: upload AmigaOS3 nightly build archive [debug]
-      uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3-debug.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-AmigaOS3-debug.lha
-        asset_content_type: application/x-lzh-compressed
-        max_releases: 3
-
-    - name: upload MorphOS nightly build archive
-      uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-MorphOS.lha
-        asset_content_type: application/x-lzh-compressed
-        max_releases: 3
-
-    - name: upload MorphOS nightly build archive [debug]
-      uses: WebFreak001/deploy-nightly@v3.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: https://uploads.github.com/repos/jens-maus/yam/releases/35749453/assets{?name,label}
-        release_id: 35749453 
-        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS-debug.lha
-        asset_name: YAM${{ env.YAMVER }}dev-$$-MorphOS-debug.lha
-        asset_content_type: application/x-lzh-compressed
-        max_releases: 3
-
-    - name: upload AmigaOS4 files as workflow artifact [release]
+    - name: Upload files as workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-AmigaOS4.lha
+        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}*.lha*
+        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-${{ env.SUFFIX }}
       continue-on-error: true
 
-    - name: upload AmigaOS4 files as workflow artifact [debug]
-      uses: actions/upload-artifact@v4
-      with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS4-debug.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-AmigaOS4-debug.lha
-      continue-on-error: true
+  build_docker_os4:
+    if: needs.repo_change_check.outputs.has_commits > 0
+    name: Build using docker (os4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    needs: [ init, repo_change_check ]
+    container:
+      image: walkero/amigagccondocker:os4-gcc11
+      volumes:
+        - '${{ github.workspace }}:/opt/code'
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+    env:
+      SUFFIX: AmigaOS4
+      DATE: ${{ needs.init.outputs.date }}
+      YAMVER: ${{ needs.init.outputs.yamver }}
+      GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
 
-    - name: upload AmigaOS3 files as workflow artifact [release]
-      uses: actions/upload-artifact@v4
+    steps:
+    - uses: actions/checkout@v4
       with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-AmigaOS3.lha
-      continue-on-error: true
+        fetch-depth: 0
 
-    - name: upload AmigaOS3 files as workflow artifact [debug]
-      uses: actions/upload-artifact@v4
-      with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-AmigaOS3-debug.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-AmigaOS3-debug.lha
-      continue-on-error: true
+    - name: Setup dependencies
+      run: |
+        sudo apt-get update -y -qq || true
+        sudo apt-get -qq install rsync
+        sudo apt-get -qq install git-restore-mtime
 
-    - name: upload MorphOS files as workflow artifact [release]
-      uses: actions/upload-artifact@v4
-      with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-MorphOS.lha
-      continue-on-error: true
+    - name: Add repository to git safe directories
+      run: |
+        git config --global --add safe.directory $GITHUB_WORKSPACE
+        git config --global --add safe.directory /opt/code
 
-    - name: upload MorphOS files as workflow artifact [debug]
+    - name: Build YAM nightly
+      timeout-minutes: 480
+      run: |
+        git restore-mtime -q
+        ./scripts/mkdist.sh nightly os4
+
+    - name: Upload nightly build archive
+      uses: WebFreak001/deploy-nightly@v3.2.0
+      with:
+        upload_url: ${{ env.UPLOAD_URL }}
+        release_id: ${{ env.RELEASE_ID }}
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-${{ env.SUFFIX }}.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: Upload nightly build archive [debug]
+      uses: WebFreak001/deploy-nightly@v3.2.0
+      with:
+        upload_url: ${{ env.UPLOAD_URL }}
+        release_id: ${{ env.RELEASE_ID }}
+        asset_path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}-debug.lha
+        asset_name: YAM${{ env.YAMVER }}dev-$$-${{ env.SUFFIX }}-debug.lha
+        asset_content_type: application/x-lzh-compressed
+        max_releases: 3
+
+    - name: Upload files as workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-MorphOS-debug.lha*
-        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-MorphOS-debug.lha
+        path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}*.lha*
+        name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-${{ env.SUFFIX }}
       continue-on-error: true

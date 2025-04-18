@@ -2,70 +2,157 @@ name: release
 on:
   workflow_dispatch:
 
-jobs:
-  check:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 480
+env:
+  ADTOOLS_DL_PATH: https://github.com/adtools/adtools/releases/download/20170213
 
+jobs:
+  init:
+    name: Setup environment
+    runs-on: ubuntu-latest
+    outputs:
+      yamtag: ${{ steps.setup.outputs.YAMTAG }}
+      yamver: ${{ steps.setup.outputs.YAMVER }}
+      sha7: ${{ steps.setup.outputs.GITHUB_SHA7 }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup variables
+      id: setup
+      run : |
+        echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >> $GITHUB_OUTPUT
+        echo YAMTAG=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2) >> $GITHUB_OUTPUT
+        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2 | tr -d ".") >> $GITHUB_OUTPUT
+
+    - name: Cleanup old action artifacts
+      run: .github/workflows/purge_artifacts.sh ${{ secrets.GITHUB_TOKEN }}
+
+  release_draft:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    needs: [ init, build_adtools, build_docker_os4 ]
     strategy:
       fail-fast: false
+    env:
+      YAMTAG: ${{ needs.init.outputs.yamtag }}
+      YAMVER: ${{ needs.init.outputs.yamver }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: setup dependencies
+    - name: Download all releases
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+
+    - name: Create release draft
+      uses: ncipollo/release-action@v1.16.0
+      with:
+        tag: ${{ env.YAMTAG }}
+        name: 'YAM ${{ env.YAMTAG }}'
+        omitBody: true
+        draft: true
+        prerelease: false
+        allowUpdates: true
+        updateOnlyUnreleased: true
+        artifacts: YAM${{ env.YAMVER }}-*.lha
+        artifactContentType: application/x-lha
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build_adtools:
+    name: Build using adtools
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    needs: init
+    strategy:
+      fail-fast: false
+      matrix:
+        #platform: [ os3, os4, mos, aros-ppc, aros-i386, aros-x86_64, aros-arm ]
+        platform: [ os3, mos ]
+    env:
+      YAMVER: ${{ needs.init.outputs.yamver }}
+      GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup dependencies
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -y -qq || true
         sudo apt-get -qq install libc6:i386
+        sudo apt-get -qq install git-restore-mtime
         sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
 
-    - name: setup env
-      run : |
-        echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >>$GITHUB_ENV
-        echo YAMVER=$(grep '#define __YAM_VERSION' src/YAM_global.c | cut -d '"' -f2 | tr -d ".") >>$GITHUB_ENV
-
-    - name: install adtools build env
+    - name: Install adtools build env
       run: |
-        DOWNLOAD_PATH=https://github.com/adtools/adtools/releases/download/20170213
-        curl -L ${DOWNLOAD_PATH}/adtools-utils.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-ppc-aros.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-i386-aros.tar.bz2 | sudo tar xj -C /
-        curl -L ${DOWNLOAD_PATH}/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C /
+        curl -L ${{ env.ADTOOLS_DL_PATH }}/adtools-utils.tar.bz2 | sudo tar xj -C /
+        if [[ ${{ matrix.platform }} =~ os3 ]]; then COMPILER=adtools-m68k-amigaos.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ os4 ]]; then COMPILER=adtools-ppc-amigaos.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ mos ]]; then COMPILER=adtools-ppc-morphos.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-ppc ]]; then COMPILER=adtools-ppc-aros.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-i386 ]]; then COMPILER=adtools-i386-aros.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-x86_64 ]]; then COMPILER=adtools-x86_64-aros.tar.bz2 ; fi
+        if [[ ${{ matrix.platform }} =~ aros-arm ]]; then COMPILER=adtools-arm-aros.tar.bz2 ; fi
+        curl -L ${{ env.ADTOOLS_DL_PATH }}/${COMPILER} | sudo tar xj -C /
 
-    - name: cleanup old action artifacts
-      run: .github/workflows/purge_artifacts.sh ${{ secrets.GITHUB_TOKEN }}
-
-    #- name: remote debug tmate session
-    #  uses: mxschmitt/action-tmate@v1
-    #  if: matrix.platform == 'os4'
-
-    - name: build YAM release
+    - name: Build YAM release
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
-        make -j1 release
+        git restore-mtime -q
+        ./scripts/mkdist.sh release ${{ matrix.platform }}
 
-    - name: upload os4 release files as workflow artifact
+    - name: Upload release files as workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        path: YAM*-AmigaOS4-*.lha*
-        name: YAM${{ env.YAMVER }}-AmigaOS4-${{ env.GITHUB_SHA7 }}.lha
-      continue-on-error: true
+        path: YAM*-*.lha*
+        name: YAM${{ env.YAMVER }}-${{ matrix.platform }}-adtools-${{ env.GITHUB_SHA7 }}.lha
 
-    - name: upload os3 release files as workflow artifact
+  build_docker_os4:
+    name: Build using docker (os4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    needs: init
+    container:
+      image: walkero/amigagccondocker:os4-gcc11
+      volumes:
+        - '${{ github.workspace }}:/opt/code'
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+    env:
+      YAMVER: ${{ needs.init.outputs.yamver }}
+      GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup dependencies
+      run: |
+        sudo apt-get update -y -qq || true
+        sudo apt-get -qq install rsync
+        sudo apt-get -qq install git-restore-mtime
+
+    - name: Add repository to git safe directories
+      run: |
+        git config --global --add safe.directory $GITHUB_WORKSPACE
+        git config --global --add safe.directory /opt/code
+
+    - name: Build YAM release
+      timeout-minutes: 480
+      run: |
+        git restore-mtime -q
+        ./scripts/mkdist.sh release os4
+
+    - name: Upload release files as workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        path: YAM*-AmigaOS3-*.lha*
-        name: YAM${{ env.YAMVER }}-AmigaOS3-${{ env.GITHUB_SHA7 }}.lha
-      continue-on-error: true
-
-    - name: upload mos release files as workflow artifact
-      uses: actions/upload-artifact@v4
-      with:
-        path: YAM*-MorphOS-*.lha*
-        name: YAM${{ env.YAMVER }}-MorphOS-${{ env.GITHUB_SHA7 }}.lha
-      continue-on-error: true
+        path: YAM*-*.lha*
+        name: YAM${{ env.YAMVER }}-os4-gcc11-${{ env.GITHUB_SHA7 }}.lha
