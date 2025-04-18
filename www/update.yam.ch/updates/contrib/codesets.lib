@@ -1,10 +1,10 @@
 NAME: codesets.library
-VERSION: 6.21
-BUILDDATE: 16.01.2018
-URL: * https://github.com/jens-maus/libcodesets/releases/download/6.21/codesets-6.21.lha
+VERSION: 6.22
+BUILDDATE: 26.02.2024
+URL: * https://github.com/jens-maus/libcodesets/releases/download/6.22/codesets-6.22.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                         codesets.library - 6.21
+                         codesets.library - 6.22
 ---------------------------------------------------------------------------
 
 codesets.library is a generic codesets conversion library commonly used

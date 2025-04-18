@@ -1,10 +1,10 @@
 NAME: NListtree.mcc
-VERSION: 18.53
-BUILDDATE: 18.12.2020
-URL: * https://github.com/amiga-mui/nlist/releases/download/0.127/MCC_NList-0.127.lha
+VERSION: 18.54
+BUILDDATE: 31.8.2021
+URL: * https://github.com/amiga-mui/nlist/releases/download/0.128/MCC_NList-0.128.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                         NListtree.mcc - 18.53
+                         NListtree.mcc - 18.54
 ---------------------------------------------------------------------------
 
 NListtree.mcc is a MUI custom class used for managing large amount of data
