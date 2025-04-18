@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: YAM*-*.lha*
-        name: YAM${{ env.YAMVER }}-${{ matrix.platform }}-adtools-${{ env.GITHUB_SHA7 }}.lha
+        name: YAM${{ env.YAMVER }}-${{ matrix.platform }}-adtools-${{ env.GITHUB_SHA7 }}
 
   build_docker_os4:
     name: Build using docker (os4)
@@ -155,4 +155,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: YAM*-*.lha*
-        name: YAM${{ env.YAMVER }}-os4-gcc11-${{ env.GITHUB_SHA7 }}.lha
+        name: YAM${{ env.YAMVER }}-os4-gcc11-${{ env.GITHUB_SHA7 }}
