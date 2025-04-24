@@ -601,10 +601,11 @@ BOOL MA_SaveIndex(struct Folder *folder)
         if(systemIsUTF8 == TRUE)
         {
           // no conversion required;
+          cmail.moreBytes = strlen(buf);
           utf8buf = (UTF8 *)buf;
-		}
-		else
-		{
+        }
+        else
+        {
           // convert the buffer string to UTF8
           // the length of the generated string is directly put into the moreBytes variable
           utf8buf = CodesetsUTF8Create(CSA_Source, buf,
