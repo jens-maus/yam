@@ -132,6 +132,7 @@ struct ComprMail
   // without bumping the index because the routines in LoadIndex() take care
   // of that.
 
+  #define SIZE_MOREBYTES (SIZE_SUBJECT + ((SIZE_ADDRESS + SIZE_REALNAME) * 3) + SIZE_DEFAULT + 1)
   #define COMPRMAIL_MORELINES 8
 };
 
@@ -325,7 +326,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             {
               struct Mail *mail;
               struct ComprMail cmail;
-              char utf8buf[SIZE_LARGE];
+              char utf8buf[SIZE_MOREBYTES * 2];
               char *buf;
               char *line;
               char *nextLine;
@@ -366,9 +367,9 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               {
                 // no conversion required
                 buf = utf8buf;
-			  }
-			  else
-			  {
+              }
+              else
+              {
                 // convert the utf8 encoded buffer to the local charset
                 if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
                                             CSA_SourceLen,       cmail.moreBytes,
@@ -587,7 +588,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       {
         struct Mail *mail = mnode->mail;
         struct ComprMail cmail;
-        char buf[SIZE_LINE];
+        char buf[SIZE_MOREBYTES];
         UTF8 *utf8buf;
 
         // create the moreBytes string we append at the end
