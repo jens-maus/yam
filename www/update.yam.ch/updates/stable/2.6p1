@@ -1,12 +1,12 @@
 VERSION: 2.6p1
 BUILDID:
 BUILDDATE: 26.09.2010
-URL: ppc-amigaos http://downloads.sourceforge.net/yam/YAM26p1-AmigaOS4.lha
-URL: m68k-amigaos http://downloads.sourceforge.net/yam/YAM26p1-AmigaOS3.lha
-URL: ppc-morphos http://downloads.sourceforge.net/yam/YAM26p1-MorphOS.lha
-URL: i386-aros http://downloads.sourceforge.net/yam/YAM26p1-AROS-i386.lha
-URL: ppc-aros http://downloads.sourceforge.net/yam/YAM26p1-AROS-ppc.lha
-URL: x86_64-aros http://downloads.sourceforge.net/yam/YAM26p1-AROS-x86_64.lha
+URL: ppc-amigaos https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-AmigaOS4.lha
+URL: m68k-amigaos https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-AmigaOS3.lha
+URL: ppc-morphos https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-MorphOS.lha
+URL: i386-aros https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-AROS-i386.lha
+URL: ppc-aros https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-AROS-ppc.lha
+URL: x86_64-aros https://github.com/jens-maus/yam/releases/download/2.6p1/YAM26p1-AROS-x86_64.lha
 CHANGES:
 ---------------------------------------------------------------------------
                    YAM - Bugfixing patch release 2.6p1

@@ -1,7 +1,7 @@
 VERSION: 2.4p1
 BUILDID:
 BUILDDATE: 25.5.2003
-URL: * http://downloads.sf.net/yam/YAM24p1.lha
+URL: * https://github.com/jens-maus/yam/releases/download/2.4p1/YAM24p1.lha
 CHANGES:
 - Fixed: failed to quote messages containing attachments (damato)
 - Fixed: the "Abbreviation" string gadget in the Glossary reset itself

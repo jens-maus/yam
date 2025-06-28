@@ -1,114 +1,24 @@
 VERSION: 2.10-dev
-BUILDID: 20140408
-BUILDDATE: 08.04.2014
-URL: m68k-amigaos http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2014-04-08-dev/YAM210dev-MorphOS.lha
-URL: i386-aros http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AROSi386.lha
-URL: ppc-aros http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AROSppc.lha
-URL: x86_64-aros http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AROSx86_64.lha
-URL: arm-aros http://nightly.yam.ch/2014-04-08-dev/YAM210dev-AROSarm.lha
+BUILDID: 20210514
+BUILDDATE: 14.05.2021
+URL: m68k-amigaos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSx86_64.lha
+URL: arm-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSarm.lha
 CHANGES:
----------------------------
-YAM Open Source - ChangeLog
----------------------------
+2021-05-13 Jens Maus <mail@jens-maus.de>
 
-$Id: ChangeLog 7778 2014-04-06 14:08:35Z damato $
-$URL: file:///home/svn/yam/trunk/ChangeLog $
+  fix README.md and retire codeclimate
 
-2014-04-06 Jens Maus <mail@jens-maus.de>
+2021-05-13 Jens Maus <mail@jens-maus.de>
 
-  * resources/certificats, tools/mk-ca-bundle.pl: updated our root certificate
-    bundle with the latest version available via http://curl.haxx.se/ca/cacert.pem
+  Merge pull request #685 from pbobbenb/master
 
-2014-04-02 Thore Böckelmann <tboeckel@gmx.de>
+Did a cleanup of icon/window positions and "forget position" on some â€¦
+2021-05-13 Jens Maus <mail@jens-maus.de>
 
-  * TZone.c: fixed the broken search for the next DST switch in case it is more
-    than half a year from today until that next switch.
-
-2014-04-01 Thore Böckelmann <tboeckel@gmx.de>
-
-  * locale: added a new header line to the .po files to specify a correct name
-    for the generated .catalog file.
-
-2014-03-30 Jens Maus <mail@jens-maus.de>
-
-  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
-    environment to the latest version (2014b) released by iana.org.
-
-2014-03-27 Jens Maus <mail@jens-maus.de>
-
-  * locale/YAM.pot: added some comments to the pot file for properly translating
-    B/KB/MB/GB units. Translators should keep on using kilo/mega/giga (10^x)
-    rather than using kibi/mibi/gibi (2^x) because these units are still more
-    common than the newer SI-standard units which users might be confused on. In
-    addition translators should use appropriate abbreviations for "byte" (B) and
-    not use "octet" (o). Please see http://en.wikipedia.org/wiki/Byte for more
-    information.
-  * YAM_UT.c: added one more case where a translation for "GB" was missing.
-
-2014-03-26 Thore Böckelmann <tboeckel@gmx.de>
-
-  * YAM_UT.c, locale/YAM.pot: made all size abbreviations translatable.
-
-2014-03-23 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/MainMailList.c: changed the (yet) non-translatable context menu of
-    NList.mcc for empty folders by the same context menu as is created for the
-    list title bar. This closes #541.
-
-2014-03-23 Jens Maus <mail@jens-maus.de>
-
-  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
-    environment to the latest version (2014a) released by iana.org.
-
-2014-03-22 Thore Böckelmann <tboeckel@gmx.de>
-
-  * YAM_RE.c: decode the letter part of multipart/signed mails in any case.
-    Otherwise such mails will end up as raw mail dump. For example AppleMail
-    creates such mails.
-
-2014-03-20 Thore Böckelmann <tboeckel@gmx.de>
-
-  * YAM_MA.c: added some debug output to the mail sending preparation.
-
-2014-03-19 Thore Böckelmann <tboeckel@gmx.de>
-
-  * tcp/pop.c: don't treat no downloadable messages on the server as an error.
-    This refs #536.
-
-2014-03-17 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/MainMailList.c: disable the "Redirect" item of the mail context menu
-    for the Sent folder. This closes #537.
-
-2014-03-14 Thore Böckelmann <tboeckel@gmx.de>
-
-  * rexx/mailcheck.c: added the missing initialization of the result stem
-    variable. This closes #536.
-  * YAM.c: fixed the early abortion of ARexx initiated mail transfers when the
-    user manually opens the transfer window.
-
-2014-03-13 Jens Maus <mail@jens-maus.de>
-
-  * tcp/ssl.c, YAM.c: slightly reworked the AmiSSL initialization part to
-    initialize the library and the global error strings right after opening
-    amissl library and not within the connection process of each thread. This
-    could potentially fix some runtime problems. This refs #530.
-
-2014-03-02 Jens Maus <mail@jens-maus.de>
-
-  * tools/mkrelease.sh: modified script to automatically copy all existing
-    catalog file to the release archive instead of having to maintain a fixed
-    list of languages in the script itself.
-
-2014-02-27 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/FolderListtree.c, mui/MainMailList.c: implemented the private method
-    MUIM_CheckShortHelp to support multiple bubble help texts within the lists
-    without having to leave the object.
-
-2014-02-27 Jens Maus <mail@jens-maus.de>
-
-
-THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
+  replaced all bintray references with github release url pathes to
+adtools since the bintray service stopped working!
