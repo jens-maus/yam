@@ -1,24 +1,8 @@
 VERSION: 2.10-dev
-BUILDID: 20210514
-BUILDDATE: 14.05.2021
-URL: m68k-amigaos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-MorphOS.lha
-URL: i386-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSi386.lha
-URL: ppc-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSppc.lha
-URL: x86_64-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSx86_64.lha
-URL: arm-aros http://nightly.yam.ch/2021-05-14-dev/YAM210dev-20210514-AROSarm.lha
+BUILDID: 20250425
+BUILDDATE: 25.04.2025
+URL: m68k-amigaos https://github.com/jens-maus/yam/releases/download/nightly-builds/YAM210dev-20250425-e5ea83-AmigaOS3.lha
+URL: ppc-amigaos https://github.com/jens-maus/yam/releases/download/nightly-builds/YAM210dev-20250425-e5ea83-AmigaOS4.lha
+URL: ppc-morphos https://github.com/jens-maus/yam/releases/download/nightly-builds/YAM210dev-20250425-e5ea83-MorphOS.lha
 CHANGES:
-2021-05-13 Jens Maus <mail@jens-maus.de>
-
-  fix README.md and retire codeclimate
-
-2021-05-13 Jens Maus <mail@jens-maus.de>
-
-  Merge pull request #685 from pbobbenb/master
-
-Did a cleanup of icon/window positions and "forget position" on some …
-2021-05-13 Jens Maus <mail@jens-maus.de>
-
-  replaced all bintray references with github release url pathes to
-adtools since the bintray service stopped working!
+For a list of recent changes, see https://github.com/jens-maus/yam/commits/master/

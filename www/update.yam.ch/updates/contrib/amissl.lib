@@ -1,56 +1,23 @@
 NAME: AmiSSL Library
-VERSION: 4.2
-BUILDDATE: 07.03.2018
-URL: * https://github.com/jens-maus/amissl/releases/download/4.2/AmiSSL-4.2.lha
+VERSION: 5.20
+BUILDDATE: 13.04.2025
+URL: m68k-amigaos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS3.lha
+URL: ppc-morphos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS3.lha
+URL: ppc-amigaos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS4.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                          AmiSSL Library - 4.2
+                          AmiSSL Library - 5.20
 ---------------------------------------------------------------------------
 
-This is version 4.2 of the AmiSSL library for Amiga based operating systems
-and the first public open-source based release of AmiSSL. Version 4.x is a new
-major release which comes with full compatibility to the OpenSSL 1.1.x line
-which includes important security related fixes and comes with new encryption
-ciphers which are required nowadays to connect to modern SSL-based services
-(e.g.  HTTPS). However, due to fundamental changes in the API between the old
-AmiSSLv3 and new v4 versions and the large changes between the old OpenSSL
-0.9.x and the new OpenSSL 1.1.x line applications have to be recompiled with
-the updated AmiSSL SDK to take full advantage of the modernized OpenSSL 1.1.x
-API. Besides that fundamental change, AmiSSLv4 can be installed on top of a
-AmiSSLv3 installation while still ensuring that applications compiled for
-AmiSSLv3 will continue to work properly.
+AmiSSL is a port of OpenSSL in a shared library for Amiga-based systems.
+OpenSSL (www.openssl.org) is "an open source project that provides a
+robust, commercial-grade, and full-featured toolkit for the Transport
+Layer Security (TLS) and Secure Sockets Layer (SSL) protocols. It is also
+a general-purpose cryptography library."
 
-IMPORTANT NOTE:
-This release comes with binaries for the AmigaOS4/PPC and AmigaOS3/m68k
-platform only.  Unfortunately, due to lack of motivated developers we couldn't
-provide native binaries for the MorphOS/PPC or AROS (PPC, i386, x86_64)
-platform in time. If you are, however, interested in seeing AmiSSL v4 being
-ported for these other Amiga-based platforms, please try to find motivated and
-talented developers who could join our team as proper maintainers for these
-alternative platforms. In addition, if you are a MorphOS or AROS developer
-yourself, feel free to send proper pull requests to see your platform
-supported in one of the next releases or please consider joining our team.
+Many mail servers now rely on SSL/TLS and the version that is advertised
+here is an important security update and every YAM user is advised to
+install this new version.
 
-Requirements:
-------------
-- AmigaOS 4.0+/PPC, AmigaOS 3.0+/68020+ or MorphOS
-
-Version 4.2 (07.03.2018):
-------------------------
-- Updated OpenSSL backend to full compatibility to latest
-  OpenSSL 1.1.0g (02.11.2017) version.
-- Updated root certificates to latest Mozilla-based bundle provided
-  by https://curl.haxx.se/ca/
-- Fixed https.c example cleanup code for non-OS4 targets (#18)
-- Reinstated AmigaOS multithreading support and semaphore protection, using
-  the new thread API introduced in OpenSSL 1.1.0 (#17)
-- Include `ppcinline/macros.h` which contains all `LPXX()` macros to use the
-  AmiSSL includes for MorphOS.
-- Minor improvements/fixes.
-
-Please find the necessary installation archive as a lha archive file
-attached to this release. The file size of this file is 5.5 MB and the
-SHA256 checksum for it is:
-
-AmiSSL-4.2.lha
-652442cad5f171108ebb6a0b74e36ec5b3665100a0a3d918742cb06f8b2649ab
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the AmiSSL lha archive.
