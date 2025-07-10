@@ -1,12 +1,12 @@
 NAME: AmiSSL Library
-VERSION: 5.20
-BUILDDATE: 13.04.2025
-URL: m68k-amigaos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS3.lha
-URL: ppc-morphos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS3.lha
-URL: ppc-amigaos https://github.com/jens-maus/amissl/releases/download/5.20/AmiSSL-5.20-OS4.lha
+VERSION: 5.21
+BUILDDATE: 01.07.2025
+URL: m68k-amigaos https://github.com/jens-maus/amissl/releases/download/5.21/AmiSSL-5.21-OS3.lha
+URL: ppc-morphos https://github.com/jens-maus/amissl/releases/download/5.21/AmiSSL-5.21-OS3.lha
+URL: ppc-amigaos https://github.com/jens-maus/amissl/releases/download/5.21/AmiSSL-5.21-OS4.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                          AmiSSL Library - 5.20
+                          AmiSSL Library - 5.21
 ---------------------------------------------------------------------------
 
 AmiSSL is a port of OpenSSL in a shared library for Amiga-based systems.
