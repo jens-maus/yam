@@ -82,7 +82,7 @@ struct Data
   Object *CH_DLLARGE;
   Object *ST_WARNSIZE;
   Object *CH_DELETE;
-  Object *CH_DUPLICATES
+  Object *CH_DUPLICATES;
   Object *CH_APPLYREMOTEFILTERS;
   Object *CH_POP3_NOTIFY_REQ;
   Object *CH_POP3_NOTIFY_SOUND;
@@ -152,7 +152,7 @@ OVERLOAD(OM_NEW)
   Object *CH_DLLARGE;
   Object *ST_WARNSIZE;
   Object *CH_DELETE;
-  Object *CH_DUPLICATES
+  Object *CH_DUPLICATES;
   Object *CH_APPLYREMOTEFILTERS;
   Object *CH_POP3_NOTIFY_REQ;
   Object *CH_POP3_NOTIFY_SOUND;
