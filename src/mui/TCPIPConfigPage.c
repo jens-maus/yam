@@ -82,6 +82,7 @@ struct Data
   Object *CH_DLLARGE;
   Object *ST_WARNSIZE;
   Object *CH_DELETE;
+  Object *CH_DUPLICATES;
   Object *CH_APPLYREMOTEFILTERS;
   Object *CH_POP3_NOTIFY_REQ;
   Object *CH_POP3_NOTIFY_SOUND;
@@ -151,6 +152,7 @@ OVERLOAD(OM_NEW)
   Object *CH_DLLARGE;
   Object *ST_WARNSIZE;
   Object *CH_DELETE;
+  Object *CH_DUPLICATES;
   Object *CH_APPLYREMOTEFILTERS;
   Object *CH_POP3_NOTIFY_REQ;
   Object *CH_POP3_NOTIFY_SOUND;
@@ -351,6 +353,9 @@ OVERLOAD(OM_NEW)
 
                 Child, HSpace(1),
                 Child, MakeCheckGroup(&CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+                
+                Child, HSpace(1),
+                Child, MakeCheckGroup(&CH_DUPLICATES, tr(MSG_CO_AvoidDuplicates)),
 
                 Child, HSpace(1),
                 Child, MakeCheckGroup(&CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
@@ -570,6 +575,7 @@ OVERLOAD(OM_NEW)
     data->CH_DLLARGE =                CH_DLLARGE;
     data->ST_WARNSIZE =               ST_WARNSIZE;
     data->CH_DELETE =                 CH_DELETE;
+    data->CH_DUPLICATES =             CH_DUPLICATES;
     data->CH_APPLYREMOTEFILTERS =     CH_APPLYREMOTEFILTERS;
     data->CH_POP3_NOTIFY_REQ =        CH_POP3_NOTIFY_REQ;
     data->CH_POP3_NOTIFY_SOUND =      CH_POP3_NOTIFY_SOUND;
@@ -622,6 +628,7 @@ OVERLOAD(OM_NEW)
     SetHelp(ST_POPUSERID,              MSG_HELP_CO_ST_POPUSERID);
     SetHelp(ST_PASSWD,                 MSG_HELP_CO_ST_PASSWD);
     SetHelp(CH_DELETE,                 MSG_HELP_CO_CH_DELETE);
+    SetHelp(CH_DUPLICATES,             MSG_HELP_CO_CH_DUPLICATES);
     SetHelp(CY_POPAUTH,                MSG_HELP_CO_CY_POPAUTH);
     SetHelp(CH_POPENABLED,             MSG_HELP_CO_CH_POPENABLED);
     SetHelp(CH_DOWNLOADONSTARTUP,      MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP );
@@ -654,6 +661,7 @@ OVERLOAD(OM_NEW)
     DoMethod(CH_POPENABLED,             MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CY_POPAUTH,                MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CH_DELETE,                 MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_DUPLICATES,             MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CH_DOWNLOADONSTARTUP,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CH_INTERVAL,               MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(NM_INTERVAL,               MUIM_Notify, MUIA_Numeric_Value,    MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
@@ -854,6 +862,7 @@ DECLARE(POP3ToGUI)
     nnset(data->ST_WARNSIZE,               MUIA_String_Integer,  msn->largeMailSizeLimit);
     nnset(data->CH_APPLYREMOTEFILTERS,     MUIA_Selected,        hasServerApplyRemoteFilters(msn));
     nnset(data->CH_DELETE,                 MUIA_Selected,        hasServerPurge(msn));
+    nnset(data->CH_DUPLICATES,             MUIA_Selected,        hasServerAvoidDuplicates(msn));
     nnset(data->CY_PRESELECTION,           MUIA_Cycle_Active,    msn->preselection);
     nnset(data->CH_POP3_NOTIFY_REQ,        MUIA_Selected,        msn->notifyByRequester);
     #if defined(__amigaos4__)
@@ -977,6 +986,11 @@ DECLARE(GUIToPOP3)
         setFlag(msn->flags, MSF_PURGEMESSGAES);
       else
         clearFlag(msn->flags, MSF_PURGEMESSGAES);
+        
+      if(GetMUICheck(data->CH_DUPLICATES) == TRUE)
+        setFlag(msn->flags, MSF_AVOID_DUPLICATES);
+      else
+        clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
