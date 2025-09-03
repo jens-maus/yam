@@ -46,7 +46,7 @@ jobs:
         merge-multiple: true
 
     - name: Create release draft
-      uses: ncipollo/release-action@v1.18.0
+      uses: ncipollo/release-action@v1.19.1
       with:
         tag: ${{ env.YAMTAG }}
         name: 'YAM ${{ env.YAMTAG }}'
