@@ -15,7 +15,7 @@ jobs:
       sha7: ${{ steps.setup.outputs.GITHUB_SHA7 }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Setup variables
       id: setup
       run : |
@@ -38,7 +38,7 @@ jobs:
       YAMVER: ${{ needs.init.outputs.yamver }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Download all releases
       uses: actions/download-artifact@v6
@@ -74,7 +74,7 @@ jobs:
       GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
@@ -130,7 +130,7 @@ jobs:
       GITHUB_SHA7: ${{ needs.init.outputs.sha7 }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
