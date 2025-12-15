@@ -106,7 +106,7 @@ jobs:
         ./scripts/mkdist.sh release ${{ matrix.platform }}
 
     - name: Upload release files as workflow artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: YAM*-*.lha*
         name: YAM${{ env.YAMVER }}-${{ matrix.platform }}-adtools-${{ env.GITHUB_SHA7 }}
@@ -152,7 +152,7 @@ jobs:
         ./scripts/mkdist.sh release os4
 
     - name: Upload release files as workflow artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: YAM*-*.lha*
         name: YAM${{ env.YAMVER }}-os4-gcc11-${{ env.GITHUB_SHA7 }}

@@ -113,7 +113,7 @@ jobs:
         max_releases: 3
 
     - name: Upload files as workflow artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}*.lha*
         name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-${{ env.SUFFIX }}
@@ -183,7 +183,7 @@ jobs:
         max_releases: 3
 
     - name: Upload files as workflow artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.SUFFIX }}*.lha*
         name: YAM${{ env.YAMVER }}dev-${{ env.DATE }}-${{ env.GITHUB_SHA7 }}-${{ env.SUFFIX }}
