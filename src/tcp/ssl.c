@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2025 YAM Open Source Team
+ Copyright (C) 2000-2026 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -365,24 +365,23 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         case GEN_IPADD:
         {
           char ipaddr[60];
+          const unsigned char *ip = ASN1_STRING_get0_data(nm->d.iPAddress);
+          int length = ASN1_STRING_length(nm->d.iPAddress);
 
-          if(nm->d.iPAddress->length == 4) // IPv4 address
+          if(length == 4) // IPv4 address
           {
-            snprintf(ipaddr, sizeof(ipaddr), "%d.%d.%d.%d", nm->d.iPAddress->data[0],
-                     nm->d.iPAddress->data[1],
-                     nm->d.iPAddress->data[2],
-                     nm->d.iPAddress->data[3]);
+            snprintf(ipaddr, sizeof(ipaddr), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
           }
-          else if((nm->d.iPAddress->length == 16) || // IPv6 address
-                  (nm->d.iPAddress->length == 20))
+          else if((length == 16) || // IPv6 address
+                  (length == 20))
           {
             char *pos = ipaddr;
             int j;
             #define VAL2HEX(s)  ((s) + (((s) >= 10) ? ('a'-10) : '0'))
 
-            for(j = 0; j < nm->d.iPAddress->length; ++j)
+            for(j = 0; j < length; ++j)
             {
-              *pos++ = VAL2HEX(nm->d.iPAddress->data[j]);
+              *pos++ = VAL2HEX(ip[j]);
               *pos++ = ':';
             }
             *pos = '\0';
@@ -414,7 +413,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
   // as per RFC3280.
   if(found == 0)
   {
-    X509_NAME *subj = X509_get_subject_name(cert);
+    const X509_NAME *subj = X509_get_subject_name(cert);
     int idx = -1;
     int lastidx;
     char *cname = NULL;
@@ -506,8 +505,8 @@ static char *ExtractReadableDN(const X509_NAME *dname)
 
   for(n = X509_NAME_entry_count(dname); n > 0; n--)
   {
-    X509_NAME_ENTRY *ent = X509_NAME_get_entry(dname, n-1);
-    ASN1_OBJECT *obj = X509_NAME_ENTRY_get_object(ent);
+    const X509_NAME_ENTRY *ent = X509_NAME_get_entry(dname, n-1);
+    const ASN1_OBJECT *obj = X509_NAME_ENTRY_get_object(ent);
 
     // Skip commonName or emailAddress except if there is no other
     // attribute in dname.
@@ -534,28 +533,29 @@ static BOOL ASN1Time2TimeVal(const ASN1_TIME *atm, struct TimeVal *tv)
 
   ENTER();
 
-  if(atm->length >= 12)
+  if(ASN1_STRING_length(atm) >= 12)
   {
     char datestring[] = "MM-DD-YY HH:MM:SS";
+    const unsigned char *data = ASN1_STRING_get0_data(atm);
 
     // month
-    datestring[0]  = atm->data[2];
-    datestring[1]  = atm->data[3];
+    datestring[0]  = data[2];
+    datestring[1]  = data[3];
     // day
-    datestring[3]  = atm->data[4];
-    datestring[4]  = atm->data[5];
+    datestring[3]  = data[4];
+    datestring[4]  = data[5];
     // year
-    datestring[6]  = atm->data[0];
-    datestring[7]  = atm->data[1];
+    datestring[6]  = data[0];
+    datestring[7]  = data[1];
     // hour
-    datestring[9]  = atm->data[6];
-    datestring[10] = atm->data[7];
+    datestring[9]  = data[6];
+    datestring[10] = data[7];
     // minute
-    datestring[12] = atm->data[8];
-    datestring[13] = atm->data[9];
+    datestring[12] = data[8];
+    datestring[13] = data[9];
     // second
-    datestring[15] = atm->data[10];
-    datestring[16] = atm->data[11];
+    datestring[15] = data[10];
+    datestring[16] = data[11];
 
     // now convert the temporary string to a TimeVal
     result = String2TimeVal(tv, datestring, DSS_USDATETIME, TZC_NONE);
@@ -596,9 +596,9 @@ static struct Certificate *MakeCertificateChain(STACK_OF(X509) *chain)
     CheckCertificateIdentity(NULL, x5, &cert->identity);
     GetCertFingerprint(cert, cert->fingerprint);
     cert->issuerStr = ExtractReadableDN(cert->issuer_dn);
-    if(ASN1Time2TimeVal(X509_get_notBefore(cert->subject), &tv))
+    if(ASN1Time2TimeVal(X509_get0_notBefore(cert->subject), &tv))
       TimeVal2String(cert->notBefore, sizeof(cert->notBefore), &tv, DSS_DATETIME, TZC_NONE);
-    if(ASN1Time2TimeVal(X509_get_notAfter(cert->subject), &tv))
+    if(ASN1Time2TimeVal(X509_get0_notAfter(cert->subject), &tv))
       TimeVal2String(cert->notAfter, sizeof(cert->notAfter), &tv, DSS_DATETIME, TZC_NONE);
 
     // now link the certificate to the issuer

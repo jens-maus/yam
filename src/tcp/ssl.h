@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2025 YAM Open Source Team
+ Copyright (C) 2000-2026 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -57,14 +57,14 @@ struct Certificate
 {
   struct Certificate *issuer; // links to the certificate of the issuer or NULL if top level
 
-  X509_NAME *subject_dn;
-  X509_NAME *issuer_dn;
-  X509      *subject;
-  char      *identity;
-  char      fingerprint[SSL_DIGESTLEN];
-  char      *issuerStr;
-  char      notBefore[SIZE_DEFAULT];
-  char      notAfter[SIZE_DEFAULT];
+  const X509_NAME *subject_dn;
+  const X509_NAME *issuer_dn;
+  X509            *subject;
+  char            *identity;
+  char             fingerprint[SSL_DIGESTLEN];
+  char            *issuerStr;
+  char             notBefore[SIZE_DEFAULT];
+  char             notAfter[SIZE_DEFAULT];
 };
 
 // public functions
