@@ -60,12 +60,16 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Restore timestamps
+      uses: chetan/git-restore-mtime-action@v2
+      with:
+        args: -q
+
     - name: Setup dependencies
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -y -qq || true
         sudo apt-get -qq install libc6:i386
-        sudo apt-get -qq install git-restore-mtime
         sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
 
     - name: Install adtools build env
@@ -89,7 +93,6 @@ jobs:
       timeout-minutes: 480
       run: |
         export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
-        git restore-mtime -q
         ./scripts/mkdist.sh nightly ${{ matrix.platform }}
 
     - name: Upload nightly build archive
@@ -145,11 +148,15 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Restore timestamps
+      uses: chetan/git-restore-mtime-action@v2
+      with:
+        args: -q
+
     - name: Setup dependencies
       run: |
         sudo apt-get update -y -qq || true
         sudo apt-get -qq install rsync
-        sudo apt-get -qq install git-restore-mtime
 
     - name: Add repository to git safe directories
       run: |
@@ -159,7 +166,6 @@ jobs:
     - name: Build YAM nightly
       timeout-minutes: 480
       run: |
-        git restore-mtime -q
         ./scripts/mkdist.sh nightly os4
 
     - name: Upload nightly build archive
