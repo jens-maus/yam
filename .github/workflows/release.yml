@@ -137,11 +137,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Restore timestamps
-      uses: chetan/git-restore-mtime-action@v2
-      with:
-        args: -q
-
     - name: Setup dependencies
       run: |
         sudo apt-get update -y -qq || true
@@ -151,6 +146,11 @@ jobs:
       run: |
         git config --global --add safe.directory $GITHUB_WORKSPACE
         git config --global --add safe.directory /opt/code
+
+    - name: Restore timestamps
+      uses: chetan/git-restore-mtime-action@v2
+      with:
+        args: -q
 
     - name: Build YAM release
       timeout-minutes: 480
