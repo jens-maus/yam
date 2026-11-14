@@ -5,7 +5,7 @@
 
  AmiSSL - OpenSSL wrapper for AmigaOS-based systems
  Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- Copyright (c) 2006-2025 AmiSSL Open Source Team.
+ Copyright (c) 2006-2026 AmiSSL Open Source Team.
  All Rights Reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,6 +67,14 @@ enum AmiSSLVersion
   AMISSL_V340,      /* AmiSSL v5.18 */
   AMISSL_V341,      /* AmiSSL v5.19 */
   AMISSL_V350,      /* AmiSSL v5.20 */
+  AMISSL_V351,      /* AmiSSL v5.21 */
+  AMISSL_V352,      /* AmiSSL v5.22 */
+  AMISSL_V353,      /* AmiSSL v5.23 */
+  AMISSL_V354,      /* AmiSSL v5.24 */
+  AMISSL_V360,      /* AmiSSL v5.25 */
+  AMISSL_V361,      /* AmiSSL v5.26 */
+  AMISSL_V362,      /* AmiSSL v5.27 */
+  AMISSL_V41x,      /* AmiSSL v6.1 */
 
   /* ADD NEW VERSIONS ABOVE THIS LINE */
   AMISSL_VMAX
@@ -79,5 +87,6 @@ enum AmiSSLVersion
 #define AMISSL_V10x AMISSL_V102f /* Latest minimum AmiSSL/OpenSSL 1.0.x compatible version */
 #define AMISSL_V11x AMISSL_V110d /* Latest minimum AmiSSL/OpenSSL 1.1.x compatible version */
 #define AMISSL_V3xx AMISSL_V303  /* Latest minimum AmiSSL/OpenSSL 3.x.x compatible version */
+#define AMISSL_V4xx AMISSL_V41x  /* Latest minimum AmiSSL/OpenSSL 4.x.x compatible version */
 
 #endif /* !LIBRARIES_AMISSLMASTER_H */

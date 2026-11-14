@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1999-2006 Andrija Antonijevic, Stefan Burstroem.
- * Copyright (c) 2014-2025 AmiSSL Open Source Team.
+ * Copyright (c) 2014-2026 AmiSSL Open Source Team.
  * All Rights Reserved.
  *
  * This file has been modified for use with AmiSSL for AmigaOS-based systems.
  *
- * Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -14,7 +14,12 @@
  */
 
 #if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
-# include <proto/amissl.h>
+#include <proto/amissl.h>
 #endif
 
+#if !defined(OSSL_OPENSSL_ECDSA_H)
+#define OSSL_OPENSSL_ECDSA_H
+
 #include <openssl/ec.h>
+
+#endif /* !defined(OSSL_OPENSSL_ECDSA_H) */

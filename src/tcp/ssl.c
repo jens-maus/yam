@@ -78,6 +78,44 @@
 #define DEFAULT_CAPATH "PROGDIR:Resources/certificates"
 #define DEFAULT_CAFILE "PROGDIR:Resources/certificates/ca-bundle.crt"
 
+///
+/// asn1strdup
+// strdup for ASN1 strings (which are not null terminated)
+static char *asn1strdup(const ASN1_STRING *str)
+{
+  const unsigned char *src = ASN1_STRING_get0_data(str);
+  size_t len = ASN1_STRING_get_length(str);
+  char *dst = malloc(len + 1);
+
+  if(dst != NULL)
+  {
+    memcpy(dst, src, len);
+    dst[len] = '\0';
+  }
+
+  return dst;
+}
+
+///
+/// asn1strlcpy
+// strlcpy for ASN1 strings (which are not null terminated)
+#if defined(DEBUG)
+static size_t asn1strlcpy(char *dst, const ASN1_STRING *str, size_t size)
+{
+  const unsigned char *src = ASN1_STRING_get0_data(str);
+  size_t len = ASN1_STRING_get_length(str);
+
+  if (size-- != 0)
+  {
+    if (len < size) size = len;
+    memcpy(dst, src, size);
+    dst[size] = '\0';
+  }
+
+  return len;
+}
+#endif
+
 /// verify_callback
 // callback function that is called by AmiSSL/OpenSSL for every certification
 // verification step
@@ -350,13 +388,16 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         // DNS:
         case GEN_DNS:
         {
-          char *name = (char *)ASN1_STRING_get0_data(nm->d.ia5);
+          char *name = asn1strdup(nm->d.ia5);
           D(DBF_NET, "GEN_DNS: '%s'", name);
 
-          if(identity != NULL && found == 0)
-            *identity = strdup(name);
-
           match = MatchHostname(name, strlen(name), hostname);
+
+          if(identity != NULL && found == 0)
+            *identity = name;
+          else
+            free(name);
+
           found = 1;
         }
         break;
@@ -366,7 +407,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         {
           char ipaddr[60];
           const unsigned char *ip = ASN1_STRING_get0_data(nm->d.iPAddress);
-          int length = ASN1_STRING_length(nm->d.iPAddress);
+          int length = ASN1_STRING_get_length(nm->d.iPAddress);
 
           if(length == 4) // IPv4 address
           {
@@ -387,7 +428,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
             *pos = '\0';
           }
           else
-            E(DBF_NET, "unexpected ip addr length %ld", nm->d.iPAddress->length);
+            E(DBF_NET, "unexpected ip addr length %ld", length);
 
           D(DBF_NET, "GEN_IPADD: '%s'", ipaddr);
 
@@ -416,7 +457,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     const X509_NAME *subj = X509_get_subject_name(cert);
     int idx = -1;
     int lastidx;
-    char *cname = NULL;
+    char *cname;
 
     // find the most specific commonName attribute.
     do
@@ -434,13 +475,13 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     }
 
     // extract the string from the entry
-    cname = strdup((char *)ASN1_STRING_get0_data(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, lastidx))));
-    if(identity != NULL)
-      *identity = strdup(cname);
-
+    cname = asn1strdup(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, lastidx)));
     match = MatchHostname(cname, strlen(cname), hostname);
 
-    free(cname);
+    if(identity == NULL)
+      free(cname);
+    else
+      *identity = cname;
   }
 
   D(DBF_NET, "Identity match for '%s': %s", hostname, match ? "good" : "bad");
@@ -513,10 +554,14 @@ static char *ExtractReadableDN(const X509_NAME *dname)
     if((OBJ_cmp(obj, cname) && OBJ_cmp(obj, email)) ||
        (!flag && n == 1))
     {
+      char *str;
+
       if(flag++)
         dstrcat(&result, ", ");
 
-      dstrcat(&result, (char *)ASN1_STRING_get0_data(X509_NAME_ENTRY_get_data(ent)));
+      str = asn1strdup(X509_NAME_ENTRY_get_data(ent));
+      dstrcat(&result, (char *)str);
+      free(str);
     }
   }
 
@@ -533,7 +578,7 @@ static BOOL ASN1Time2TimeVal(const ASN1_TIME *atm, struct TimeVal *tv)
 
   ENTER();
 
-  if(ASN1_STRING_length(atm) >= 12)
+  if(ASN1_STRING_get_length(atm) >= 12)
   {
     char datestring[] = "MM-DD-YY HH:MM:SS";
     const unsigned char *data = ASN1_STRING_get0_data(atm);
@@ -957,6 +1002,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                     const SSL_CIPHER *cipher;
                     X509 *server_cert;
                     char peer_CN[256] = "";
+                    int idx;
 
                     cipher = SSL_get_current_cipher(conn->ssl);
                     if(cipher != NULL)
@@ -964,12 +1010,15 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                     D(DBF_NET, "Certificate verify result: %ld", SSL_get_verify_result(conn->ssl));
 
-                    if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
-                      E(DBF_NET, "SSL_get_peer_certificate() error!");
+                    if((server_cert = SSL_get0_peer_certificate(conn->ssl)) == NULL)
+                      E(DBF_NET, "SSL_get0_peer_certificate() error!");
 
-                    D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
+                    D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get0_pubkey(server_cert)));
 
-                    X509_NAME_get_text_by_NID(X509_get_subject_name(server_cert), NID_commonName, peer_CN, sizeof(peer_CN));
+                    idx = X509_NAME_get_index_by_NID(X509_get_subject_name(server_cert), NID_commonName, -1);
+                    if(idx >= 0)
+                      asn1strlcpy(peer_CN, X509_NAME_ENTRY_get_data(X509_NAME_get_entry(X509_get_subject_name(server_cert), idx)), sizeof(peer_CN));
+
                     D(DBF_NET, "peer_commonName: '%s'", peer_CN);
 
                     #define X509BUFSIZE 4096
@@ -989,9 +1038,6 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                       free(x509buf);
                     }
-
-                    if(server_cert != NULL)
-                      X509_free(server_cert);
                   }
                   #endif
                 }
