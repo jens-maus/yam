@@ -10041,3 +10041,11 @@ msgstr "\033bThis nightly build expires on %s"
 msgctxt "MSG_UNKNOWN_SIZE (2583//)"
 msgid "unknown"
 msgstr "unknown"
+
+msgctxt "MSG_CO_AvoidDuplicates (2584//)"
+msgid "Avoid duplicates"
+msgstr "Avoid duplicates"
+
+msgctxt "MSG_HELP_CO_CH_DUPLICATES (2585//)"
+msgid "Avoid getting duplicate mails from server"
+msgstr "Avoid getting duplicate mails from server"
