@@ -1273,7 +1273,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 else if(stricmp(q, "Enabled") == 0)                Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_ACTIVE) : clearFlag(msn->flags, MSF_ACTIVE);
                 else if(stricmp(q, "SSLMode") == 0)                setFlag(msn->flags, POP3SecMethod2MSF(atoi(value)));
                 else if(stricmp(q, "UseAPOP") == 0)                Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_APOP) : clearFlag(msn->flags, MSF_APOP);
-                else if(stricmp(q, "Delete") == 0)                 Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_PURGEMESSGAES) : clearFlag(msn->flags, MSF_PURGEMESSGAES);
+                else if(stricmp(q, "Delete") == 0)                 Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_PURGEMESSAGES) : clearFlag(msn->flags, MSF_PURGEMESSAGES);
                 else if(stricmp(q, "AvoidDuplicates") == 0)        Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_AVOID_DUPLICATES) : clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
                 else if(stricmp(q, "ApplyRemoteFilters") == 0)     Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS) : clearFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
                 else if(stricmp(q, "Preselection") == 0)           msn->preselection = atoi(value);
@@ -2217,9 +2217,9 @@ int LoadConfig(struct Config *co, const char *fname)
             if(globalPOP3DeleteOnServer != -1)
             {
               if(globalPOP3DeleteOnServer == TRUE)
-                setFlag(msn->flags, MSF_PURGEMESSGAES);
+                setFlag(msn->flags, MSF_PURGEMESSAGES);
               else
-                clearFlag(msn->flags, MSF_PURGEMESSGAES);
+                clearFlag(msn->flags, MSF_PURGEMESSAGES);
             }
 
             if(globalPOP3Preselection != -1)

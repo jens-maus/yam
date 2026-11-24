@@ -45,7 +45,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 // dependant on the actual type of the mail server
 #define MSF_ACTIVE                (1<<0)  // [POP3/SMTP] : user enabled this server
 #define MSF_APOP                  (1<<1)  // [POP3]      : use APOP authentication
-#define MSF_PURGEMESSGAES         (1<<2)  // [POP3]      : delete messages after transfer
+#define MSF_PURGEMESSAGES         (1<<2)  // [POP3]      : delete messages after transfer
 #define MSF_UIDLCHECKED           (1<<3)  // [POP3]      : TRUE if the UIDLs were checked during the last transfer
 #define MSF_SEC_SSL               (1<<4)  // [POP3/SMTP] : SSLv3 protocol secure mode
 #define MSF_SEC_TLS               (1<<5)  // [POP3/SMTP] : TLSv1 protocol secure mode
@@ -64,7 +64,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 
 #define isServerActive(v)                (isFlagSet((v)->flags, MSF_ACTIVE))
 #define hasServerAPOP(v)                 (isFlagSet((v)->flags, MSF_APOP))
-#define hasServerPurge(v)                (isFlagSet((v)->flags, MSF_PURGEMESSGAES))
+#define hasServerPurge(v)                (isFlagSet((v)->flags, MSF_PURGEMESSAGES))
 #define hasServerCheckedUIDL(v)          (isFlagSet((v)->flags, MSF_UIDLCHECKED))
 #define hasServerSSL(v)                  (isFlagSet((v)->flags, MSF_SEC_SSL))
 #define hasServerTLS(v)                  (isFlagSet((v)->flags, MSF_SEC_TLS))
