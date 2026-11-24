@@ -103,7 +103,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             }
 
             msn->port = 110;
-            setFlag(msn->flags, MSF_PURGEMESSGAES);
+            setFlag(msn->flags, MSF_PURGEMESSAGES);
             setFlag(msn->flags, MSF_AVOID_DUPLICATES);
             setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
 

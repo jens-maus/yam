@@ -974,9 +974,9 @@ DECLARE(GUIToPOP3)
         clearFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
 
       if(GetMUICheck(data->CH_DELETE) == TRUE)
-        setFlag(msn->flags, MSF_PURGEMESSGAES);
+        setFlag(msn->flags, MSF_PURGEMESSAGES);
       else
-        clearFlag(msn->flags, MSF_PURGEMESSGAES);
+        clearFlag(msn->flags, MSF_PURGEMESSAGES);
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
